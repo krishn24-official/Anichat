@@ -1,0 +1,22 @@
+[
+  {"question": "Who killed Tanjiro's family?", "expect": ["Episode 1", "Chapter 1", "Muzan Kibutsuji", "Tanjiro Kamado"], "answer_contains": ["muzan"]},
+  {"question": "How did Tanjiro's family die?", "expect": ["Episode 1", "Chapter 1"], "answer_contains": ["muzan", "demon"]},
+  {"question": "How did Rengoku die?", "expect": ["Kyojuro Rengoku", "Episode 33", "Chapter 66", "Akaza"], "answer_contains": ["akaza"]},
+  {"question": "Who trained Tanjiro before the Final Selection?", "expect": ["Sakonji Urokodaki", "Episode 2", "Episode 3", "Tanjiro Kamado"], "answer_contains": ["urokodaki"]},
+  {"question": "Where does the Final Selection take place?", "expect": ["Mount Fujikasane", "Episode 4", "Episode 5"], "answer_contains": ["fujikasane"]},
+  {"question": "What is Hinokami Kagura?", "expect": ["Hinokami Kagura"], "answer_contains": ["dance"]},
+  {"question": "Which breathing style does Zenitsu use?", "expect": ["Zenitsu Agatsuma", "Thunder Breathing"], "answer_contains": ["thunder"]},
+  {"question": "Which breathing style does Inosuke use?", "expect": ["Inosuke Hashibira", "Beast Breathing"], "answer_contains": ["beast"]},
+  {"question": "Who is the Water Hashira?", "expect": ["Giyu Tomioka", "Water Breathing"], "answer_contains": ["giyu", "tomioka"]},
+  {"question": "Who is Upper Rank Three?", "expect": ["Akaza"], "answer_contains": ["akaza"]},
+  {"question": "Who is Nezuko?", "expect": ["Nezuko Kamado"], "answer_contains": ["sister"]},
+  {"question": "Who is Muzan Kibutsuji?", "expect": ["Muzan Kibutsuji"], "answer_contains": ["demon king", "first demon", "progenitor", "original demon", "first ever demon"]},
+  {"question": "Who is Tamayo?", "expect": ["Tamayo"], "answer_contains": ["physician", "doctor"]},
+  {"question": "Which demon did Tanjiro fight at Mount Natagumo?", "expect": ["Rui", "Mount Natagumo", "Mount Natagumo Arc", "Episode 15", "Episode 16", "Episode 17", "Episode 18", "Episode 19", "Episode 20", "Episode 21"], "answer_contains": ["rui"]},
+  {"question": "What happens in chapter 196?", "expect": ["Chapter 196"], "answer_contains": ["human"]},
+  {"question": "What happens in episode 19?", "expect": ["Episode 19"], "answer_contains": ["rui", "hinokami"]},
+  {"question": "Who is the Sound Hashira?", "expect": ["Tengen Uzui"], "answer_contains": ["tengen", "uzui"]},
+  {"question": "Who are Daki and Gyutaro?", "expect": ["Daki", "Gyutaro"], "answer_contains": ["upper rank six", "sibling", "brother", "sister"]},
+  {"question": "Who is the strongest of the Upper Ranks?", "expect": ["Kokushibo"], "answer_contains": ["kokushibo"]},
+  {"question": "Where do the swordsmiths live?", "expect": ["Swordsmith Village"], "answer_contains": ["swordsmith village", "village"]}
+]

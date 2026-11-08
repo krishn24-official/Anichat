@@ -1,0 +1,129 @@
+"""Stage 2 output: one Markdown document per wiki page. Pure Python, no I/O.
+
+A document = YAML front matter (metadata used for filtering later: series, kind,
+episode/chapter number, mentioned characters...) + a readable Markdown body.
+Stage 3 splits the body by heading into chunks and copies the metadata onto each.
+"""
+
+import json
+import re
+from dataclasses import dataclass, field
+
+from anichat.domain.entities import RawPage
+from anichat.domain.wikitext import parse_page
+
+MIN_BODY_CHARS = 300  # pages shorter than this are stubs: nothing worth retrieving
+LICENSE = "CC BY-SA 3.0"
+MAX_MENTIONS = 40
+# Infobox facts kept in the metadata but left out of the text: they rarely answer a question
+# and they drown out what a page is about in its embedding.
+TRIVIA_FACTS = {
+    "height", "weight", "hair_color", "eye_color", "allrelatives", "image_size", "blood_type",
+    "birthday_image", "anime_debut", "manga_debut", "game_debut", "japanese_va", "english_va",
+}
+
+
+@dataclass
+class Document:
+    """A cleaned page ready to be chunked.
+
+    Created by: build_document()
+    Saved by:   infrastructure/document_store.py  DocumentStore.save()
+    Read by:    stage 3 (chunking), not written yet
+    """
+
+    series: str
+    series_title: str
+    kind: str
+    title: str  # wiki page title, e.g. "Episode 1"
+    display_title: str  # e.g. "Episode 1: Cruelty"
+    source_url: str
+    revision_id: int
+    number: int | None = None  # episode / chapter number
+    facts: dict[str, str] = field(default_factory=dict)
+    mentions: list[str] = field(default_factory=list)
+    body: str = ""
+
+
+def _number(kind: str, title: str) -> int | None:
+    """"Episode 12" -> 12, "Chapter 205" -> 205; None for other pages.
+
+    Called by: build_document()
+    """
+    m = re.fullmatch(r"(?:Episode|Chapter)\s+(\d+)", title.strip(), re.I)
+    return int(m.group(1)) if m and kind in ("episode", "chapter") else None
+
+
+def _display_title(kind: str, title: str, facts: dict[str, str]) -> str:
+    """Episodes/chapters get their real name appended: "Episode 1: Cruelty".
+
+    Called by: build_document()
+    """
+    name = facts.get("title") or facts.get("chapter title")
+    if kind in ("episode", "chapter") and name and name.lower() != title.lower():
+        return f"{title}: {name}"
+    return title
+
+
+def build_document(page: RawPage, series_title: str) -> Document | None:
+    """Clean one raw page into a Document; None for stubs.
+
+    Called by: application/build_documents.py  BuildDocumentsService.build()
+    """
+    parsed = parse_page(page.wikitext)
+    facts = dict(parsed.infobox)
+
+    parts = [parsed.lead] if parsed.lead else []
+    for level, heading, text in parsed.sections:
+        if text:
+            parts.append(f"{'#' * level} {heading}\n\n{text}")
+    body = "\n\n".join(parts).strip()
+    if len(body) < MIN_BODY_CHARS:
+        return None
+
+    return Document(
+        series=page.series,
+        series_title=series_title,
+        kind=page.kind,
+        title=page.title,
+        display_title=_display_title(page.kind, page.title, facts),
+        source_url=page.url,
+        revision_id=page.revision_id,
+        number=_number(page.kind, page.title),
+        facts={k: v for k, v in facts.items() if v},
+        mentions=parsed.mentions[:MAX_MENTIONS],
+        body=body,
+    )
+
+
+def to_markdown(doc: Document) -> str:
+    """Render a Document as Markdown with YAML front matter (values written as JSON,
+    which is valid YAML, so quotes and colons in titles are always safe).
+
+    Called by: infrastructure/document_store.py  DocumentStore.save()
+    """
+    meta = {
+        "series": doc.series,
+        "series_title": doc.series_title,
+        "kind": doc.kind,
+        "title": doc.title,
+        "display_title": doc.display_title,
+        "number": doc.number,
+        "source": doc.source_url,
+        "revision": doc.revision_id,
+        "license": LICENSE,
+        "facts": doc.facts,
+        "mentions": doc.mentions,
+    }
+    front = "\n".join(f"{k}: {json.dumps(v, ensure_ascii=False)}" for k, v in meta.items())
+    shown = {k: v for k, v in doc.facts.items() if k not in TRIVIA_FACTS}
+    facts = "\n".join(f"- **{k.replace('_', ' ').capitalize()}:** {v}" for k, v in shown.items())
+    header = f"# {doc.display_title}\n\n*{doc.series_title}* · Source: [{doc.title}]({doc.source_url}) ({LICENSE})"
+    # Intro first, then facts: the intro ("Akaza ... held the position of Upper Rank Three")
+    # becomes its own chunk, so its embedding is about who/what the page is, not hair colour.
+    intro, sep, rest = doc.body.partition("\n## ")
+    if intro.startswith("## "):  # no intro paragraph: the body starts with a section
+        intro, rest, sep = "", doc.body[3:], "\n## "
+    facts_block = f"## Facts\n\n{facts}\n\n" if facts else ""
+    body = (f"{intro.strip()}\n\n" if intro.strip() else "") + facts_block + (f"## {rest}" if sep else "")
+    return f"---\n{front}\n---\n\n{header}\n\n{body.strip()}\n"

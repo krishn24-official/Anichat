@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+# Collected/derived data is rebuilt by the scripts; keep it out of git.
+data/
+models/
