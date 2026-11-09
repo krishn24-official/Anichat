@@ -13,10 +13,33 @@ wiki knowledge with retrieval-augmented generation (RAG).
 | 4. Embed + index | FastEmbed (bge-small dense + BM25 sparse) into Qdrant, with an embedding cache | ✅ `scripts/index.py` |
 | 5. Retrieve | Hybrid search + exact chapter/episode lookups (reranking measured: off) | ✅ `scripts/ask.py`, `scripts/evaluate.py` |
 | 6. Answer | FastAPI + Gemini -> Groq, answers only from sources, with citations | ✅ `anichat/interfaces/api.py`, `scripts/chat.py` |
-| 7. Evaluate | Question set with known answers | ✅ started: `evals/demon_slayer.json` (20 questions) |
+| 7. Evaluate | Question sets with known answers, per series | ✅ `evals/*.json`, `scripts/evaluate.py`, `scripts/evaluate_answers.py` |
 
 Heavy work (stages 1-4) runs on a laptop; the hosted API (stages 5-6) stays light:
 small ONNX models, Qdrant Cloud, LLM APIs.
+
+## Series
+
+| Series | Wiki | Pages | Chunks | Retrieval (top 5) | Answers correct |
+|---|---|---|---|---|---|
+| Demon Slayer | kimetsu-no-yaiba.fandom.com | 499 | 4,125 | 95% | 20/20 |
+| Death Note | deathnote.fandom.com | 338 | 1,800 | 100% | 12/12 |
+| Attack on Titan | attackontitan.fandom.com | 540 | 5,561 | 100% | 14/14 |
+| Jujutsu Kaisen | jujutsu-kaisen.fandom.com | 754 | 5,412 | 100% | 14/15 |
+| Naruto | naruto.fandom.com | 3,929 | 20,888 | 100% | 14/14 |
+| Naruto Shippuden | naruto.fandom.com (shares Naruto's characters/jutsu) | 947 | 2,497 | 100% | 10/10 |
+| One Piece | onepiece.fandom.com | 4,152 | 34,576 | 100% | 14/14 |
+
+Each series is configured in `anichat/domain/series.py` (wiki categories per page kind, infobox
+filters for wikis that mix several series, Semantic MediaWiki properties to fetch). Known miss:
+"Who killed Satoru Gojo?" (the Jujutsu Kaisen wiki has no "People killed" lists).
+
+What the pipeline adds beyond page text:
+- **Profile cards**: a short "who/what is X" chunk per entity with its key facts.
+- **Other names** from wiki redirects ("Pain" -> Nagato, "Tobi" -> Obito Uchiha).
+- **Derived facts**: "Killed by" from other pages' "People killed" lists, "Children" from "Parents".
+- **Exact lookups**: "chapter 139" / "episode 1" go straight to that page; names, aliases and
+  titles ("Third Hokage") go straight to the entity's card.
 
 ## Layout
 
@@ -39,13 +62,31 @@ pip install -r requirements.txt
 python -m pytest
 python -m scripts.collect --series demon_slayer          # stage 1 -> data/raw/
 python -m scripts.build_documents --series demon_slayer  # stage 2 -> data/documents/
+python -m scripts.check_documents --series demon_slayer  # leftover markup / missing numbers
 python -m scripts.chunk --series demon_slayer            # stage 3 -> data/chunks/
-python -m scripts.index --series demon_slayer            # stage 4 -> data/qdrant/ (first run ~25 min on CPU)
+python -m scripts.index --series demon_slayer            # stage 4 -> Qdrant (first run ~25 min on CPU)
+python -m scripts.evaluate --series demon_slayer         # retrieval quality (no LLM)
+python -m scripts.evaluate_answers --series demon_slayer # answer quality (uses the LLM APIs)
 ```
 
+### Vector database (Qdrant)
+
+With several series, use a Qdrant server: the local folder mode (no `QDRANT_URL`) is pure
+Python and slows down past ~10k chunks (3.8 s per search at 17k; the server takes ~1 s at 75k).
+Start Docker Desktop, then once:
+
+```
+docker run -d --name anichat-qdrant --restart unless-stopped -p 6333:6333 -v "${PWD}\data\qdrant_server:/qdrant/storage" qdrant/qdrant:v1.19.2
+```
+
+and set `QDRANT_URL=http://localhost:6333` in `.env` (dashboard: http://localhost:6333/dashboard).
+For hosting, use a Qdrant Cloud cluster instead: set its URL and `QDRANT_API_KEY`, then re-run
+`scripts.index` for each series (vectors come from the cache, no re-embedding).
+
 Embedding a full chunk takes ~0.3 s on a laptop CPU, so the first index of a series takes
-~25 minutes. Vectors are cached in `data/embeddings.sqlite` by text, so later runs only embed
-chunks that changed (a full re-index from cache takes ~30 s).
+~25 minutes (One Piece, 34k chunks: ~3 h). Vectors are cached in `data/embeddings.sqlite` by
+text and saved every 256 chunks, so an interrupted run continues where it stopped and later runs
+only embed chunks that changed.
 
 ## Chat
 

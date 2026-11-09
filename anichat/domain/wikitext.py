@@ -8,8 +8,13 @@ before templates so a link's "|" is never mistaken for a template parameter.
 import re
 from dataclasses import dataclass, field
 
-# Infobox templates: their parameters become the page's structured facts.
+# Infobox templates: their parameters become the page's structured facts. Every wiki names
+# them differently ({{Human3}}, {{Shinigami2}}, {{Objects}}...), so besides these known names,
+# any template with INFOBOX_MIN_FIELDS named fields is a candidate (unless it is a navigation/notice
+# template); the one with the most fields wins (see _render_templates).
 INFOBOX_TEMPLATES = {"episode", "chapter infobox", "character", "ability", "location", "story arc"}
+INFOBOX_MIN_FIELDS = 3
+NOT_INFOBOX = {"parenttab", "tabs", "for", "for2", "quote", "quotebox", "stub", "toc limit", "cropwh"}
 # Infobox parameters that are layout, not facts.
 SKIP_FACTS = {"image", "caption", "name", "next", "previous", "cover", "image2", "gallery"}
 # Sections that are only media, navigation or citations.
@@ -53,7 +58,7 @@ def _strip_noise(text: str) -> str:
     """
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     text = re.sub(r"<ref[^>]*/>|<ref[^>]*>.*?</ref>", "", text, flags=re.S | re.I)
-    text = re.sub(r"<gallery[^>]*>.*?</gallery>", "", text, flags=re.S | re.I)
+    text = re.sub(r"<(gallery|imagemap)[^>]*>.*?</\1>", "", text, flags=re.S | re.I)  # media blocks
     text = re.sub(r"<tabber>(.*?)</tabber>", _tab_labels, text, flags=re.S | re.I)
     return re.sub(r"__[A-Z]+__", "", text)
 
@@ -120,7 +125,7 @@ def _split_params(body: str) -> tuple[str, list[str], dict[str, str]]:
     positional, named = [], {}
     for p in parts[1:]:
         key, sep, value = p.partition("=")
-        if sep and re.fullmatch(r"[\w ōū\-]+", key.strip()):
+        if sep and re.fullmatch(r"[\w ōū\-().]+", key.strip()):  # keys like "Number (in vol.)"
             named[key.strip().lower()] = value.strip()
         else:
             positional.append(p.strip())
@@ -133,13 +138,23 @@ def _render_templates(text: str, infobox: dict[str, str]) -> str:
 
     Called by: parse_page()
     """
+    # Infobox candidates as (known name?, field count, facts). The best one wins after rendering:
+    # a known infobox name first, else the most fields. Not simply the first: a hatnote such as
+    # {{Disambiguation|this=...|for=...|see=...}} above the real infobox also has 3 named fields.
+    candidates: list[tuple[bool, int, dict[str, str]]] = []
+
     def render(m: re.Match) -> str:
         name, positional, named = _split_params(m.group(1))
-        if name in INFOBOX_TEMPLATES and not infobox:
+        known = name in INFOBOX_TEMPLATES or "infobox" in name
+        if (known or len(named) >= INFOBOX_MIN_FIELDS) and name not in NOT_INFOBOX and not name.startswith(KEEP_CONTENT):
+            facts = {}
             for key, value in named.items():
+                value = re.sub(r"^\s*[*#]+\s*", "", value, flags=re.M)  # list items ("* Face to Face")
                 value = _plain(re.sub(r"\s*\n\s*", "; ", value))  # multi-line values -> one line
+                value = re.sub(r"\s*;(?:\s*;)*\s*", "; ", value).strip("; ")  # "a ; ; b" -> "a; b"
                 if key not in SKIP_FACTS and value:
-                    infobox[key] = value
+                    facts[key] = value
+            candidates.append((known, len(named), facts))
             return ""
         if name == "nihongo":  # {{Nihongo|English|Japanese|Romaji}} -> English (Japanese, Romaji)
             english, extra = (positional + ["", "", ""])[0], [p for p in positional[1:3] if p]
@@ -156,7 +171,10 @@ def _render_templates(text: str, infobox: dict[str, str]) -> str:
         if new == text:
             break
         text = new
-    return text
+    if candidates:
+        infobox.update(max(candidates, key=lambda c: (c[0], c[1]))[2])
+    # Wiki typos: a template missing one opening brace ("{ref|ob = 10}}") is never matched above.
+    return re.sub(r"(?<!\{)\{[^{}\n]{1,200}\}\}", "", text)
 
 
 def _convert_tables(text: str) -> str:

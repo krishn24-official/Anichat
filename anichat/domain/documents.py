@@ -45,24 +45,63 @@ class Document:
     body: str = ""
 
 
-def _number(kind: str, title: str) -> int | None:
-    """"Episode 12" -> 12, "Chapter 205" -> 205; None for other pages.
+# Where each wiki keeps the number; "overall" first (per-season/per-volume numbers restart at 1).
+NUMBER_FACTS = {
+    "episode": ("number (overall)", "number", "episode", "#", "ep number", "episodenumber", "episode number"),
+    "chapter": ("number (overall)", "chapter", "number", "chapter number", "#"),
+}
+
+
+def _number(kind: str, title: str, facts: dict[str, str]) -> int | None:
+    """Episode/chapter number from the title ("Episode 12" -> 12) or, on wikis that name
+    these pages by their title ("Bomb"), from the infobox (chapter = 30). None otherwise.
 
     Called by: build_document()
     """
+    if kind not in NUMBER_FACTS:
+        return None
     m = re.fullmatch(r"(?:Episode|Chapter)\s+(\d+)", title.strip(), re.I)
-    return int(m.group(1)) if m and kind in ("episode", "chapter") else None
+    if m:
+        return int(m.group(1))
+    for key in NUMBER_FACTS[kind]:
+        m = re.match(r"\s*(\d{1,4})\b", facts.get(key, ""))
+        if m:
+            return int(m.group(1))
+    return None
 
 
-def _display_title(kind: str, title: str, facts: dict[str, str]) -> str:
-    """Episodes/chapters get their real name appended: "Episode 1: Cruelty".
+def _display_title(kind: str, title: str, facts: dict[str, str], number: int | None) -> str:
+    """Episodes/chapters show both number and name: "Episode 1: Cruelty" (page "Episode 1",
+    infobox title "Cruelty") or "Chapter 30: Bomb" (page "Bomb", infobox chapter 30).
 
     Called by: build_document()
     """
-    name = facts.get("title") or facts.get("chapter title")
-    if kind in ("episode", "chapter") and name and name.lower() != title.lower():
+    if kind not in NUMBER_FACTS:
+        return title
+    label = f"{kind.capitalize()} {number}" if number is not None else None
+    if label and title.lower() != label.lower():
+        return f"{label}: {title}"  # page named by its title
+    name = facts.get("title") or facts.get("chapter title") or facts.get("ep title") or facts.get("episode title") or facts.get("english")
+    if name and name.lower() != title.lower():
         return f"{title}: {name}"
     return title
+
+
+def _other_names(redirects: str, title: str) -> str:
+    """Redirect titles -> other names: bracketed qualifiers dropped ("Haku (Naruto)" -> "Haku";
+    left in, "Naruto" would become an alias of every such page), duplicates and the page's own
+    name removed, case-insensitively.
+
+    Called by: build_document()
+    """
+    seen = {title.split(" (")[0].lower()}
+    names = []
+    for name in redirects.split(";"):
+        name = re.sub(r"\s*\(.*?\)", "", name).strip()
+        if name and name.lower() not in seen:
+            seen.add(name.lower())
+            names.append(name)
+    return "; ".join(names)
 
 
 def build_document(page: RawPage, series_title: str) -> Document | None:
@@ -71,7 +110,10 @@ def build_document(page: RawPage, series_title: str) -> Document | None:
     Called by: application/build_documents.py  BuildDocumentsService.build()
     """
     parsed = parse_page(page.wikitext)
-    facts = dict(parsed.infobox)
+    # Facts from Semantic MediaWiki and redirects (page.properties) fill what the infobox lacks.
+    facts = {**page.properties, **parsed.infobox}
+    if facts.get("also called"):
+        facts["also called"] = _other_names(facts["also called"], page.title)
 
     parts = [parsed.lead] if parsed.lead else []
     for level, heading, text in parsed.sections:
@@ -81,15 +123,16 @@ def build_document(page: RawPage, series_title: str) -> Document | None:
     if len(body) < MIN_BODY_CHARS:
         return None
 
+    number = _number(page.kind, page.title, facts)
     return Document(
         series=page.series,
         series_title=series_title,
         kind=page.kind,
         title=page.title,
-        display_title=_display_title(page.kind, page.title, facts),
+        display_title=_display_title(page.kind, page.title, facts, number),
         source_url=page.url,
         revision_id=page.revision_id,
-        number=_number(page.kind, page.title),
+        number=number,
         facts={k: v for k, v in facts.items() if v},
         mentions=parsed.mentions[:MAX_MENTIONS],
         body=body,

@@ -22,6 +22,9 @@ class RawPage:
     revision_id: int  # wiki revision fetched, so a later re-fetch can tell if it changed
     wikitext: str  # raw MediaWiki markup; cleaned in stage 2
     fetched_at: str  # ISO timestamp (UTC)
+    # Facts kept outside the wikitext (Naruto wiki: Semantic MediaWiki holds the infobox data),
+    # already renamed to our fact names, e.g. {"parents": "Minato Namikaze; Kushina Uzumaki"}.
+    properties: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass

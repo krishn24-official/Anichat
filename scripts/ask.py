@@ -7,11 +7,11 @@
 import argparse
 from pathlib import Path
 
+from anichat import container
 from anichat.application.retrieve import RetrievalService
 from anichat.domain.series import SERIES
 from anichat.infrastructure.fastembed_embedder import FastEmbedEmbedder
 from anichat.infrastructure.fastembed_reranker import FastEmbedReranker
-from anichat.infrastructure.qdrant_index import QdrantIndex
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 
@@ -21,7 +21,7 @@ def main(series_id: str, question: str, rerank: bool) -> None:
 
     Called by: this file's __main__ block (command line)
     """
-    index = QdrantIndex(path=str(DATA / "qdrant"))
+    index = container.index()  # Qdrant server when QDRANT_URL is set, else the local folder
     try:
         service = RetrievalService(FastEmbedEmbedder(), index, FastEmbedReranker() if rerank else None)
         result = service.retrieve(question, series=series_id)

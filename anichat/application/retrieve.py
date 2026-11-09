@@ -20,6 +20,7 @@ from anichat.domain.chunking import Chunk
 from anichat.domain.entities_lookup import build_phrase_index, lookup
 from anichat.domain.ports import Embedder, Reranker, VectorIndex
 from anichat.domain.query import parse_question
+from anichat.domain.series import search_scope
 
 CANDIDATES = 15  # hybrid-search results passed to the reranker (cost grows with this)
 EXACT_PER_PAGE = 2  # chunks taken from a page referenced by number
@@ -57,9 +58,9 @@ class RetrievalService:
         self._index = index
         self._reranker = reranker  # None = hybrid search order only
         self._candidates = candidates
-        self._phrase_indexes: dict[str | None, dict] = {}  # per series, built on first use
+        self._phrase_indexes: dict = {}  # per search scope (series id or ids), built on first use
 
-    def _phrases(self, series: str | None) -> dict:
+    def _phrases(self, series: str | tuple[str, ...] | None) -> dict:
         """The name/alias/title -> profile card table for a series (built once from the index).
 
         Called by: retrieve()
@@ -84,9 +85,11 @@ class RetrievalService:
                           for c in self._index.find(kind, number, series, EXACT_PER_PAGE)]
         timings["exact"] = time.perf_counter() - started
 
-        # 2. Hybrid search.
+        # 2. Hybrid search, also over the pages a sequel shares (Shippuden -> Naruto's characters).
+        #    The exact lookups above stay within `series`: "episode 1" is that series' episode 1.
+        scope = search_scope(series)
         t = time.perf_counter()
-        hits = self._index.search(self._embedder.embed_query(question), self._candidates, series)
+        hits = self._index.search(self._embedder.embed_query(question), self._candidates, scope)
         timings["search"] = time.perf_counter() - t
 
         # 3. Rerank.
@@ -107,11 +110,15 @@ class RetrievalService:
                 chosen.append(item)
         chosen = chosen[:limit]
 
-        # 5. A page named by an alias/title the search missed ("Upper Rank Three" -> Akaza)
-        #    takes the last slot, unless that page is already among the results.
+        # 5. The profile card of a page the question names ("Upper Rank Three" -> Akaza) takes
+        #    the last slot, unless the card is already among the results. Checked by card, not
+        #    by page: "Who killed Eren Yeager?" finds Eren's history, but the answer is the
+        #    card's "Killed by" line.
         t = time.perf_counter()
-        pages = {c.chunk.title for c in chosen}
-        entities = [c for c in lookup(question, self._phrases(series)) if c.title not in pages][:ENTITY_SLOTS]
+        # Only the best matches (longest phrase) are considered: if "Eren Yeager"'s card is already
+        # there, the weaker "Yeager" match must not push it out of the last slot.
+        present = {c.chunk.id for c in chosen}
+        entities = [c for c in lookup(question, self._phrases(scope))[:ENTITY_SLOTS] if c.id not in present]
         if entities:
             chosen = chosen[: limit - len(entities)] + [RetrievedChunk(c, 1.0, "entity") for c in entities]
         timings["entity"] = time.perf_counter() - t

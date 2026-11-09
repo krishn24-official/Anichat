@@ -42,6 +42,11 @@ class RawStore:
         """
         return self._path(series, kind, title).exists()
 
+    def load(self, series: str, kind: str, title: str) -> RawPage | None:
+        """A saved page, or None. Called by: application/collect.py  CollectService._add_properties()"""
+        path = self._path(series, kind, title)
+        return RawPage(**json.loads(path.read_text(encoding="utf-8"))) if path.exists() else None
+
     def save(self, page: RawPage) -> None:
         """Write the page as pretty JSON (overwrites an older copy).
 

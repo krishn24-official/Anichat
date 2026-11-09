@@ -1,0 +1,16 @@
+[
+  {"question": "Who is Monkey D. Luffy?", "expect": ["Monkey D. Luffy"], "answer_contains": ["straw hat", "captain", "pirate king"]},
+  {"question": "What is the Gomu Gomu no Mi?", "expect": ["Gomu Gomu no Mi"], "answer_contains": ["rubber", "nika"]},
+  {"question": "What is Haki?", "expect": ["Haki"], "answer_contains": ["armament", "observation", "conqueror"]},
+  {"question": "Who are the Four Emperors?", "expect": ["Four Emperors"], "answer_contains": ["shanks", "emperor", "yonko"]},
+  {"question": "Who is Gol D. Roger?", "expect": ["Gol D. Roger"], "answer_contains": ["pirate king"]},
+  {"question": "Who is Roronoa Zoro?", "expect": ["Roronoa Zoro"], "answer_contains": ["sword", "swordsman"]},
+  {"question": "What is the Void Century?", "expect": ["Void Century"], "answer_contains": ["100", "hundred", "history"]},
+  {"question": "Who killed Portgas D. Ace?", "expect": ["Portgas D. Ace", "Sakazuki"], "answer_contains": ["akainu", "sakazuki"]},
+  {"question": "Who is Kaido?", "expect": ["Kaidou"], "answer_contains": ["beasts pirates", "emperor", "strongest creature"]},
+  {"question": "Who are the Straw Hat Pirates?", "expect": ["Straw Hat Pirates"], "answer_contains": ["luffy"]},
+  {"question": "What is a Poneglyph?", "expect": ["Poneglyph"], "answer_contains": ["stone", "ancient", "robin"]},
+  {"question": "Who is Nico Robin?", "expect": ["Nico Robin"], "answer_contains": ["archaeolog", "ohara", "poneglyph"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["shanks", "luffy"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["luffy", "coby", "koby", "alvida"]}
+]

@@ -14,6 +14,9 @@ from pathlib import Path
 from anichat.domain.ports import Embedded, Embedder, SparseVector
 
 
+SAVE_EVERY = 256  # chunks embedded between two saves to the cache
+
+
 def text_key(model: str, text: str) -> str:
     """Cache key: the model name and the text (a different model must never reuse vectors).
 
@@ -72,10 +75,13 @@ class CachingEmbedder:
 
         missing = [i for i, k in enumerate(keys) if k not in found]
         self.hits, self.misses = len(texts) - len(missing), len(missing)
-        if missing:
-            fresh = self._inner.embed_documents([texts[i] for i in missing])
-            self._store([(keys[i], e) for i, e in zip(missing, fresh)])
-            found.update({keys[i]: e for i, e in zip(missing, fresh)})
+        # Embedded and saved in batches: a run stopped after an hour (One Piece takes ~3 h on a
+        # laptop CPU) keeps everything embedded so far, and the next run continues from there.
+        for start in range(0, len(missing), SAVE_EVERY):
+            batch = missing[start:start + SAVE_EVERY]
+            fresh = self._inner.embed_documents([texts[i] for i in batch])
+            self._store([(keys[i], e) for i, e in zip(batch, fresh)])
+            found.update({keys[i]: e for i, e in zip(batch, fresh)})
         return [found[k] for k in keys]
 
     def embed_query(self, text: str) -> Embedded:

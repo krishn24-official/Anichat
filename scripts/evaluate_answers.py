@@ -34,7 +34,8 @@ def is_expected(title: str, expected: list[str]) -> bool:
 
     Called by: score()
     """
-    return any(title == e or title.startswith(e + ":") for e in expected)
+    # "Chapter 245: Naruto's Homecoming!!" also matches the page title "Naruto's Homecoming!!"
+    return any(title == e or title.startswith(e + ":") or title.endswith(": " + e) for e in expected)
 
 
 def score(case: dict, answer, retrieved_titles: list[str]) -> dict:

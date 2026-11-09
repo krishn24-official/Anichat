@@ -83,6 +83,44 @@ class FandomClient:
                 titles += await self._members(host, sub.removeprefix("Category:"), "page")
         return list(dict.fromkeys(titles))
 
+    async def redirects_to(self, host: str, titles: list[str]) -> dict[str, list[str]]:
+        """Redirect titles pointing at each page, 50 pages per request ("Nagato" -> ["Pain",
+        "Pein", "Akatsuki Leader", ...]). Wikis create a redirect for every name a character goes by.
+
+        Called by: application/collect.py  CollectService._add_aliases()
+        """
+        found: dict[str, list[str]] = {}
+        for i in range(0, len(titles), 50):
+            cont: dict = {}
+            while True:
+                data = await self._api(host, {"action": "query", "prop": "redirects", "rdlimit": "max",
+                                              "titles": "|".join(titles[i:i + 50]), **cont})
+                for page in data.get("query", {}).get("pages", {}).values():
+                    found.setdefault(page.get("title", ""), []).extend(r["title"] for r in page.get("redirects", []))
+                if "continue" not in data:
+                    break
+                cont = data["continue"]
+        return found
+
+    async def page_properties(self, host: str, title: str) -> dict[str, list[str]]:
+        """A page's Semantic MediaWiki properties, values as plain titles/text. Wikis like
+        naruto.fandom.com keep the infobox data there instead of in the page's wikitext.
+
+        Called by: application/collect.py  CollectService._add_properties()
+        """
+        data = await self._api(host, {"action": "browsebysubject", "subject": title.replace(" ", "_")})
+        out: dict[str, list[str]] = {}
+        for prop in data.get("query", {}).get("data", []):
+            values = []
+            for item in prop.get("dataitem", []):
+                value = str(item.get("item", ""))
+                if "##_" in value:  # internal sub-object or query id, not a value
+                    continue
+                values.append(value.split("#", 1)[0].replace("_", " ").strip())
+            if values and not prop["property"].startswith("_"):
+                out[prop["property"]] = [v for v in dict.fromkeys(values) if v]
+        return out
+
     async def fetch_page(self, host: str, series: str, kind: str, title: str) -> RawPage | None:
         """Download one page's wikitext (redirects followed). None if missing or failing.
 

@@ -1,0 +1,14 @@
+[
+  {"question": "What is a Death Note?", "expect": ["Death Note (object)", "Rules of the Death Note"], "answer_contains": ["notebook"]},
+  {"question": "Who is Kira?", "expect": ["Light Yagami", "Kira"], "answer_contains": ["light"]},
+  {"question": "Who is L?", "expect": ["L (character)"], "answer_contains": ["detective"]},
+  {"question": "Who killed L?", "expect": ["Rem", "L (character)", "Silence", "Shame"], "answer_contains": ["rem"]},
+  {"question": "Who is Ryuk?", "expect": ["Ryuk"], "answer_contains": ["shinigami"]},
+  {"question": "Who are L's successors?", "expect": ["Near", "Mello", "L (character)"], "answer_contains": ["near", "mello"]},
+  {"question": "Who is Misa Amane?", "expect": ["Misa Amane"], "answer_contains": ["second kira", "idol", "model"]},
+  {"question": "How does Light Yagami die?", "expect": ["Light Yagami", "Ryuk", "New World", "Finis"], "answer_contains": ["ryuk"]},
+  {"question": "Who is Light's father?", "expect": ["Soichiro Yagami", "Light Yagami"], "answer_contains": ["soichiro"]},
+  {"question": "What happens in chapter 30?", "expect": ["Bomb"], "answer_contains": ["misa", "light", "kira"]},
+  {"question": "Who is Teru Mikami?", "expect": ["Teru Mikami"], "answer_contains": ["prosecutor"]},
+  {"question": "What is the Yotsuba Group?", "expect": ["Yotsuba Group", "Yotsuba Corporation"], "answer_contains": ["corporation", "company", "executives"]}
+]

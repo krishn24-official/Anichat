@@ -15,11 +15,11 @@ import argparse
 import json
 from pathlib import Path
 
+from anichat import container
 from anichat.application.retrieve import CANDIDATES, RetrievalService
 from anichat.domain.series import SERIES
 from anichat.infrastructure.fastembed_embedder import FastEmbedEmbedder
 from anichat.infrastructure.fastembed_reranker import RERANK_MODEL, FastEmbedReranker
-from anichat.infrastructure.qdrant_index import QdrantIndex
 
 ROOT = Path(__file__).resolve().parents[1]
 TOP = 5
@@ -52,7 +52,7 @@ def main(series_id: str, candidates: int, rerankers: list[str]) -> None:
     """
     cases = json.loads((ROOT / "evals" / f"{series_id}.json").read_text(encoding="utf-8"))
     embedder = FastEmbedEmbedder()
-    index = QdrantIndex(path=str(ROOT / "data" / "qdrant"))
+    index = container.index()  # Qdrant server when QDRANT_URL is set, else the local folder
     try:
         setups = {"search only": RetrievalService(embedder, index, None, candidates)}
         for model in rerankers:

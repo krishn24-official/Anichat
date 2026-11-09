@@ -1,9 +1,10 @@
 """Stage 3 use case: chunk every document of a series and save the chunks."""
 
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import Iterable, Protocol
 
-from anichat.domain.chunking import Chunk, SourceDocument, chunk_document
+from anichat.domain.chunking import Chunk, SourceDocument, children_by_parent, chunk_document, killers_by_victim
 
 
 class DocumentReader(Protocol):
@@ -50,11 +51,23 @@ class ChunkDocumentsService:
         Returns the report and the chunks (the script prints a few as samples).
         """
         report, all_chunks = ChunkReport(series=series), []
-        for doc in self._reader.iter_documents(series):
+        docs = list(self._reader.iter_documents(series))
+        # How many pages link to each page: used to pick "Kira" -> Light Yagami (linked from almost
+        # every page) over minor characters also called Kira.
+        links = Counter(m for d in docs for m in set(d.meta.get("mentions") or []))
+        # "Killed by" facts gathered from the killers' pages, shown on the victims' cards.
+        killers = killers_by_victim(docs)
+        children = children_by_parent(docs)
+        for doc in docs:
             if not all(doc.meta.get(k) for k in REQUIRED):
                 report.skipped.append(str(doc.meta.get("title", "<untitled>")))
                 continue
-            chunks = chunk_document(doc)
+            derived = {"killed by": killers.get(doc.meta["title"]), "children": children.get(doc.meta["title"])}
+            facts = doc.meta.get("facts") or {}
+            extra = {k: "; ".join(v) for k, v in derived.items() if v and not facts.get(k)}
+            if extra:
+                doc = SourceDocument({**doc.meta, "facts": {**facts, **extra}}, doc.body)
+            chunks = chunk_document(doc, importance=links.get(doc.meta["title"], 0))
             kind = doc.meta["kind"]
             report.documents[kind] = report.documents.get(kind, 0) + 1
             report.chunks[kind] = report.chunks.get(kind, 0) + len(chunks)

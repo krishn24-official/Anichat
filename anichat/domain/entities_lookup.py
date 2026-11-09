@@ -12,45 +12,85 @@ from collections import defaultdict
 
 from anichat.domain.chunking import Chunk
 
-MAX_ENTITIES_PER_PHRASE = 2  # a phrase shared by more pages ("Twelve Kizuki") identifies no one
+MAX_ENTITIES_PER_PHRASE = 5  # a phrase shared by more pages ("Twelve Kizuki") identifies no one
+UNAMBIGUOUS = 2  # up to this many pages: all are candidates; more: only the most-linked one
 MIN_PHRASE_CHARS = 4
 # Capitalised multi-word phrases: "Upper Rank Three", "Sound Hashira", "Demon King".
 _TITLE = re.compile(r"\b[A-Z][a-z]+(?:\s+(?:of\s+the\s+|of\s+)?[A-Z][a-z]+){1,3}\b")
-_FACT_LINE = re.compile(r"^(?:Alias|Occupation|Rank|Affiliation): (.+)$", re.M)
+_ALIAS_LINE = re.compile(r"^Alias: (.+)$", re.M)
+_ROLE_LINE = re.compile(r"^(?:Occupation|Rank|Affiliation): (.+)$", re.M)
+# "Hiruzen Sarutobi was the Third Hokage of Konohagakure": what the first sentence says the
+# entity *is* names it, even if other cards mention the phrase ("grandson of the Third Hokage").
+_DEFINED_AS = re.compile(r"\b(?:is|was)\s+the\s+(?:former\s+)?((?:[A-Z0-9][\w'’-]*\s+){0,3}[A-Z][\w'’-]*)")
 
 
-def card_phrases(card: Chunk, series_title: str = "") -> set[str]:
-    """Lower-cased phrases that may identify the card's entity: its name, its first name,
-    aliases/occupations from the facts, and title-like phrases from its description.
+def _split_values(value: str) -> list[str]:
+    """"[The First] Kira; L-Kira (by Teru)" -> ["Kira", "L-Kira", "by Teru"]. Called by: _phrases()"""
+    value = re.sub(r"\[[^\]]*\]", "", value)
+    parts = (p.strip() for p in re.split(r"[;,]|\(|\)", value))
+    return [p for p in parts if p and p.lower() not in ("formerly", "human", "demon")]
 
-    Called by: build_phrase_index()
+
+def _phrases(card: Chunk, series_title: str = "") -> tuple[set[str], set[str]]:
+    """(identity phrases, role phrases), lower-cased.
+    Identity = names and aliases: "Kira" identifies a person even if minor pages share it.
+    Role = occupation/rank/affiliation and titles from the description: "Twelve Kizuki" is a
+    group, so it only identifies someone when at most UNAMBIGUOUS pages share it.
+
+    Called by: card_phrases(), build_phrase_index()
     """
     body = card.text.split("\n\n", 1)[-1]
     name = card.title.split(" (")[0]
-    phrases = {card.title, name}
-    if len(name.split()) > 1:
-        phrases.add(name.split()[0])  # first name ("Tengen"); one shared by 3+ pages is dropped later
-    for value in _FACT_LINE.findall(body):
-        for part in re.split(r"[;,]|\(|\)", value):  # "Shinobi (Formerly) ; Sound Hashira (Formerly)"
-            part = part.strip()
-            if part and part.lower() not in ("formerly", "human", "demon"):
-                phrases.add(part)
-    phrases.update(_TITLE.findall(body))
+    identity = {card.title, name}
+    if len(name.split()) > 1 and card.kind == "character":
+        # first name ("Tengen"); not for jutsu/arcs: "Naruto Cannon" does not make "Naruto" a name
+        identity.add(name.split()[0])
+    for value in _ALIAS_LINE.findall(body):
+        identity.update(_split_values(value))
+    first_sentence = re.split(r"(?<=[.!?])\s", body.strip(), maxsplit=1)[0]
+    identity.update(_DEFINED_AS.findall(first_sentence))
+    roles = set(_TITLE.findall(body))
+    for value in _ROLE_LINE.findall(body):
+        roles.update(_split_values(value))
     ignore = {series_title.lower(), "kimetsu no yaiba"}
-    return {p.lower() for p in phrases if len(p) >= MIN_PHRASE_CHARS and p.lower() not in ignore}
+
+    def clean(phrases: set[str]) -> set[str]:
+        return {p.lower() for p in phrases if len(p) >= MIN_PHRASE_CHARS and p.lower() not in ignore}
+
+    identity = clean(identity)
+    return identity, clean(roles) - identity
+
+
+def card_phrases(card: Chunk, series_title: str = "") -> set[str]:
+    """All lower-cased phrases that may identify the card's entity (identity + role).
+
+    Called by: tests; see _phrases() for the two kinds
+    """
+    identity, roles = _phrases(card, series_title)
+    return identity | roles
 
 
 def build_phrase_index(cards: list[Chunk], series_title: str = "") -> dict[str, list[Chunk]]:
-    """phrase -> the (at most MAX_ENTITIES_PER_PHRASE) cards it identifies.
+    """phrase -> the cards it may identify. Identity phrases are kept when shared by up to
+    MAX_ENTITIES_PER_PHRASE pages (lookup() then picks the most linked); role phrases only
+    when shared by at most UNAMBIGUOUS pages.
 
     Called by: application/retrieve.py  RetrievalService._phrases() (built once, on first use,
                from the cards returned by VectorIndex.profile_cards())
     """
-    index: dict[str, list[Chunk]] = defaultdict(list)
+    identity_index: dict[str, list[Chunk]] = defaultdict(list)
+    role_index: dict[str, list[Chunk]] = defaultdict(list)
     for card in cards:
-        for phrase in card_phrases(card, series_title):
-            index[phrase].append(card)
-    return {p: cs for p, cs in index.items() if len(cs) <= MAX_ENTITIES_PER_PHRASE}
+        identity, roles = _phrases(card, series_title)
+        for p in identity:
+            identity_index[p].append(card)
+        for p in roles:
+            role_index[p].append(card)
+    index = {p: cs for p, cs in role_index.items() if len(cs) <= UNAMBIGUOUS}
+    for p, cs in identity_index.items():
+        if len(cs) <= MAX_ENTITIES_PER_PHRASE:
+            index[p] = cs + [c for c in index.get(p, []) if c not in cs]
+    return index
 
 
 def lookup(question: str, phrase_index: dict[str, list[Chunk]], limit: int = 2) -> list[Chunk]:
@@ -63,7 +103,14 @@ def lookup(question: str, phrase_index: dict[str, list[Chunk]], limit: int = 2) 
     found: list[Chunk] = []
     for phrase in sorted(phrase_index, key=len, reverse=True):
         if re.search(rf"(?<!\w){re.escape(phrase)}(?!\w)", q):
-            for card in phrase_index[phrase]:
+            # The page titled exactly by the phrase first ("Founding Titan" -> that page, not Eren,
+            # whose aliases include it), then the most linked. A qualified title doesn't count:
+            # "Tobi (Zetsu)" is not the main "Tobi" (Obito Uchiha, most linked, is).
+            candidates = sorted(phrase_index[phrase], reverse=True,
+                                key=lambda c: (c.title.lower() == phrase, c.importance))
+            if len(candidates) > UNAMBIGUOUS:  # "Kira": 4 pages -> the main one (most linked)
+                candidates = candidates[:1]
+            for card in candidates:
                 if card.id not in {c.id for c in found}:
                     found.append(card)
         if len(found) >= limit:

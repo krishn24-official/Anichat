@@ -94,3 +94,31 @@ def test_intro_comes_before_facts_and_trivia_facts_are_hidden():
     assert body.index("Akaza is a demon") < body.index("## Facts") < body.index("## History")
     assert "**Rank:** Upper Rank Three" in body and "173 cm" not in body
     assert '"height": "173 cm"' in md  # still in the metadata
+
+
+def test_other_wikis_infoboxes_and_numbers_from_the_infobox():
+    text = ("{{ParentTab\n|tab1 = Main Page\n|tab2 = Transcript\n}}\n"
+            "{{Chapter\n|box title = Bomb\n|chapter = 30\n|volume = [[Love (volume)|Love]]\n}}\n"
+            "==Summary==\n" + "Light plans his next move carefully. " * 12)
+    doc = build_document(page(text, "chapter", "Bomb"), "Death Note")
+    assert doc.number == 30 and doc.display_title == "Chapter 30: Bomb"
+    assert doc.facts["volume"] == "Love" and "tab1" not in doc.facts  # tab bar is not the infobox
+    episode = ("{{Episode\n|number = 36\n|chapter = * [[Face to Face]]\n* [[Inducement]]\n|ja = June 19, 2007\n}}\n"
+               "==Plot==\n" + "Near and Mello race to find Kira. " * 12)
+    ep = build_document(page(episode, "episode", "1.28"), "Death Note")
+    assert ep.number == 36 and ep.display_title == "Episode 36: 1.28"
+    assert ep.facts["chapter"] == "Face to Face; Inducement"
+
+
+def test_infobox_is_the_biggest_template_not_a_hatnote_and_keys_may_have_brackets():
+    from anichat.domain.wikitext import parse_page
+
+    page = parse_page("{{Disambiguation|this=the 138th chapter|for=the 93rd episode|see=A Long Dream (Episode)}}\n"
+                      "{{Chapter box|Volume=34|Number (in vol.)=4|Number (overall)=138|Kanji=x}}\nText.")
+    assert page.infobox["number (overall)"] == "138" and "see" not in page.infobox
+
+
+def test_redirect_names_lose_bracketed_qualifiers_and_duplicates():
+    from anichat.domain.documents import _other_names
+
+    assert _other_names("Haku (Naruto); Haku; Masked man; Masked Man; Tobi", "Haku") == "Masked man; Tobi"

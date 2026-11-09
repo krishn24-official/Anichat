@@ -60,3 +60,41 @@ def test_safe_filenames():
     assert safe_filename("Tanjiro Kamado") == "tanjiro_kamado"
     assert safe_filename("Episode 1: Cruelty") == "episode_1_cruelty"
     assert safe_filename("???") == "untitled"
+
+
+def test_infobox_filters_split_a_shared_wiki_and_sequels_search_the_shared_pages():
+    from anichat.domain.series import SERIES, search_scope
+
+    naruto_ep = SERIES["naruto"].categories[0]
+    shippuden_ch = SERIES["naruto_shippuden"].categories[1]
+    assert naruto_ep.accepts({"episode": "1", "shippuden": "No", "boruto": "No", "boruto anime": "No"})
+    assert not naruto_ep.accepts({"episode": "1", "shippuden": "Yes", "boruto": "No", "boruto anime": "No"})
+    assert not naruto_ep.accepts({"episode": "1", "shippuden": "No", "boruto": "Yes", "boruto anime": "Yes"})
+    assert shippuden_ch.accepts({"chapter": "245", "boruto": "No"})
+    assert not shippuden_ch.accepts({"chapter": "12", "boruto": "No"})
+    assert search_scope("naruto_shippuden") == ("naruto_shippuden", "naruto")
+    assert search_scope("death_note") == "death_note"
+
+
+def test_redirect_titles_are_stored_as_other_names_of_entity_pages():
+    class Wiki(FakeWiki):
+        async def category_pages(self, host, category, include_subcategories):
+            return ["Nagato"]
+
+        async def redirects_to(self, host, titles):
+            return {"Nagato": ["Pain", "Pein/original", "ペイン", "Akatsuki Leader"]}
+
+    class Store(FakeStore):
+        pages = {}
+
+        def save(self, page):
+            super().save(page)
+            self.pages[page.title] = page
+
+        def load(self, series, kind, title):
+            return self.pages.get(title)
+
+    store = Store()
+    series = SeriesSource("demo", "Demo", "demo.fandom.com", (CategorySource("character", "Characters"),))
+    asyncio.run(CollectService(Wiki(), store).collect(series))
+    assert store.pages["Nagato"].properties == {"also called": "Pain; Akatsuki Leader"}

@@ -37,7 +37,8 @@ class QdrantIndex:
     """
 
     def __init__(self, path: str | None = None, url: str | None = None, api_key: str | None = None):
-        self._client = QdrantClient(path=path) if path else QdrantClient(url=url, api_key=api_key)
+        # Server timeout 120 s, not 5: uploads run while the CPU is busy embedding.
+        self._client = QdrantClient(path=path) if path else QdrantClient(url=url, api_key=api_key, timeout=120)
 
     def close(self) -> None:
         """Release the local storage lock. Called by: scripts/index.py main()"""
@@ -58,11 +59,19 @@ class QdrantIndex:
         )
 
     @staticmethod
-    def _series_filter(series: str | None) -> models.Filter | None:
+    def _series_condition(series: str | tuple[str, ...]) -> models.FieldCondition:
+        """`series` is one id or several (a sequel and the series it shares pages with).
+        Called by: _series_filter(), find(), profile_cards()"""
+        if isinstance(series, str):
+            return models.FieldCondition(key="series", match=models.MatchValue(value=series))
+        return models.FieldCondition(key="series", match=models.MatchAny(any=list(series)))
+
+    @classmethod
+    def _series_filter(cls, series: str | tuple[str, ...] | None) -> models.Filter | None:
         """Filter on the `series` payload field. Called by replace_series(), count(), search()"""
         if not series:
             return None
-        return models.Filter(must=[models.FieldCondition(key="series", match=models.MatchValue(value=series))])
+        return models.Filter(must=[cls._series_condition(series)])
 
     def replace_series(self, series: str, chunks: list[Chunk], vectors: list[Embedded]) -> int:
         """Delete every point of the series, then store the new ones (so chunks removed
@@ -104,21 +113,21 @@ class QdrantIndex:
             models.FieldCondition(key="number", match=models.MatchValue(value=number)),
         ]
         if series:
-            conditions.append(models.FieldCondition(key="series", match=models.MatchValue(value=series)))
+            conditions.append(self._series_condition(series))
         points, _ = self._client.scroll(COLLECTION, scroll_filter=models.Filter(must=conditions), limit=100, with_payload=True)
         chunks = [Chunk(**p.payload) for p in points]
         # ids end with the chunk's position; a profile card (":card") comes first
         chunks.sort(key=lambda c: int(c.id.rsplit(":", 1)[1]) if c.id.rsplit(":", 1)[1].isdigit() else -1)
         return chunks[:limit]
 
-    def profile_cards(self, series: str | None = None) -> list[Chunk]:
+    def profile_cards(self, series: str | tuple[str, ...] | None = None) -> list[Chunk]:
         """All profile cards (a few hundred per series), for the exact name/alias lookup.
 
         Called by: application/retrieve.py  RetrievalService._phrases()  (once, then cached)
         """
         conditions = [models.FieldCondition(key="section", match=models.MatchValue(value="Profile"))]
         if series:
-            conditions.append(models.FieldCondition(key="series", match=models.MatchValue(value=series)))
+            conditions.append(self._series_condition(series))
         cards, offset = [], None
         while True:
             points, offset = self._client.scroll(COLLECTION, scroll_filter=models.Filter(must=conditions),
@@ -127,7 +136,7 @@ class QdrantIndex:
             if offset is None:
                 return cards
 
-    def search(self, query: Embedded, limit: int, series: str | None = None) -> list[SearchHit]:
+    def search(self, query: Embedded, limit: int, series: str | tuple[str, ...] | None = None) -> list[SearchHit]:
         """Hybrid search: top candidates by meaning and by keywords, fused with Reciprocal
         Rank Fusion (a chunk ranked high by either method rises to the top).
 

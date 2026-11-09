@@ -1,0 +1,17 @@
+[
+  {"question": "Who is Yuji Itadori?", "expect": ["Yuji Itadori"], "answer_contains": ["protagonist", "sukuna"]},
+  {"question": "Who is Satoru Gojo?", "expect": ["Satoru Gojo"], "answer_contains": ["strongest", "special grade"]},
+  {"question": "Who is the King of Curses?", "expect": ["Sukuna"], "answer_contains": ["sukuna"]},
+  {"question": "What is Gojo's Limitless technique?", "expect": ["Limitless", "Satoru Gojo"], "answer_contains": ["infinity", "space"]},
+  {"question": "What is Malevolent Shrine?", "expect": ["Malevolent Shrine"], "answer_contains": ["domain", "sukuna"]},
+  {"question": "What is a Domain Expansion?", "expect": ["Domain Expansion"], "answer_contains": ["barrier", "innate domain"]},
+  {"question": "What is cursed energy?", "expect": ["Cursed Energy"], "answer_contains": ["negative emotions", "emotion"]},
+  {"question": "Who is Kenjaku?", "expect": ["Kenjaku"], "answer_contains": ["brain", "body", "bodies"]},
+  {"question": "How was Gojo sealed?", "expect": ["Prison Realm", "Shibuya Incident", "Shibuya Incident Arc", "Satoru Gojo"], "answer_contains": ["prison realm"]},
+  {"question": "Who killed Satoru Gojo?", "expect": ["Satoru Gojo", "Sukuna", "Chapter 236"], "answer_contains": ["sukuna"]},
+  {"question": "What happens in chapter 236?", "expect": ["Chapter 236"], "answer_contains": ["gojo"]},
+  {"question": "Who is Mahito?", "expect": ["Mahito"], "answer_contains": ["cursed spirit"]},
+  {"question": "What is the Culling Game?", "expect": ["Culling Game", "Culling Game Arc"], "answer_contains": ["kenjaku", "colonies", "colony"]},
+  {"question": "Who is Megumi Fushiguro?", "expect": ["Megumi Fushiguro"], "answer_contains": ["ten shadows", "shikigami", "sorcerer"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["yuji", "finger"]}
+]

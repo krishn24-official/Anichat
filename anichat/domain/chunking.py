@@ -56,6 +56,7 @@ class Chunk:
     number: int | None
     source: str
     mentions: list[str] = field(default_factory=list)  # page's linked entities that appear in this chunk
+    importance: int = 0  # profile cards: how many pages of the series link to this page
 
 
 def _sections(body: str) -> list[tuple[list[str], str]]:
@@ -129,8 +130,9 @@ def _chunk_id(meta: dict, n: int) -> str:
     return key if len(key) <= 120 else key[:100] + ":" + hashlib.sha1(key.encode()).hexdigest()[:12]
 
 
-def chunk_document(doc: SourceDocument) -> list[Chunk]:
-    """All chunks of one document, in reading order.
+def chunk_document(doc: SourceDocument, importance: int = 0) -> list[Chunk]:
+    """All chunks of one document, in reading order. `importance` (how many pages link
+    here) is stored on the profile card, to pick the main entity when a name is ambiguous.
 
     Called by: application/chunk_documents.py  ChunkDocumentsService.chunk()
     """
@@ -156,7 +158,7 @@ def chunk_document(doc: SourceDocument) -> list[Chunk]:
 
     # 2. Chunks with their location line and metadata (plus a profile card for entity pages).
     chunks = []
-    card = _profile_card(meta, page, pieces)
+    card = _profile_card(meta, page, pieces, importance)
     if card:
         chunks.append(card)
     for n, (section, text) in enumerate(pieces):
@@ -177,12 +179,59 @@ def chunk_document(doc: SourceDocument) -> list[Chunk]:
     return chunks
 
 
-CARD_KINDS = {"character", "breathing_style", "location", "arc"}
-CARD_FACTS = ("alias", "affiliation", "occupation", "rank", "race", "status", "relatives", "user", "creator")
+# Entity kinds (not episodes/chapters) get a profile card: a short "who/what is X" chunk.
+CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit"}
+CARD_FACTS = ("alias", "affiliation", "occupation", "rank", "race", "species", "status", "relatives", "user", "creator",
+              "killed by", "parents", "children", "clan", "classification")
+# Wiki sections listing whom a character killed ("People killed" on Attack on Titan pages).
+KILL_SECTIONS = ("people killed", "killed", "victims", "kills")
+
+
+def children_by_parent(docs: list[SourceDocument]) -> dict[str, list[str]]:
+    """Reverse of the "parents" facts: parent page title -> children ("Minato Namikaze" ->
+    ["Naruto Uzumaki"]), so "Who is Minato's son?" finds it on Minato's own card too.
+
+    Called by: application/chunk_documents.py  ChunkDocumentsService.chunk()
+    """
+    found: dict[str, list[str]] = {}
+    for doc in docs:
+        for parent in ((doc.meta.get("facts") or {}).get("parents") or "").split(";"):
+            if parent.strip():
+                found.setdefault(parent.strip(), []).append(doc.meta.get("title"))
+    return found
+
+
+def killers_by_victim(docs: list[SourceDocument]) -> dict[str, list[str]]:
+    """Reverse of the "People killed" lists: victim page title -> the pages that list them.
+    "Who killed Eren?" is answered on Mikasa's page, not Eren's; this puts "Killed by: Mikasa
+    Ackerman" on Eren's profile card. Only list items naming a page of the series count, and
+    sub-sections ("Failed attempts") are not part of the list.
+
+    Called by: application/chunk_documents.py  ChunkDocumentsService.chunk()
+    """
+    titles = {d.meta.get("title"): d.meta.get("title") for d in docs}
+    titles.update({t.split(" (")[0]: t for t in list(titles) if t})  # "L" -> "L (character)"
+    found: dict[str, list[str]] = {}
+    for doc in docs:
+        in_list = False
+        for line in doc.body.splitlines():
+            if line.startswith("#"):
+                in_list = line.lstrip("# ").strip().lower() in KILL_SECTIONS and line.startswith("## ")
+                continue
+            if in_list and line.startswith("- "):
+                name = re.sub(r"\s*\(.*?\)\s*$", "", line[2:]).strip()  # "Eren Yeager (indirectly)"
+                victim = titles.get(name)
+                killer = doc.meta.get("title")
+                if victim and victim != killer and killer not in found.setdefault(victim, []):
+                    found[victim].append(killer)
+    return found
+# Each wiki names the alias field differently ("aka" on the Death Note wiki): all are shown as "Alias".
+ALIAS_FACTS = ("alias", "aliases", "aka", "also known as", "nickname", "nicknames", "epithet", "epithets",
+               "also called")  # "also called": redirect titles (application/collect.py _add_aliases)
 CARD_SENTENCES = 2
 
 
-def _profile_card(meta: dict, page: str, pieces: list[tuple[str, str]]) -> Chunk | None:
+def _profile_card(meta: dict, page: str, pieces: list[tuple[str, str]], importance: int = 0) -> Chunk | None:
     """A short "who/what is this" chunk for entity pages: name, the intro's first sentences
     and key facts. Long intros bury a defining phrase ("held the position of Upper Rank
     Three") among history; a short card makes "Who is Upper Rank Three?" find the page.
@@ -196,7 +245,10 @@ def _profile_card(meta: dict, page: str, pieces: list[tuple[str, str]]) -> Chunk
     paragraph = next((p for p in intro.split("\n\n") if len(p) >= 40), "")
     sentences = _SENTENCE_END.split(paragraph)[:CARD_SENTENCES]
     facts = meta.get("facts") or {}
-    fact_lines = [f"{k.replace('_', ' ').capitalize()}: {facts[k]}" for k in CARD_FACTS if facts.get(k)]
+    aliases = "; ".join(facts[k] for k in ALIAS_FACTS if facts.get(k))
+    fact_lines = ([f"Alias: {aliases}"] if aliases else []) + [
+        f"{k.replace('_', ' ').capitalize()}: {facts[k]}" for k in CARD_FACTS if k != "alias" and facts.get(k)
+    ]
     if not sentences or not sentences[0]:
         return None
     text = f"{page} › Profile\n\n" + " ".join(sentences) + ("\n" + "\n".join(fact_lines) if fact_lines else "")
@@ -211,6 +263,7 @@ def _profile_card(meta: dict, page: str, pieces: list[tuple[str, str]]) -> Chunk
         number=meta.get("number"),
         source=meta.get("source", ""),
         mentions=[m for m in meta.get("mentions", []) if _mentioned(m, text.lower())],
+        importance=importance,
     )
 
 

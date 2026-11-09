@@ -12,6 +12,7 @@ import argparse
 import time
 from pathlib import Path
 
+from anichat import container
 from anichat.application.index_chunks import IndexChunksService
 from anichat.domain.series import SERIES
 from anichat.infrastructure.chunk_store import ChunkStore
@@ -41,7 +42,7 @@ def main(series_id: str, queries: list[str]) -> None:
     """
     started = time.time()
     embedder = CachingEmbedder(FastEmbedEmbedder(), DATA / "embeddings.sqlite", model=f"{DENSE_MODEL}+{SPARSE_MODEL}")
-    index = QdrantIndex(path=str(DATA / "qdrant"))
+    index = container.index()  # Qdrant server when QDRANT_URL is set, else the local folder
     try:
         report = IndexChunksService(ChunkStore(DATA / "chunks"), embedder, index, embedder.dense_size).index(series_id)
         print(f"{report.series}: {report.chunks} chunks ({embedder.hits} from cache, {embedder.misses} embedded), "

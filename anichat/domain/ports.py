@@ -67,7 +67,7 @@ class VectorIndex(Protocol):
 
     def count(self, series: str | None = None) -> int: ...
 
-    def search(self, query: Embedded, limit: int, series: str | None = None) -> list[SearchHit]:
+    def search(self, query: Embedded, limit: int, series: str | tuple[str, ...] | None = None) -> list[SearchHit]:
         """Hybrid search: dense and keyword results fused into one ranking."""
         ...
 
@@ -75,7 +75,7 @@ class VectorIndex(Protocol):
         """Chunks of the page with this kind and number (e.g. chapter 196), in reading order."""
         ...
 
-    def profile_cards(self, series: str | None = None) -> list[Chunk]:
+    def profile_cards(self, series: str | tuple[str, ...] | None = None) -> list[Chunk]:
         """Every profile card (section "Profile"), for the name/alias/title lookup."""
         ...
 
@@ -107,6 +107,14 @@ class WikiClient(Protocol):
         """The page's raw wikitext, or None if it does not exist or cannot be fetched."""
         ...
 
+    async def redirects_to(self, host: str, titles: list[str]) -> dict[str, list[str]]:
+        """Titles of the redirect pages pointing at each page ("Pain" -> "Nagato"): its other names."""
+        ...
+
+    async def page_properties(self, host: str, title: str) -> dict[str, list[str]]:
+        """Semantic MediaWiki properties of a page ({"Parent": ["Minato Namikaze", ...]}), {} if none."""
+        ...
+
 
 class RawStore(Protocol):
     """Keeps fetched pages on disk so nothing is downloaded twice.
@@ -116,6 +124,8 @@ class RawStore(Protocol):
     """
 
     def has(self, series: str, kind: str, title: str) -> bool: ...
+
+    def load(self, series: str, kind: str, title: str) -> RawPage | None: ...
 
     def save(self, page: RawPage) -> None: ...
 

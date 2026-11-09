@@ -78,3 +78,22 @@ def test_entity_pages_get_a_short_profile_card():
     assert "Affiliation: Demon Slayer Corps" in card.text and "165 cm" not in card.text
     chapter = chunk_document(SourceDocument({**META, "kind": "chapter"}, BODY))
     assert not any(c.id.endswith(":card") for c in chapter)  # only entity pages get cards
+
+
+def test_people_killed_lists_become_killed_by_facts_on_the_victims():
+    from anichat.domain.chunking import SourceDocument, killers_by_victim
+
+    def doc(title, body):
+        return SourceDocument({"title": title}, body)
+
+    mikasa = doc("Mikasa Ackerman", "Intro.\n\n## People killed\n\n- Floch Forster\n- Eren Yeager\n- One robber\n\n"
+                                    "### Failed attempts\n\n- Reiner Braun\n\n## Trivia\n\n- Eren Yeager")
+    docs = [mikasa, doc("Eren Yeager", "x"), doc("Floch Forster", "x"), doc("Reiner Braun", "x")]
+    assert killers_by_victim(docs) == {"Floch Forster": ["Mikasa Ackerman"], "Eren Yeager": ["Mikasa Ackerman"]}
+
+
+def test_parents_facts_give_the_parents_a_children_fact():
+    from anichat.domain.chunking import SourceDocument, children_by_parent
+
+    naruto = SourceDocument({"title": "Naruto Uzumaki", "facts": {"parents": "Minato Namikaze; Kushina Uzumaki"}}, "x")
+    assert children_by_parent([naruto]) == {"Minato Namikaze": ["Naruto Uzumaki"], "Kushina Uzumaki": ["Naruto Uzumaki"]}

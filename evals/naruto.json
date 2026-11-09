@@ -1,0 +1,16 @@
+[
+  {"question": "Who is Naruto Uzumaki?", "expect": ["Naruto Uzumaki"], "answer_contains": ["jinchūriki", "jinchuriki", "hokage", "nine-tails"]},
+  {"question": "Who is Kakashi Hatake?", "expect": ["Kakashi Hatake"], "answer_contains": ["team 7", "sharingan", "sixth hokage", "jōnin"]},
+  {"question": "What is the Rasengan?", "expect": ["Rasengan"], "answer_contains": ["minato", "chakra", "sphere"]},
+  {"question": "What is the Sharingan?", "expect": ["Sharingan"], "answer_contains": ["uchiha", "dōjutsu", "eye"]},
+  {"question": "Who is the Nine-Tails?", "expect": ["Kurama", "Tailed Beast"], "answer_contains": ["kurama"]},
+  {"question": "What is Akatsuki?", "expect": ["Akatsuki"], "answer_contains": ["tailed beast", "criminal", "organisation", "organization"]},
+  {"question": "Who is Orochimaru?", "expect": ["Orochimaru"], "answer_contains": ["sannin", "immortality"]},
+  {"question": "Who is Gaara?", "expect": ["Gaara"], "answer_contains": ["kazekage", "sand", "one-tail", "shukaku"]},
+  {"question": "Who is the Third Hokage?", "expect": ["Hiruzen Sarutobi"], "answer_contains": ["hiruzen"]},
+  {"question": "What are the Chūnin Exams?", "expect": ["Chūnin Exams"], "answer_contains": ["genin", "chūnin", "chunin"]},
+  {"question": "Who is Zabuza Momochi?", "expect": ["Zabuza Momochi"], "answer_contains": ["mist", "swordsm", "kirigakure"]},
+  {"question": "Who is Naruto's father?", "expect": ["Minato Namikaze", "Naruto Uzumaki"], "answer_contains": ["minato"]},
+  {"question": "What happens in episode 1?", "expect": ["Enter: Naruto Uzumaki!"], "answer_contains": ["mizuki", "iruka", "scroll"]},
+  {"question": "What happens in chapter 1?", "expect": ["Naruto Uzumaki!! (chapter 1)"], "answer_contains": ["iruka", "mizuki", "scroll", "nine-tail"]}
+]

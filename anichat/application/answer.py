@@ -11,7 +11,10 @@ from anichat.application.retrieve import RetrievalService
 from anichat.domain.answering import NO_SOURCES_ANSWER, Source, build_messages, cited_sources, normalize_citations
 from anichat.domain.llm import ChatModel
 
-CONTEXT_CHUNKS = 5  # sources given to the model per question
+# Sources given to the model per question. 8, not 5: the passage that answers a short question
+# is often ranked 6th-8th ("Who killed L?" -> "The End of L" was 8th). ~1k extra tokens per
+# question, still inside Groq's free per-minute limit.
+CONTEXT_CHUNKS = 8
 BUSY_ANSWER = "My AI models are busy or out of their free daily quota right now. Please try again in a few minutes."
 
 

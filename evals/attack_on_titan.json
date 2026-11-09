@@ -1,0 +1,16 @@
+[
+  {"question": "Who is Eren Yeager?", "expect": ["Eren Yeager"], "answer_contains": ["survey corps", "protagonist"]},
+  {"question": "What is the Founding Titan?", "expect": ["Founding Titan"], "answer_contains": ["nine titans", "ymir"]},
+  {"question": "Who is the Armored Titan?", "expect": ["Reiner Braun", "Armored Titan"], "answer_contains": ["reiner"]},
+  {"question": "Who was the Colossus Titan?", "expect": ["Bertolt Hoover", "Colossus Titan", "Armin Arlert"], "answer_contains": ["bertolt", "armin"]},
+  {"question": "Who killed Eren Yeager?", "expect": ["Mikasa Ackerman", "Eren Yeager", "Toward the Tree on That Hill (Chapter)"], "answer_contains": ["mikasa"]},
+  {"question": "Who was the commander of the Survey Corps?", "expect": ["Erwin Smith", "Survey Corps", "Hange Zoë"], "answer_contains": ["erwin", "hange"]},
+  {"question": "What happens in chapter 139?", "expect": ["Toward the Tree on That Hill (Chapter)"], "answer_contains": ["eren", "mikasa"]},
+  {"question": "Who is Levi Ackerman?", "expect": ["Levi Ackerman"], "answer_contains": ["captain", "survey corps"]},
+  {"question": "Who is Ymir Fritz?", "expect": ["Ymir Fritz"], "answer_contains": ["titan"]},
+  {"question": "What is Marley?", "expect": ["Marley"], "answer_contains": ["nation"]},
+  {"question": "Who is Zeke Yeager?", "expect": ["Zeke Yeager"], "answer_contains": ["beast titan", "half-brother", "brother"]},
+  {"question": "What is the Rumbling?", "expect": ["Wall Titan", "Founding Titan", "Eren Yeager", "The Rumbling (Chapter)", "The Rumbling (Episode)"], "answer_contains": ["wall", "colossal", "colossus"]},
+  {"question": "Who is Eren's father?", "expect": ["Grisha Yeager", "Eren Yeager"], "answer_contains": ["grisha"]},
+  {"question": "What happens in episode 1?", "expect": ["To You, in 2000 Years: The Fall of Shiganshina, Part 1"], "answer_contains": ["shiganshina", "wall"]}
+]

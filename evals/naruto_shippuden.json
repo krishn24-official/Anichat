@@ -1,0 +1,12 @@
+[
+  {"question": "Who killed Jiraiya?", "expect": ["Jiraiya", "Nagato"], "answer_contains": ["pain", "nagato"]},
+  {"question": "Who is Pain?", "expect": ["Nagato"], "answer_contains": ["nagato", "akatsuki"]},
+  {"question": "Why did Itachi kill the Uchiha clan?", "expect": ["Itachi Uchiha", "Uchiha Clan Downfall", "Uchiha Clan"], "answer_contains": ["coup", "konoha", "danzō", "danzo"]},
+  {"question": "Who is Madara Uchiha?", "expect": ["Madara Uchiha"], "answer_contains": ["uchiha", "founder", "hashirama"]},
+  {"question": "Who is Tobi?", "expect": ["Obito Uchiha"], "answer_contains": ["obito"]},
+  {"question": "What is the Fourth Shinobi World War?", "expect": ["Fourth Shinobi World War"], "answer_contains": ["allied", "akatsuki", "war"]},
+  {"question": "What happens in episode 1?", "expect": ["Homecoming (episode)"], "answer_contains": ["return", "sakura", "naruto"]},
+  {"question": "What happens in chapter 245?", "expect": ["Naruto's Homecoming!!"], "answer_contains": ["naruto", "return", "konoha"]},
+  {"question": "What happens in chapter 700?", "expect": ["Naruto Uzumaki!! (chapter 700)"], "answer_contains": ["hokage", "boruto"]},
+  {"question": "How did Naruto defeat Pain?", "expect": ["Nagato", "Naruto Uzumaki", "Pain's Assault"], "answer_contains": ["sage", "nagato", "talk"]}
+]
