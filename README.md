@@ -88,6 +88,25 @@ Embedding a full chunk takes ~0.3 s on a laptop CPU, so the first index of a ser
 text and saved every 256 chunks, so an interrupted run continues where it stopped and later runs
 only embed chunks that changed.
 
+### Faster indexing on an NVIDIA GPU
+
+With an NVIDIA GPU, embed into the cache first, then index (the indexer then only stores):
+
+```
+python -m venv .venv-gpu
+.venv-gpu\Scripts\pip install -r requirements.txt
+.venv-gpu\Scripts\pip uninstall -y onnxruntime
+.venv-gpu\Scripts\pip install "onnxruntime-gpu[cuda,cudnn]"     # ~3 GB of CUDA/cuDNN libraries
+set ANICHAT_EMBED_DEVICE=cuda
+.venv-gpu\Scripts\python -m scripts.embed --series bleach fairy_tail
+python -m scripts.index --series bleach                          # vectors come from the cache
+```
+
+On a GTX 1650 (4 GB) this embeds ~15 chunks/s, about 5x the laptop CPU, with the same vectors
+(cosine 0.99999 against CPU-made ones). Keep the GPU batch small (32): larger batches of long
+chunks overflow a 4 GB card and halve the speed. Don't run CPU indexing that embeds at the same
+time: both need the CPU and slow each other down.
+
 ## Chat
 
 Put your keys in `.env` (copy `.env.example`), then:

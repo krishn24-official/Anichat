@@ -1,0 +1,82 @@
+[
+ {
+  "question": "Who is Yoichi Isagi?",
+  "expect": [
+   "Yoichi Isagi"
+  ],
+  "answer_contains": [
+   "striker",
+   "blue lock"
+  ]
+ },
+ {
+  "question": "Who is Seishiro Nagi?",
+  "expect": [
+   "Seishiro Nagi"
+  ],
+  "answer_contains": [
+   "genius",
+   "trap",
+   "reo"
+  ]
+ },
+ {
+  "question": "Who is Rin Itoshi?",
+  "expect": [
+   "Rin Itoshi"
+  ],
+  "answer_contains": [
+   "sae",
+   "brother"
+  ]
+ },
+ {
+  "question": "Who is Meguru Bachira?",
+  "expect": [
+   "Meguru Bachira"
+  ],
+  "answer_contains": [
+   "dribbl",
+   "monster"
+  ]
+ },
+ {
+  "question": "Who is Jinpachi Ego?",
+  "expect": [
+   "Jinpachi Ego"
+  ],
+  "answer_contains": [
+   "blue lock",
+   "coach"
+  ]
+ },
+ {
+  "question": "What is the First Selection?",
+  "expect": [
+   "First Selection Arc",
+   "First Selection"
+  ],
+  "answer_contains": [
+   "team",
+   "blue lock"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "isagi"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "isagi"
+  ]
+ }
+]

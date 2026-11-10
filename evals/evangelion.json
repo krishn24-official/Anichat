@@ -1,0 +1,125 @@
+[
+ {
+  "question": "Who is Shinji Ikari?",
+  "expect": [
+   "Shinji Ikari"
+  ],
+  "answer_contains": [
+   "pilot",
+   "unit-01"
+  ]
+ },
+ {
+  "question": "Who is Rei Ayanami?",
+  "expect": [
+   "Rei Ayanami"
+  ],
+  "answer_contains": [
+   "pilot",
+   "unit-00",
+   "first child"
+  ]
+ },
+ {
+  "question": "Who is Asuka?",
+  "expect": [
+   "Asuka Langley Sohryu"
+  ],
+  "answer_contains": [
+   "pilot",
+   "unit-02",
+   "second child"
+  ]
+ },
+ {
+  "question": "Who is Gendo Ikari?",
+  "expect": [
+   "Gendo Ikari"
+  ],
+  "answer_contains": [
+   "commander",
+   "nerv"
+  ]
+ },
+ {
+  "question": "What is NERV?",
+  "expect": [
+   "NERV"
+  ],
+  "answer_contains": [
+   "angel",
+   "organization"
+  ]
+ },
+ {
+  "question": "What is SEELE?",
+  "expect": [
+   "SEELE"
+  ],
+  "answer_contains": [
+   "instrumentality",
+   "secret"
+  ]
+ },
+ {
+  "question": "What is the Human Instrumentality Project?",
+  "expect": [
+   "Human Instrumentality Project"
+  ],
+  "answer_contains": [
+   "humanity",
+   "souls"
+  ]
+ },
+ {
+  "question": "What is Evangelion Unit-01?",
+  "expect": [
+   "Evangelion Unit-01"
+  ],
+  "answer_contains": [
+   "shinji",
+   "yui"
+  ]
+ },
+ {
+  "question": "What was Second Impact?",
+  "expect": [
+   "Second Impact"
+  ],
+  "answer_contains": [
+   "antarctica",
+   "2000"
+  ]
+ },
+ {
+  "question": "What is an A.T. Field?",
+  "expect": [
+   "Absolute Terror Field"
+  ],
+  "answer_contains": [
+   "barrier",
+   "field"
+  ]
+ },
+ {
+  "question": "Who is Kaworu Nagisa?",
+  "expect": [
+   "Kaworu Nagisa"
+  ],
+  "answer_contains": [
+   "angel",
+   "tabris",
+   "fifth child"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode:01"
+  ],
+  "answer_contains": [
+   "shinji",
+   "angel"
+  ]
+ }
+]

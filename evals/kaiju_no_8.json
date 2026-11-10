@@ -1,0 +1,81 @@
+[
+ {
+  "question": "Who is Kafka Hibino?",
+  "expect": [
+   "Kafka Hibino"
+  ],
+  "answer_contains": [
+   "kaiju no. 8",
+   "kaiju"
+  ]
+ },
+ {
+  "question": "Who is Mina Ashiro?",
+  "expect": [
+   "Mina Ashiro"
+  ],
+  "answer_contains": [
+   "captain",
+   "third division"
+  ]
+ },
+ {
+  "question": "Who is Kikoru Shinomiya?",
+  "expect": [
+   "Kikoru Shinomiya"
+  ],
+  "answer_contains": [
+   "defense force",
+   "genius"
+  ]
+ },
+ {
+  "question": "Who is Soshiro Hoshina?",
+  "expect": [
+   "Soshiro Hoshina"
+  ],
+  "answer_contains": [
+   "vice-captain",
+   "vice captain",
+   "sword"
+  ]
+ },
+ {
+  "question": "What is Kaiju No. 9?",
+  "expect": [
+   "Kaiju No. 9"
+  ],
+  "answer_contains": [
+   "intelligent",
+   "kaiju"
+  ]
+ },
+ {
+  "question": "What is the Defense Force?",
+  "expect": [
+   "Defense Force"
+  ],
+  "answer_contains": [
+   "kaiju",
+   "japan"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "kafka"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "kafka"
+  ]
+ }
+]

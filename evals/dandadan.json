@@ -1,0 +1,73 @@
+[
+ {
+  "question": "Who is Okarun?",
+  "expect": [
+   "Okarun"
+  ],
+  "answer_contains": [
+   "occult",
+   "turbo granny"
+  ]
+ },
+ {
+  "question": "Who is Momo Ayase?",
+  "expect": [
+   "Momo Ayase"
+  ],
+  "answer_contains": [
+   "psychic",
+   "medium",
+   "spirit"
+  ]
+ },
+ {
+  "question": "Who is Turbo Granny?",
+  "expect": [
+   "Turbo Granny"
+  ],
+  "answer_contains": [
+   "yokai",
+   "okarun"
+  ]
+ },
+ {
+  "question": "Who is Jiji?",
+  "expect": [
+   "Jiji"
+  ],
+  "answer_contains": [
+   "momo",
+   "evil eye"
+  ]
+ },
+ {
+  "question": "What is the Evil Eye?",
+  "expect": [
+   "Evil Eye"
+  ],
+  "answer_contains": [
+   "yokai",
+   "jiji"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "momo",
+   "okarun"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "momo",
+   "okarun"
+  ]
+ }
+]

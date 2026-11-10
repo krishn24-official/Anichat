@@ -1,0 +1,84 @@
+[
+ {
+  "question": "Who is Aqua Hoshino?",
+  "expect": [
+   "Aqua Hoshino"
+  ],
+  "answer_contains": [
+   "reincarnat",
+   "gorou",
+   "ai"
+  ]
+ },
+ {
+  "question": "Who is Ai Hoshino?",
+  "expect": [
+   "Ai Hoshino"
+  ],
+  "answer_contains": [
+   "idol",
+   "b-komachi"
+  ]
+ },
+ {
+  "question": "Who is Ruby Hoshino?",
+  "expect": [
+   "Ruby Hoshino"
+  ],
+  "answer_contains": [
+   "sarina",
+   "idol",
+   "twin"
+  ]
+ },
+ {
+  "question": "Who is Kana Arima?",
+  "expect": [
+   "Kana Arima"
+  ],
+  "answer_contains": [
+   "child actress",
+   "actress"
+  ]
+ },
+ {
+  "question": "What is B-Komachi?",
+  "expect": [
+   "B-Komachi"
+  ],
+  "answer_contains": [
+   "idol",
+   "group"
+  ]
+ },
+ {
+  "question": "Who is Hikaru Kamiki?",
+  "expect": [
+   "Hikaru Kamiki"
+  ],
+  "answer_contains": [
+   "father",
+   "actor"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "gorou",
+   "ai"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "gorou",
+   "ai"
+  ]
+ }
+]

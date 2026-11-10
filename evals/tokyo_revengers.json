@@ -1,0 +1,14 @@
+[
+  {"question": "Who is Takemichi Hanagaki?", "expect": ["Takemichi Hanagaki"], "answer_contains": ["time leap", "toman", "hinata"]},
+  {"question": "Who is Mikey?", "expect": ["Manjiro Sano"], "answer_contains": ["toman", "leader", "invincible"]},
+  {"question": "Who is Draken?", "expect": ["Ken Ryuguji"], "answer_contains": ["vice", "toman"]},
+  {"question": "Who is Kisaki?", "expect": ["Tetta Kisaki"], "answer_contains": ["toman", "hinata"]},
+  {"question": "What is the Tokyo Manji Gang?", "expect": ["Tokyo Manji Gang"], "answer_contains": ["gang", "mikey"]},
+  {"question": "Who is Hinata Tachibana?", "expect": ["Hinata Tachibana"], "answer_contains": ["takemichi", "girlfriend"]},
+  {"question": "Who is Keisuke Baji?", "expect": ["Keisuke Baji"], "answer_contains": ["first division", "toman"]},
+  {"question": "Who is Izana Kurokawa?", "expect": ["Izana Kurokawa"], "answer_contains": ["tenjiku", "leader"]},
+  {"question": "What is Bonten?", "expect": ["Bonten"], "answer_contains": ["criminal", "mikey"]},
+  {"question": "What is Bloody Halloween?", "expect": ["Bloody Halloween"], "answer_contains": ["valhalla", "toman"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["takemichi", "hinata"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["takemichi", "hinata"]}
+]

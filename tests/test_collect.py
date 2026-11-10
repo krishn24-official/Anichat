@@ -98,3 +98,40 @@ def test_redirect_titles_are_stored_as_other_names_of_entity_pages():
     series = SeriesSource("demo", "Demo", "demo.fandom.com", (CategorySource("character", "Characters"),))
     asyncio.run(CollectService(Wiki(), store).collect(series))
     assert store.pages["Nagato"].properties == {"also called": "Pain; Akatsuki Leader"}
+
+
+def test_a_title_excluded_by_one_source_can_be_collected_by_the_next():
+    class MixedWiki(FakeWiki):
+        async def category_pages(self, host, category, include_subcategories):
+            return ["Episode 1", "Chapter 1"]
+
+        async def fetch_page(self, host, series, kind, title):
+            return RawPage(series, kind, title, "u", 1, "text", "now")
+
+    series = SeriesSource("demo", "Demo", "demo.fandom.com", (
+        CategorySource("episode", "Episodes", exclude_titles=r"^(?!episode \d+$)"),
+        CategorySource("chapter", "Episodes", exclude_titles=r"^(?!chapter \d+$)"),
+    ))
+    report = asyncio.run(CollectService(MixedWiki(), FakeStore()).collect(series))
+    assert report.listed == {"episode": 1, "chapter": 1}
+
+
+def test_linked_from_keeps_only_pages_the_other_category_links_to():
+    class LinkedWiki(FakeWiki):
+        async def category_pages(self, host, category, include_subcategories):
+            return {"Movies": ["Iron Man"], "Characters": ["Tony Stark", "Minor Guard"]}[category]
+
+        async def fetch_page(self, host, series, kind, title):
+            return RawPage(series, kind, title, "u", 1, "text", "now")
+
+        async def links_from(self, host, titles):
+            assert titles == ["Iron Man"]
+            return {"Tony Stark", "Malibu"}
+
+    series = SeriesSource("demo", "Demo", "demo.fandom.com", (
+        CategorySource("movie", "Movies"),
+        CategorySource("chapter", "Characters", linked_from="Movies"),  # numbered kind: no alias lookups
+    ))
+    store = FakeStore()
+    asyncio.run(CollectService(LinkedWiki(), store).collect(series, kinds=["chapter"]))
+    assert store.saved == {"Tony Stark"}

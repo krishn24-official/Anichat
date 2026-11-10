@@ -1,0 +1,116 @@
+[
+ {
+  "question": "Who is Ichigo Kurosaki?",
+  "expect": [
+   "Ichigo Kurosaki"
+  ],
+  "answer_contains": [
+   "substitute",
+   "shinigami"
+  ]
+ },
+ {
+  "question": "Who is Rukia Kuchiki?",
+  "expect": [
+   "Rukia Kuchiki"
+  ],
+  "answer_contains": [
+   "shinigami"
+  ]
+ },
+ {
+  "question": "Who is Sosuke Aizen?",
+  "expect": [
+   "Sousuke Aizen"
+  ],
+  "answer_contains": [
+   "captain",
+   "hōgyoku",
+   "hogyoku",
+   "betray"
+  ]
+ },
+ {
+  "question": "What is a Zanpakuto?",
+  "expect": [
+   "Zanpakutō"
+  ],
+  "answer_contains": [
+   "sword",
+   "shinigami"
+  ]
+ },
+ {
+  "question": "What is the Gotei 13?",
+  "expect": [
+   "Gotei 13"
+  ],
+  "answer_contains": [
+   "divisions",
+   "captain"
+  ]
+ },
+ {
+  "question": "What is a Hollow?",
+  "expect": [
+   "Hollow"
+  ],
+  "answer_contains": [
+   "soul",
+   "evil",
+   "spirit"
+  ]
+ },
+ {
+  "question": "What is Ichigo's zanpakuto?",
+  "expect": [
+   "Ichigo Kurosaki",
+   "Zangetsu (Zanpakutō spirit)"
+  ],
+  "answer_contains": [
+   "zangetsu"
+  ]
+ },
+ {
+  "question": "Who is Yhwach?",
+  "expect": [
+   "Yhwach"
+  ],
+  "answer_contains": [
+   "quincy",
+   "wandenreich"
+  ]
+ },
+ {
+  "question": "What is Bankai?",
+  "expect": [
+   "Zanpakutō"
+  ],
+  "answer_contains": [
+   "release",
+   "zanpakutō",
+   "zanpakuto"
+  ]
+ },
+ {
+  "question": "What happens in chapter 116?",
+  "expect": [
+   "Chapter 116"
+  ],
+  "answer_contains": [
+   "byakuya",
+   "ichigo",
+   "yoruichi"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "ichigo",
+   "rukia"
+  ]
+ }
+]

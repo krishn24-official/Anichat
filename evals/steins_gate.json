@@ -1,0 +1,74 @@
+[
+ {
+  "question": "Who is Rintaro Okabe?",
+  "expect": [
+   "Rintaro Okabe"
+  ],
+  "answer_contains": [
+   "hououin kyouma",
+   "mad scientist",
+   "lab"
+  ]
+ },
+ {
+  "question": "Who is Kurisu Makise?",
+  "expect": [
+   "Kurisu Makise"
+  ],
+  "answer_contains": [
+   "neuroscien",
+   "scientist"
+  ]
+ },
+ {
+  "question": "Who is Mayuri Shiina?",
+  "expect": [
+   "Mayuri Shiina"
+  ],
+  "answer_contains": [
+   "childhood friend",
+   "okabe"
+  ]
+ },
+ {
+  "question": "What is a D-Mail?",
+  "expect": [
+   "D-Mail"
+  ],
+  "answer_contains": [
+   "past",
+   "message",
+   "text"
+  ]
+ },
+ {
+  "question": "What is SERN?",
+  "expect": [
+   "SERN"
+  ],
+  "answer_contains": [
+   "time travel",
+   "organization"
+  ]
+ },
+ {
+  "question": "Who is Suzuha Amane?",
+  "expect": [
+   "Suzuha Amane"
+  ],
+  "answer_contains": [
+   "time travel",
+   "future"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "S;G (anime) - Ep.01"
+  ],
+  "answer_contains": [
+   "okabe",
+   "kurisu"
+  ]
+ }
+]

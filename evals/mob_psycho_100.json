@@ -1,0 +1,14 @@
+[
+  {"question": "Who is Mob?", "expect": ["Shigeo Kageyama"], "answer_contains": ["esper", "psychic"]},
+  {"question": "Who is Reigen Arataka?", "expect": ["Arataka Reigen"], "answer_contains": ["con", "spirits and such", "mob"]},
+  {"question": "Who is Dimple?", "expect": ["Dimple"], "answer_contains": ["spirit"]},
+  {"question": "Who is Ritsu Kageyama?", "expect": ["Ritsu Kageyama"], "answer_contains": ["brother", "mob"]},
+  {"question": "Who is Teruki Hanazawa?", "expect": ["Teruki Hanazawa"], "answer_contains": ["esper", "black vinegar"]},
+  {"question": "What is Claw?", "expect": ["Claw"], "answer_contains": ["esper", "organization", "suzuki"]},
+  {"question": "Who is Toichiro Suzuki?", "expect": ["Toichiro Suzuki"], "answer_contains": ["claw", "leader"]},
+  {"question": "What is the Body Improvement Club?", "expect": ["Body Improvement Club"], "answer_contains": ["club", "mob"]},
+  {"question": "Who is Keiji Mogami?", "expect": ["Keiji Mogami"], "answer_contains": ["spirit", "psychic"]},
+  {"question": "What is the Spirits and Such Consultation Office?", "expect": ["Spirits and Such Consultation Office"], "answer_contains": ["reigen"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["mob"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["mob", "reigen"]}
+]

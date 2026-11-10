@@ -1,0 +1,106 @@
+[
+ {
+  "question": "Who is Meliodas?",
+  "expect": [
+   "Meliodas"
+  ],
+  "answer_contains": [
+   "dragon",
+   "sin of wrath",
+   "captain"
+  ]
+ },
+ {
+  "question": "Who is Escanor?",
+  "expect": [
+   "Escanor"
+  ],
+  "answer_contains": [
+   "lion",
+   "pride",
+   "sun"
+  ]
+ },
+ {
+  "question": "Who is Ban?",
+  "expect": [
+   "Ban"
+  ],
+  "answer_contains": [
+   "fox",
+   "greed",
+   "immortal"
+  ]
+ },
+ {
+  "question": "Who is Elizabeth Liones?",
+  "expect": [
+   "Elizabeth Liones"
+  ],
+  "answer_contains": [
+   "princess",
+   "goddess"
+  ]
+ },
+ {
+  "question": "Who is King?",
+  "expect": [
+   "King"
+  ],
+  "answer_contains": [
+   "fairy",
+   "sloth"
+  ]
+ },
+ {
+  "question": "Who is Merlin?",
+  "expect": [
+   "Merlin"
+  ],
+  "answer_contains": [
+   "boar",
+   "gluttony",
+   "mage"
+  ]
+ },
+ {
+  "question": "What is the Demon Clan?",
+  "expect": [
+   "Demon Clan"
+  ],
+  "answer_contains": [
+   "demon king",
+   "clan"
+  ]
+ },
+ {
+  "question": "Who are the Holy Knights?",
+  "expect": [
+   "Holy Knights"
+  ],
+  "answer_contains": [
+   "liones",
+   "knight"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "meliodas",
+   "elizabeth"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "meliodas",
+   "elizabeth"
+  ]
+ }
+]

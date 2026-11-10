@@ -1,0 +1,96 @@
+[
+ {
+  "question": "Who is Kirito?",
+  "expect": [
+   "Kirigaya Kazuto"
+  ],
+  "answer_contains": [
+   "black swordsman",
+   "kirito"
+  ]
+ },
+ {
+  "question": "Who is Asuna?",
+  "expect": [
+   "Yuuki Asuna"
+  ],
+  "answer_contains": [
+   "flash",
+   "lightning",
+   "kirito"
+  ]
+ },
+ {
+  "question": "What is Aincrad?",
+  "expect": [
+   "Aincrad"
+  ],
+  "answer_contains": [
+   "floating castle",
+   "100 floors",
+   "floors"
+  ]
+ },
+ {
+  "question": "Who is Kayaba Akihiko?",
+  "expect": [
+   "Kayaba Akihiko"
+  ],
+  "answer_contains": [
+   "creator",
+   "heathcliff"
+  ]
+ },
+ {
+  "question": "What is Project Alicization?",
+  "expect": [
+   "Project Alicization"
+  ],
+  "answer_contains": [
+   "fluctlight",
+   "artificial"
+  ]
+ },
+ {
+  "question": "Who is Eugeo?",
+  "expect": [
+   "Eugeo"
+  ],
+  "answer_contains": [
+   "kirito",
+   "friend",
+   "underworld"
+  ]
+ },
+ {
+  "question": "What are Sword Skills?",
+  "expect": [
+   "Sword Skills"
+  ],
+  "answer_contains": [
+   "system",
+   "attack"
+  ]
+ },
+ {
+  "question": "What is the Underworld?",
+  "expect": [
+   "Underworld"
+  ],
+  "answer_contains": [
+   "virtual",
+   "fluctlight"
+  ]
+ },
+ {
+  "question": "Who is Yui?",
+  "expect": [
+   "Yui"
+  ],
+  "answer_contains": [
+   "ai",
+   "program",
+   "daughter"
+  ]
+ }
+]

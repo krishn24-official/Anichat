@@ -1,0 +1,22 @@
+[
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "S;G0 (anime) - Ep.01"
+  ],
+  "answer_contains": [
+   "okabe",
+   "kurisu"
+  ]
+ },
+ {
+  "question": "Who is Maho Hiyajo?",
+  "expect": [
+   "Maho Hiyajo"
+  ],
+  "answer_contains": [
+   "kurisu",
+   "scientist"
+  ]
+ }
+]

@@ -4,6 +4,7 @@ Models are downloaded on first use into AniChat/models/ (not the OS temp folder,
 which disk cleanup can empty).
 """
 
+import os
 from pathlib import Path
 
 from fastembed import SparseTextEmbedding, TextEmbedding
@@ -14,6 +15,9 @@ DENSE_MODEL = "BAAI/bge-small-en-v1.5"  # 384 dimensions, 512-token input
 SPARSE_MODEL = "Qdrant/bm25"  # classic keyword scoring; Qdrant applies the IDF part
 DENSE_SIZE = 384
 MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
+# ANICHAT_EMBED_DEVICE=cuda runs the dense model on an NVIDIA GPU (needs onnxruntime-gpu: see
+# README, "Faster indexing"). Same model and vectors as on the CPU, several times faster.
+DEVICE = os.getenv("ANICHAT_EMBED_DEVICE", "cpu").lower()
 
 
 class FastEmbedEmbedder:
@@ -26,9 +30,19 @@ class FastEmbedEmbedder:
 
     dense_size = DENSE_SIZE
 
-    def __init__(self, batch_size: int = 64):
+    def __init__(self, batch_size: int = 64, device: str = DEVICE):
         MODELS_DIR.mkdir(exist_ok=True)
-        self._dense = TextEmbedding(DENSE_MODEL, cache_dir=str(MODELS_DIR))
+        if device == "cuda":
+            import onnxruntime  # onnxruntime-gpu: load the CUDA/cuDNN libraries installed with it by pip
+            onnxruntime.preload_dlls()
+            self._dense = TextEmbedding(DENSE_MODEL, cache_dir=str(MODELS_DIR),
+                                        providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
+            # Small batches: on a 4 GB GPU (GTX 1650) 256 long chunks overflow memory and halve the
+            # speed; 16-128 all run at ~16 chunks/s there.
+            batch_size = 32
+        else:
+            self._dense = TextEmbedding(DENSE_MODEL, cache_dir=str(MODELS_DIR))
+        self.device = device
         self._sparse = SparseTextEmbedding(SPARSE_MODEL, cache_dir=str(MODELS_DIR))
         self._batch = batch_size
 

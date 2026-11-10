@@ -60,12 +60,15 @@ def _number(kind: str, title: str, facts: dict[str, str]) -> int | None:
     """
     if kind not in NUMBER_FACTS:
         return None
-    # "Episode 12", also with a qualifier: "Episode 1 (2011)" (Hunter x Hunter's two anime)
-    m = re.fullmatch(r"(?:Episode|Chapter)\s+(\d+)(?:\s*\(.*\))?", title.strip(), re.I)
+    # "Episode 12", also with a qualifier: "Episode 1 (2011)" (Hunter x Hunter's two anime), or a
+    # sequel's prefix: "Re: Episode 1" (Tokyo Ghoul:re), or a colon: "Episode:01" (Evangelion).
+    # Gintama calls chapters "Lesson 12". Not "Chapter 23.5" (a bonus chapter).
+    m = re.fullmatch(r"(?:.*[\s:])?(?:Episode|Chapter|Lesson)(?:\s+|:)(\d+)(?:\s*\(.*\))?", title.strip(), re.I)
     if m:
         return int(m.group(1))
     for key in NUMBER_FACTS[kind]:
-        m = re.match(r"\s*(\d{1,4})\b", facts.get(key, ""))
+        # Not "17.5" (a recap between 17 and 18): read as 17, it would clash with episode 17.
+        m = re.match(r"\s*(\d{1,4})\b(?!\.\d)", facts.get(key, ""))
         if m:
             return int(m.group(1))
     return None
@@ -82,10 +85,16 @@ def _display_title(kind: str, title: str, facts: dict[str, str], number: int | N
     label = f"{kind.capitalize()} {number}" if number is not None else None
     if label and re.match(rf"{label}:", title, re.I):
         return title  # already "Chapter 1: The Two Alchemists"
-    numbered_page = label and re.fullmatch(rf"{label}(?:\s*\(.*\))?", title, re.I)  # "Episode 1 (2011)"
+    # "Episode 1", "Episode 1 (2011)", "Episode:01", or a sequel's "FT100YQ Episode 1"
+    words = r"chapter|lesson" if kind == "chapter" else r"episode|ep\."  # "S;G (anime) - Ep.01"
+    numbered_page = label and re.search(rf"\b(?:{words})(?:\s+|:)?0*{number}(?:\s*\(.*\))?$", title, re.I)
     if label and not numbered_page:
-        return f"{label}: {title}"  # page named by its title
-    name = facts.get("title") or facts.get("chapter title") or facts.get("ep title") or facts.get("episode title") or facts.get("english")
+        # Page named by its title; "Assassin from the Past (episode)" loses the redundant qualifier.
+        return f"{label}: {re.sub(r'\s*\((?:episode|chapter)\)$', '', title, flags=re.I)}"
+    name = (facts.get("title") or facts.get("chapter title") or facts.get("ep title") or facts.get("episode title")
+            or facts.get("english") or facts.get("engname") or facts.get("entitle") or facts.get("ename"))
+    if name and number is not None:  # "Episode 01: Prologue..." -> "Prologue..."
+        name = re.sub(rf"^(?:{words})\s*0*{number}\s*:\s*", "", name, flags=re.I)
     if name and name.lower() != title.lower():
         return f"{label or title}: {name}"
     return label or title

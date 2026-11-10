@@ -180,9 +180,9 @@ def chunk_document(doc: SourceDocument, importance: int = 0) -> list[Chunk]:
 
 
 # Entity kinds (not episodes/chapters) get a profile card: a short "who/what is X" chunk.
-CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit", "movie", "ova", "ability", "race", "page", "magic", "transformation", "devil"}
+CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit", "movie", "ova", "ability", "race", "page", "magic", "transformation", "devil", "quirk", "angel", "mecha"}
 CARD_FACTS = ("alias", "affiliation", "occupation", "rank", "race", "species", "status", "relatives", "user", "creator",
-              "killed by", "parents", "children", "clan", "classification")
+              "killed by", "parents", "children", "clan", "classification", "quirk")
 # Wiki sections listing whom a character killed ("People killed" on Attack on Titan pages).
 KILL_SECTIONS = ("people killed", "killed", "victims", "kills")
 

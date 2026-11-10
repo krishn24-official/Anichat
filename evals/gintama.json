@@ -1,0 +1,93 @@
+[
+ {
+  "question": "Who is Gintoki Sakata?",
+  "expect": [
+   "Gintoki Sakata"
+  ],
+  "answer_contains": [
+   "yorozuya",
+   "shiroyasha",
+   "samurai"
+  ]
+ },
+ {
+  "question": "Who is Shinpachi Shimura?",
+  "expect": [
+   "Shinpachi Shimura"
+  ],
+  "answer_contains": [
+   "yorozuya",
+   "glasses"
+  ]
+ },
+ {
+  "question": "Who is Kagura?",
+  "expect": [
+   "Kagura"
+  ],
+  "answer_contains": [
+   "yato",
+   "yorozuya"
+  ]
+ },
+ {
+  "question": "What is the Shinsengumi?",
+  "expect": [
+   "Shinsengumi"
+  ],
+  "answer_contains": [
+   "police",
+   "kondo",
+   "hijikata"
+  ]
+ },
+ {
+  "question": "Who is Takasugi Shinsuke?",
+  "expect": [
+   "Shinsuke Takasugi"
+  ],
+  "answer_contains": [
+   "kiheitai",
+   "shoyo",
+   "shouyou"
+  ]
+ },
+ {
+  "question": "Who is Katsura Kotaro?",
+  "expect": [
+   "Kotarou Katsura"
+  ],
+  "answer_contains": [
+   "joui",
+   "zura"
+  ]
+ },
+ {
+  "question": "What are the Amanto?",
+  "expect": [
+   "Amanto"
+  ],
+  "answer_contains": [
+   "alien"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Lesson 1"
+  ],
+  "answer_contains": [
+   "gintoki",
+   "shinpachi"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1-2"
+  ],
+  "answer_contains": [
+   "gintoki"
+  ]
+ }
+]

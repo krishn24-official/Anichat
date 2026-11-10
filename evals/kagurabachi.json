@@ -1,0 +1,62 @@
+[
+ {
+  "question": "Who is Chihiro Rokuhira?",
+  "expect": [
+   "Chihiro Rokuhira"
+  ],
+  "answer_contains": [
+   "enchanted blade",
+   "father",
+   "sword"
+  ]
+ },
+ {
+  "question": "Who is Kunishige Rokuhira?",
+  "expect": [
+   "Kunishige Rokuhira"
+  ],
+  "answer_contains": [
+   "swordsmith",
+   "father"
+  ]
+ },
+ {
+  "question": "What are the Enchanted Blades?",
+  "expect": [
+   "Enchanted Blade"
+  ],
+  "answer_contains": [
+   "kunishige",
+   "sword"
+  ]
+ },
+ {
+  "question": "What is Hishaku?",
+  "expect": [
+   "Hishaku"
+  ],
+  "answer_contains": [
+   "sorcerer",
+   "organization"
+  ]
+ },
+ {
+  "question": "Who is Togo Shiba?",
+  "expect": [
+   "Togo Shiba"
+  ],
+  "answer_contains": [
+   "sorcerer",
+   "chihiro"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "chihiro"
+  ]
+ }
+]

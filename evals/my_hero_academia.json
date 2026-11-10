@@ -1,0 +1,18 @@
+[
+  {"question": "Who is Izuku Midoriya?", "expect": ["Izuku Midoriya"], "answer_contains": ["deku", "one for all"]},
+  {"question": "Who is All Might?", "expect": ["Toshinori Yagi"], "answer_contains": ["symbol of peace", "one for all"]},
+  {"question": "What is One For All?", "expect": ["One For All"], "answer_contains": ["stockpil", "pass", "transfer"]},
+  {"question": "Who is All For One?", "expect": ["All For One"], "answer_contains": ["villain", "quirk"]},
+  {"question": "What is Bakugo's quirk?", "expect": ["Katsuki Bakugo", "Explosion"], "answer_contains": ["explosion", "sweat"]},
+  {"question": "What is Shoto Todoroki's quirk?", "expect": ["Shoto Todoroki", "Half-Cold Half-Hot"], "answer_contains": ["ice", "fire"]},
+  {"question": "Who is Dabi really?", "expect": ["Dabi"], "answer_contains": ["toya", "todoroki"]},
+  {"question": "Who is Hawks?", "expect": ["Keigo Takami"], "answer_contains": ["wing", "hero"]},
+  {"question": "Who is Stain?", "expect": ["Chizome Akaguro"], "answer_contains": ["hero killer"]},
+  {"question": "What is Eri's quirk?", "expect": ["Eri", "Rewind"], "answer_contains": ["rewind"]},
+  {"question": "Who is Tomura Shigaraki?", "expect": ["Tomura Shigaraki"], "answer_contains": ["league of villains", "decay"]},
+  {"question": "Who leads the League of Villains?", "expect": ["League of Villains", "Tomura Shigaraki"], "answer_contains": ["shigaraki"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["izuku", "quirkless"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["izuku", "quirk"]},
+  {"question": "Who is Nana Shimura?", "expect": ["Nana Shimura"], "answer_contains": ["one for all", "seventh"]},
+  {"question": "What is the relationship between Deku and Bakugo?", "expect": ["Izuku Midoriya/Relationships", "Katsuki Bakugo", "Izuku Midoriya"], "answer_contains": ["childhood", "rival"]}
+]

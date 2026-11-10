@@ -115,6 +115,10 @@ class WikiClient(Protocol):
         """Semantic MediaWiki properties of a page ({"Parent": ["Minato Namikaze", ...]}), {} if none."""
         ...
 
+    async def links_from(self, host: str, titles: list[str]) -> set[str]:
+        """Titles of the articles the given pages link to (an MCU movie -> its characters, items...)."""
+        ...
+
 
 class RawStore(Protocol):
     """Keeps fetched pages on disk so nothing is downloaded twice.

@@ -1,0 +1,16 @@
+[
+  {"question": "Who is Saitama?", "expect": ["Saitama"], "answer_contains": ["one punch", "hero"]},
+  {"question": "Who is Genos?", "expect": ["Genos"], "answer_contains": ["cyborg", "disciple"]},
+  {"question": "Who is Garou?", "expect": ["Garou"], "answer_contains": ["hero hunter", "monster"]},
+  {"question": "Who is Boros?", "expect": ["Boros"], "answer_contains": ["alien", "dark matter"]},
+  {"question": "Who is Tatsumaki?", "expect": ["Tatsumaki"], "answer_contains": ["esper", "tornado"]},
+  {"question": "Who is Metal Bat?", "expect": ["Bad"], "answer_contains": ["s-class", "bat"]},
+  {"question": "Who is Mumen Rider?", "expect": ["Satoru"], "answer_contains": ["c-class", "bicycle"]},
+  {"question": "Who is King?", "expect": ["King"], "answer_contains": ["strongest", "s-class"]},
+  {"question": "What is the Hero Association?", "expect": ["Heroes/Hero Association"], "answer_contains": ["hero", "organization"]},
+  {"question": "What is the Monster Association?", "expect": ["Mysterious Beings/Monster Association"], "answer_contains": ["monster", "orochi"]},
+  {"question": "What are disaster levels?", "expect": ["Disaster Level"], "answer_contains": ["tiger", "dragon", "god"]},
+  {"question": "What is the limiter?", "expect": ["Limiter"], "answer_contains": ["limit", "saitama"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["saitama"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["saitama"]}
+]

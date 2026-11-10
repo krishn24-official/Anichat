@@ -1,0 +1,87 @@
+[
+ {
+  "question": "Who is Lelouch?",
+  "expect": [
+   "Lelouch vi Britannia"
+  ],
+  "answer_contains": [
+   "zero",
+   "geass",
+   "britannia"
+  ]
+ },
+ {
+  "question": "Who is Zero?",
+  "expect": [
+   "Zero"
+  ],
+  "answer_contains": [
+   "lelouch",
+   "black knights"
+  ]
+ },
+ {
+  "question": "Who is C.C.?",
+  "expect": [
+   "C.C."
+  ],
+  "answer_contains": [
+   "geass",
+   "witch",
+   "immortal"
+  ]
+ },
+ {
+  "question": "What is Geass?",
+  "expect": [
+   "Geass"
+  ],
+  "answer_contains": [
+   "power",
+   "contract"
+  ]
+ },
+ {
+  "question": "Who is Suzaku Kururugi?",
+  "expect": [
+   "Suzaku Kururugi"
+  ],
+  "answer_contains": [
+   "lancelot",
+   "knight"
+  ]
+ },
+ {
+  "question": "What are the Black Knights?",
+  "expect": [
+   "The Order of the Black Knights"
+  ],
+  "answer_contains": [
+   "zero",
+   "lelouch"
+  ]
+ },
+ {
+  "question": "What is a Knightmare Frame?",
+  "expect": [
+   "Knightmare Frame",
+   "Knightmare Frames"
+  ],
+  "answer_contains": [
+   "mecha",
+   "robot",
+   "weapon"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "The Day a New Demon was Born (episode)"
+  ],
+  "answer_contains": [
+   "lelouch",
+   "c.c.",
+   "geass"
+  ]
+ }
+]

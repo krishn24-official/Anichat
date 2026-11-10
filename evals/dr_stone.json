@@ -1,0 +1,80 @@
+[
+ {
+  "question": "Who is Senku Ishigami?",
+  "expect": [
+   "Senku Ishigami"
+  ],
+  "answer_contains": [
+   "science"
+  ]
+ },
+ {
+  "question": "Who is Tsukasa Shishio?",
+  "expect": [
+   "Tsukasa Shishio"
+  ],
+  "answer_contains": [
+   "strongest",
+   "primate"
+  ]
+ },
+ {
+  "question": "Who is Chrome?",
+  "expect": [
+   "Chrome"
+  ],
+  "answer_contains": [
+   "sorcerer",
+   "science"
+  ]
+ },
+ {
+  "question": "Who is Gen Asagiri?",
+  "expect": [
+   "Gen Asagiri"
+  ],
+  "answer_contains": [
+   "mentalist"
+  ]
+ },
+ {
+  "question": "What is the Kingdom of Science?",
+  "expect": [
+   "Kingdom of Science"
+  ],
+  "answer_contains": [
+   "senku"
+  ]
+ },
+ {
+  "question": "What is the petrification?",
+  "expect": [
+   "Petrification",
+   "Petrification Weapon"
+  ],
+  "answer_contains": [
+   "stone"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "taiju",
+   "stone"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "taiju",
+   "stone",
+   "senku"
+  ]
+ }
+]

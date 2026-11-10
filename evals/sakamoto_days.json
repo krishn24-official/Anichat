@@ -1,0 +1,75 @@
+[
+ {
+  "question": "Who is Taro Sakamoto?",
+  "expect": [
+   "Taro Sakamoto"
+  ],
+  "answer_contains": [
+   "hitman",
+   "assassin",
+   "retired"
+  ]
+ },
+ {
+  "question": "Who is Shin Asakura?",
+  "expect": [
+   "Shin Asakura"
+  ],
+  "answer_contains": [
+   "mind",
+   "read"
+  ]
+ },
+ {
+  "question": "Who is Lu Shaotang?",
+  "expect": [
+   "Lu Shaotang"
+  ],
+  "answer_contains": [
+   "sakamoto",
+   "chinese",
+   "mafia"
+  ]
+ },
+ {
+  "question": "Who is Yoichi Nagumo?",
+  "expect": [
+   "Yoichi Nagumo"
+  ],
+  "answer_contains": [
+   "order",
+   "assassin"
+  ]
+ },
+ {
+  "question": "Who is Slur?",
+  "expect": [
+   "Slur",
+   "Kei Uzuki"
+  ],
+  "answer_contains": [
+   "villain",
+   "assassin"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "sakamoto",
+   "shin"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "sakamoto",
+   "shin"
+  ]
+ }
+]

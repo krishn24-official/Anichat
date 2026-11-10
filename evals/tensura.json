@@ -1,0 +1,94 @@
+[
+ {
+  "question": "Who is Rimuru Tempest?",
+  "expect": [
+   "Rimuru Tempest"
+  ],
+  "answer_contains": [
+   "slime",
+   "satoru"
+  ]
+ },
+ {
+  "question": "Who is Milim Nava?",
+  "expect": [
+   "Milim Nava"
+  ],
+  "answer_contains": [
+   "demon lord",
+   "destroyer"
+  ]
+ },
+ {
+  "question": "Who is Veldora?",
+  "expect": [
+   "Veldora Tempest"
+  ],
+  "answer_contains": [
+   "dragon",
+   "storm"
+  ]
+ },
+ {
+  "question": "What is the Jura-Tempest Federation?",
+  "expect": [
+   "Jura-Tempest Federation"
+  ],
+  "answer_contains": [
+   "rimuru",
+   "nation",
+   "monster"
+  ]
+ },
+ {
+  "question": "Who is Diablo?",
+  "expect": [
+   "Diablo"
+  ],
+  "answer_contains": [
+   "demon",
+   "primordial"
+  ]
+ },
+ {
+  "question": "Who is Benimaru?",
+  "expect": [
+   "Benimaru"
+  ],
+  "answer_contains": [
+   "ogre",
+   "samurai",
+   "kijin"
+  ]
+ },
+ {
+  "question": "What are unique skills?",
+  "expect": [
+   "Unique skill",
+   "Skill"
+  ],
+  "answer_contains": [
+   "skill"
+  ]
+ },
+ {
+  "question": "What is Raphael?",
+  "expect": [
+   "Raphael"
+  ],
+  "answer_contains": [
+   "great sage",
+   "skill"
+  ]
+ },
+ {
+  "question": "Who is Clayman?",
+  "expect": [
+   "Clayman"
+  ],
+  "answer_contains": [
+   "demon lord",
+   "puppet"
+  ]
+ }
+]

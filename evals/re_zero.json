@@ -1,0 +1,84 @@
+[
+ {
+  "question": "Who is Subaru Natsuki?",
+  "expect": [
+   "Natsuki Subaru"
+  ],
+  "answer_contains": [
+   "return by death",
+   "summoned"
+  ]
+ },
+ {
+  "question": "Who is Emilia?",
+  "expect": [
+   "Emilia"
+  ],
+  "answer_contains": [
+   "half-elf",
+   "royal selection"
+  ]
+ },
+ {
+  "question": "Who is Rem?",
+  "expect": [
+   "Rem"
+  ],
+  "answer_contains": [
+   "maid",
+   "oni",
+   "twin"
+  ]
+ },
+ {
+  "question": "Who is Beatrice?",
+  "expect": [
+   "Beatrice"
+  ],
+  "answer_contains": [
+   "spirit",
+   "library"
+  ]
+ },
+ {
+  "question": "What is Return by Death?",
+  "expect": [
+   "Return by Death",
+   "Natsuki Subaru"
+  ],
+  "answer_contains": [
+   "dies",
+   "death",
+   "return"
+  ]
+ },
+ {
+  "question": "Who is Reinhard van Astrea?",
+  "expect": [
+   "Reinhard van Astrea"
+  ],
+  "answer_contains": [
+   "sword saint"
+  ]
+ },
+ {
+  "question": "What is the Witch Cult?",
+  "expect": [
+   "Witch Cult"
+  ],
+  "answer_contains": [
+   "satella",
+   "sin archbishop",
+   "witch"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "subaru"
+  ]
+ }
+]

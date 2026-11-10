@@ -120,6 +120,25 @@ class FandomClient:
                 cont = data["continue"]
         return found
 
+    async def links_from(self, host: str, titles: list[str]) -> set[str]:
+        """Article titles linked from the given pages, 10 pages per request (pages like MCU
+        movies link to hundreds of others, so the API pages through them).
+
+        Called by: application/collect.py  CollectService._linked()
+        """
+        found: set[str] = set()
+        for i in range(0, len(titles), 10):
+            cont: dict = {}
+            while True:
+                data = await self._api(host, {"action": "query", "prop": "links", "pllimit": "max", "plnamespace": 0,
+                                              "titles": "|".join(titles[i:i + 10]), **cont})
+                for page in data.get("query", {}).get("pages", {}).values():
+                    found.update(link["title"] for link in page.get("links", []))
+                if "continue" not in data:
+                    break
+                cont = data["continue"]
+        return found
+
     async def page_properties(self, host: str, title: str) -> dict[str, list[str]]:
         """A page's Semantic MediaWiki properties, values as plain titles/text. Wikis like
         naruto.fandom.com keep the infobox data there instead of in the page's wikitext.

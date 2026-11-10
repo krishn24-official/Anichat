@@ -1,0 +1,17 @@
+[
+  {"question": "Who is Natsu Dragneel?", "expect": ["Natsu Dragneel"], "answer_contains": ["dragon slayer", "fire"]},
+  {"question": "Who is Lucy Heartfilia?", "expect": ["Lucy Heartfilia"], "answer_contains": ["celestial spirit"]},
+  {"question": "Who is Erza Scarlet?", "expect": ["Erza Scarlet"], "answer_contains": ["requip", "titania"]},
+  {"question": "Who is Gray Fullbuster?", "expect": ["Gray Fullbuster"], "answer_contains": ["ice"]},
+  {"question": "Who is Zeref?", "expect": ["Zeref Dragneel"], "answer_contains": ["black wizard", "dark mage", "natsu"]},
+  {"question": "Who is Acnologia?", "expect": ["Acnologia"], "answer_contains": ["dragon"]},
+  {"question": "Who is Igneel?", "expect": ["Igneel"], "answer_contains": ["dragon", "natsu"]},
+  {"question": "What is Dragon Slayer Magic?", "expect": ["Dragon Slayer Magic"], "answer_contains": ["dragon", "lost magic"]},
+  {"question": "What is Celestial Spirit Magic?", "expect": ["Celestial Spirit Magic"], "answer_contains": ["key", "spirit"]},
+  {"question": "What is Fairy Law?", "expect": ["Fairy Law"], "answer_contains": ["enemy", "light"]},
+  {"question": "Who is Mavis Vermillion?", "expect": ["Mavis Vermillion"], "answer_contains": ["first master", "founder"]},
+  {"question": "What is Tartaros?", "expect": ["Tartaros"], "answer_contains": ["dark guild", "demon"]},
+  {"question": "What are the Grand Magic Games?", "expect": ["Grand Magic Games", "Grand Magic Games arc"], "answer_contains": ["guild", "tournament", "fiore"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["lucy", "natsu"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["lucy", "natsu"]}
+]

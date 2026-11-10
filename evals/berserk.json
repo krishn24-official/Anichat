@@ -1,0 +1,83 @@
+[
+ {
+  "question": "Who is Guts?",
+  "expect": [
+   "Guts"
+  ],
+  "answer_contains": [
+   "black swordsman",
+   "dragon slayer"
+  ]
+ },
+ {
+  "question": "Who is Griffith?",
+  "expect": [
+   "Griffith"
+  ],
+  "answer_contains": [
+   "band of the hawk",
+   "falcon",
+   "femto"
+  ]
+ },
+ {
+  "question": "Who is Casca?",
+  "expect": [
+   "Casca"
+  ],
+  "answer_contains": [
+   "band of the hawk",
+   "guts"
+  ]
+ },
+ {
+  "question": "What is the Band of the Falcon?",
+  "expect": [
+   "Band of the Falcon"
+  ],
+  "answer_contains": [
+   "mercenar",
+   "griffith"
+  ]
+ },
+ {
+  "question": "What is the Dragon Slayer?",
+  "expect": [
+   "Dragon Slayer"
+  ],
+  "answer_contains": [
+   "sword",
+   "guts"
+  ]
+ },
+ {
+  "question": "Who is Zodd?",
+  "expect": [
+   "Zodd"
+  ],
+  "answer_contains": [
+   "apostle",
+   "immortal"
+  ]
+ },
+ {
+  "question": "Who is Schierke?",
+  "expect": [
+   "Schierke"
+  ],
+  "answer_contains": [
+   "witch",
+   "magic"
+  ]
+ },
+ {
+  "question": "What happens in episode 1 of the manga?",
+  "expect": [
+   "Episode 1 (Manga)",
+   "Episode 0 (Manga)"
+  ],
+  "answer_contains": [
+   "guts"
+  ]
+ }
+]

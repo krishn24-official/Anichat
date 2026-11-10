@@ -1,0 +1,6 @@
+[
+  {"question": "What happens in chapter 1?", "expect": ["Fairy Tail: 100 Years Quest Chapter 1"], "answer_contains": ["quest", "guild"]},
+  {"question": "What happens in episode 1?", "expect": ["FT100YQ Episode 1"], "answer_contains": ["quest", "guild"]},
+  {"question": "Who is Natsu Dragneel?", "expect": ["Natsu Dragneel"], "answer_contains": ["dragon slayer"]},
+  {"question": "Who is Elefseria?", "expect": ["Elefseria"], "answer_contains": ["guild", "quest"]}
+]

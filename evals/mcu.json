@@ -1,0 +1,138 @@
+[
+ {
+  "question": "Who is Iron Man?",
+  "expect": [
+   "Iron Man"
+  ],
+  "answer_contains": [
+   "tony stark",
+   "stark"
+  ]
+ },
+ {
+  "question": "Who is Thanos?",
+  "expect": [
+   "Thanos"
+  ],
+  "answer_contains": [
+   "titan",
+   "infinity stones"
+  ]
+ },
+ {
+  "question": "What are the Infinity Stones?",
+  "expect": [
+   "Infinity Stones"
+  ],
+  "answer_contains": [
+   "six",
+   "stone"
+  ]
+ },
+ {
+  "question": "Who are the Avengers?",
+  "expect": [
+   "Avengers"
+  ],
+  "answer_contains": [
+   "team",
+   "heroes"
+  ]
+ },
+ {
+  "question": "What happens in Avengers: Endgame?",
+  "expect": [
+   "Avengers: Endgame"
+  ],
+  "answer_contains": [
+   "thanos",
+   "time heist",
+   "snap"
+  ]
+ },
+ {
+  "question": "Who is Steve Rogers?",
+  "expect": [
+   "Steve Rogers"
+  ],
+  "answer_contains": [
+   "captain america",
+   "super soldier"
+  ]
+ },
+ {
+  "question": "What is Wakanda?",
+  "expect": [
+   "Wakanda"
+  ],
+  "answer_contains": [
+   "vibranium",
+   "african"
+  ]
+ },
+ {
+  "question": "Who is the Scarlet Witch?",
+  "expect": [
+   "Scarlet Witch"
+  ],
+  "answer_contains": [
+   "wanda",
+   "chaos magic"
+  ]
+ },
+ {
+  "question": "Who is Loki?",
+  "expect": [
+   "Loki"
+  ],
+  "answer_contains": [
+   "god of mischief",
+   "thor",
+   "brother"
+  ]
+ },
+ {
+  "question": "What is Mjolnir?",
+  "expect": [
+   "Mjølnir"
+  ],
+  "answer_contains": [
+   "hammer",
+   "thor"
+  ]
+ },
+ {
+  "question": "What was the Snap?",
+  "expect": [
+   "Snap",
+   "Blip"
+  ],
+  "answer_contains": [
+   "half",
+   "thanos"
+  ]
+ },
+ {
+  "question": "Who is Doctor Strange?",
+  "expect": [
+   "Doctor Strange"
+  ],
+  "answer_contains": [
+   "sorcerer",
+   "time stone"
+  ]
+ },
+ {
+  "question": "Who killed Tony Stark?",
+  "expect": [
+   "Iron Man",
+   "Avengers: Endgame",
+   "Battle of Earth"
+  ],
+  "answer_contains": [
+   "thanos",
+   "snap",
+   "gauntlet"
+  ]
+ }
+]

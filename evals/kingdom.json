@@ -1,0 +1,81 @@
+[
+ {
+  "question": "Who is Shin?",
+  "expect": [
+   "Li Xin"
+  ],
+  "answer_contains": [
+   "general",
+   "hi shin unit"
+  ]
+ },
+ {
+  "question": "Who is Ei Sei?",
+  "expect": [
+   "Ying Zheng"
+  ],
+  "answer_contains": [
+   "king",
+   "qin"
+  ]
+ },
+ {
+  "question": "Who is Ou Ki?",
+  "expect": [
+   "Wang Yi"
+  ],
+  "answer_contains": [
+   "great general",
+   "six great generals"
+  ]
+ },
+ {
+  "question": "Who is Ri Boku?",
+  "expect": [
+   "Ri Boku"
+  ],
+  "answer_contains": [
+   "zhao",
+   "general"
+  ]
+ },
+ {
+  "question": "What is the Hi Shin Unit?",
+  "expect": [
+   "Hi Shin Unit"
+  ],
+  "answer_contains": [
+   "shin",
+   "unit"
+  ]
+ },
+ {
+  "question": "Who is Kyou Kai?",
+  "expect": [
+   "Kyou Kai"
+  ],
+  "answer_contains": [
+   "assassin",
+   "shiba"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "shin",
+   "hyou"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "shin"
+  ]
+ }
+]

@@ -110,6 +110,13 @@ def test_other_wikis_infoboxes_and_numbers_from_the_infobox():
     assert ep.facts["chapter"] == "Face to Face; Inducement"
 
 
+def test_a_sequel_page_ending_in_its_number_shows_number_and_english_name():
+    text = ("{{Character Template (Chapter)\n|chapter=1\n|volume=#1\n|engname=The First Guild\n}}\n"
+            + "Natsu and the others set out on the hundred years quest. " * 12)
+    doc = build_document(page(text, "chapter", "Fairy Tail: 100 Years Quest Chapter 1"), "Fairy Tail")
+    assert doc.number == 1 and doc.display_title == "Chapter 1: The First Guild"
+
+
 def test_infobox_is_the_biggest_template_not_a_hatnote_and_keys_may_have_brackets():
     from anichat.domain.wikitext import parse_page
 

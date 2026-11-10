@@ -1,0 +1,32 @@
+[
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "The Day a Demon Awakens (episode)"
+  ],
+  "answer_contains": [
+   "lelouch",
+   "memories"
+  ]
+ },
+ {
+  "question": "What happens in the last episode?",
+  "expect": [
+   "Re; (episode)"
+  ],
+  "answer_contains": [
+   "zero requiem",
+   "lelouch"
+  ]
+ },
+ {
+  "question": "Who is Lelouch?",
+  "expect": [
+   "Lelouch vi Britannia"
+  ],
+  "answer_contains": [
+   "zero",
+   "geass"
+  ]
+ }
+]

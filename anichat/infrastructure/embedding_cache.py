@@ -37,7 +37,9 @@ class CachingEmbedder:
         self._model = model
         self.dense_size = getattr(inner, "dense_size", None)
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        self._db = sqlite3.connect(str(path))
+        # Two processes may share the cache (the indexer, and scripts/embed.py filling it ahead on a
+        # GPU): wait for the other's write instead of failing with "database is locked".
+        self._db = sqlite3.connect(str(path), timeout=120)
         self._db.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, dense BLOB, sparse TEXT)")
         self.hits = 0  # how many chunks came from the cache in this run (printed by scripts/index.py)
         self.misses = 0

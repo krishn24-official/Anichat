@@ -12,7 +12,7 @@ from dataclasses import dataclass
 # earlier category claimed: small wikis leave many pages uncategorised.
 ALL_ARTICLES = "*"
 # Pages the catch-all skips: sub-pages ("Sung Jinwoo/Gallery") and list pages.
-NOT_ARTICLES = r"/|^list of|^lists? |gallery|^\d{4}$"
+NOT_ARTICLES = r"/|^list of|^lists? |gallery|^\d{4}$|^category:|^template:|^user:"
 
 
 @dataclass(frozen=True)
@@ -37,6 +37,15 @@ class CategorySource:
     # Explicit page titles, used instead of the category's members: important pages the wiki
     # never categorised (Dragon Ball: "Majin Buu", "Dragon Balls", "Tournament of Power").
     titles: tuple[str, ...] = ()
+    # Skip pages that are members of these categories (Tokyo Revengers: the mobile game's event
+    # pages have no common title pattern, but all are in "Pazuribe Events").
+    exclude_categories: tuple[str, ...] = ()
+    # Split each page into one page per section whose heading matches this regex (groups:
+    # number, name): Bleach's volume pages hold their chapters as sections. See domain/sections.py.
+    split_sections: str = ""
+    # Keep only pages linked from this category's pages: the MCU wiki has 9,000 characters, but
+    # the ones linked from the movie pages are the ones the movies are about.
+    linked_from: str = ""
     # Semantic MediaWiki properties to store as facts: (wiki property, our fact name) pairs.
     properties: tuple[tuple[str, str], ...] = ()
 
@@ -93,6 +102,39 @@ _NARUTO_MANGA = (("boruto", "no|"), ("blue vortex", "no|"), ("v jump", "no|"), (
 _NARUTO_CHARACTER_FACTS = (("Parent", "parents"), ("Affiliation", "affiliation"), ("Clan", "clan"),
                            ("Classification", "classification"), ("Ninja_Rank", "rank"),
                            ("Species", "species"), ("Status", "status"))
+
+# Pages every wiki has that answer no question about the story (catch-all "page" sources).
+WIKI_NOISE = (r"|^community:|^user:|^board thread:|^volume \d|soundtrack|^blu-ray|popularity poll|"
+              r"^(chapters|episodes|characters|episode guide|episode list|story arcs|locations)$|^chapters and volumes$")
+NOISE_CATEGORIES = ("Music", "Songs", "Video Games", "Games", "Merchandise")
+
+
+def standard_series(id: str, title: str, wiki_host: str, *extra: CategorySource, skip: str = "",
+                    shares_with: str | None = None) -> SeriesSource:
+    """A series on a wiki with the usual layout: pages titled exactly "Chapter N" / "Episode N"
+    (spin-offs like "Chapter 1 (Holidays)" or "Reboot: Chapter 1" are left out, so numbers are
+    unique), and the usual Characters / Locations / Organizations / Story Arcs categories (a
+    missing one lists nothing). `extra`: wiki-specific sources, collected before the catch-all;
+    `skip`: more title patterns (regex) to leave out of the catch-all.
+
+    Called by: SERIES below
+    """
+    return SeriesSource(
+        id=id, title=title, wiki_host=wiki_host, shares_with=shares_with,
+        categories=(
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!episode \d+$)"),
+            CategorySource("chapter", "Chapters", exclude_titles=r"^(?!chapter \d+$)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Arcs", exclude_titles=NOT_ARTICLES),
+            *extra,
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + (f"|{skip}" if skip else ""),
+                           exclude_categories=NOISE_CATEGORIES),
+        ),
+    )
+
 
 SERIES: dict[str, SeriesSource] = {
     "demon_slayer": SeriesSource(
@@ -427,6 +469,419 @@ SERIES: dict[str, SeriesSource] = {
             CategorySource("location", "Locations", include_subcategories=True),
             CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
             CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|\(2003|live action"),
+        ),
+    ),
+    "my_hero_academia": SeriesSource(
+        id="my_hero_academia",
+        title="My Hero Academia",
+        wiki_host="myheroacademia.fandom.com",
+        categories=(
+            # The spin-off Vigilantes has its own "Chapter 1" and "Episode 1": left out for now.
+            CategorySource("episode", "Episodes", exclude_titles=r"\(vigilantes\)"),
+            CategorySource("chapter", "Chapters", exclude_titles=r"\(vigilantes\)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("quirk", "Quirks", exclude_titles=NOT_ARTICLES),
+            CategorySource("technique", "Ultimate Moves", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Battles", exclude_titles=NOT_ARTICLES),
+            # Character pages keep relationships on a subpage ("Izuku Midoriya/Relationships").
+            CategorySource("relationships", "Character Subpage", exclude_titles=r"^(?!.*/relationships$)"),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|\(vigilantes\)|soundtrack|^volume \d|^episodes$|^chapters and volumes$"),
+        ),
+    ),
+    "frieren": SeriesSource(
+        id="frieren",
+        title="Frieren: Beyond Journey's End",
+        wiki_host="frieren.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes"),
+            CategorySource("chapter", "Chapters"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            # Character pages are tabbed: history, synopsis and relationships are subpages, not all
+            # of them categorised. So: every subpage ("Frieren/History", "List of Characters/Minor").
+            CategorySource("character_story", ALL_ARTICLES, exclude_titles=r"^[^/]*$|/gallery$"),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|^chapters and volumes$|^episodes and volumes$|"
+                           r"^community:|^discord$|^blu-ray|^art works|^coloring book"),
+        ),
+    ),
+    "one_punch_man": SeriesSource(
+        id="one_punch_man",
+        title="One Punch Man",
+        wiki_host="onepunchman.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!episode \d+$)"),
+            CategorySource("ova", "Episodes", exclude_titles=r"^(?!ova \d+$)"),
+            # "Chapter 157 (Online)" is the Jump+ numbering of the same manga chapters: one is enough.
+            # Named bonus chapters ("200 Yen") have no number: they are collected as pages below.
+            CategorySource("chapter", "Chapters", exclude_titles=r"\(online\)|^(?!chapter \d)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            # Big organizations are subpages here ("Heroes/Hero Association"): subpages allowed.
+            CategorySource("organization", "Organizations", exclude_titles=r"^list of|gallery"),
+            CategorySource("arc", "Arcs", exclude_titles=NOT_ARTICLES + r"|^user:"),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Fights", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|\(online\)|^volume \d|^community:|"
+                           r"popularity poll|^chapters and volumes$|^dvd$|^figures$|^audiobooks$|merchandise",
+                           exclude_categories=("Games", "Music", "Polls")),
+        ),
+    ),
+    "tokyo_revengers": SeriesSource(
+        id="tokyo_revengers",
+        title="Tokyo Revengers",
+        wiki_host="tokyorevengers.fandom.com",
+        categories=(
+            # Spin-offs ("Chapter 1 (Todai Revengers)", "... (Letter from Keisuke Baji)") are left out:
+            # they would give a second "chapter 1".
+            CategorySource("episode", "Episodes", exclude_titles=r"\("),
+            CategorySource("chapter", "Chapters", exclude_titles=r"\("),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            # Character pages keep relationships and story on subpages ("Manjiro Sano/Synopsis").
+            CategorySource("relationships", "Relationships"),
+            CategorySource("character_story", "Synopsis"),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Battles", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|\(todai revengers\)|"
+                           r"\(letter from keisuke baji\)|^volume \d|^community:|^blu-ray|chibi revengers|"
+                           r"^decisive battle|popularity poll|^calendar$",
+                           exclude_categories=("Pazuribe Events", "Media", "Music", "Games", "Chibi Revengers Episodes")),
+        ),
+    ),
+    "mob_psycho_100": SeriesSource(
+        id="mob_psycho_100",
+        title="Mob Psycho 100",
+        wiki_host="mob-psycho-100.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!episode \d+$)"),
+            CategorySource("chapter", "Chapters", exclude_titles=r"^(?!chapter \d)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES + r"|^template:|^characters$|^\?+$"),
+            CategorySource("organization", "Claw", exclude_titles=NOT_ARTICLES),
+            CategorySource("technique", "Psychic Techniques", exclude_titles=NOT_ARTICLES),
+            CategorySource("technique", "Non-Psychic Techniques", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            # The live-action drama has its own episodes and characters: left out.
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|live-action|soundtrack|^community:|"
+                           r"^(chapters|episodes|characters|humans|espers|games|anime|anime interviews|story arcs|"
+                           r"mob psycho 100 wiki|lol)$|\(reigen\)|guide book|fanbook|picture collection|"
+                           r"psychic battle|psychic puzzle|^sekai oni|hito kui|cherri bomb",
+                           exclude_categories=("Live-action episodes", "Songs")),
+        ),
+    ),
+    "fairy_tail": SeriesSource(
+        id="fairy_tail",
+        title="Fairy Tail",
+        wiki_host="fairytail.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!episode \d+$)"),
+            # The sequel (100 Years Quest) has its own chapter/episode 1: a separate series below.
+            CategorySource("chapter", "Chapters", exclude_titles=r"^(?!chapter \d+$)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("magic", "Caster Magic", exclude_titles=NOT_ARTICLES),
+            CategorySource("magic", "Holder Magic", exclude_titles=NOT_ARTICLES),
+            CategorySource("magic", "Lost Magic", exclude_titles=NOT_ARTICLES),
+            CategorySource("technique", "Spells", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Guilds", include_subcategories=True, exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("object", "Magic Items", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Fights", exclude_titles=NOT_ARTICLES + r"|^template:"),
+            CategorySource("event", "Event", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|^community:|^volume \d|soundtrack|"
+                           r"chapter review|^fairy tail: 100 years quest chapter|^ft100yq episode",
+                           exclude_categories=("Music", "Video Games")),
+        ),
+    ),
+    "fairy_tail_100_years_quest": SeriesSource(
+        id="fairy_tail_100_years_quest",
+        title="Fairy Tail: 100 Years Quest",
+        wiki_host="fairytail.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!ft100yq episode \d+$)"),
+            CategorySource("chapter", "Fairy Tail: 100 Years Quest Chapters", exclude_titles=NOT_ARTICLES),
+        ),
+        shares_with="fairy_tail",
+    ),
+    # Wikis with the usual layout (see standard_series above).
+    "blue_lock": standard_series("blue_lock", "Blue Lock", "bluelock.fandom.com"),
+    "tokyo_ghoul": standard_series(
+        "tokyo_ghoul", "Tokyo Ghoul", "tokyoghoul.fandom.com",
+        # The sequel's "Re: Chapter N" pages: the tokyo_ghoul_re series below.
+        skip=r"^re: (chapter|episode)|^jack: chapter|remake$"),
+    "tokyo_ghoul_re": SeriesSource(
+        id="tokyo_ghoul_re",
+        title="Tokyo Ghoul:re",
+        wiki_host="tokyoghoul.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!re: episode \d+$)"),
+            CategorySource("chapter", "Chapters", exclude_titles=r"^(?!re: chapter \d+$)"),
+        ),
+        shares_with="tokyo_ghoul",
+    ),
+    "dr_stone": standard_series("dr_stone", "Dr. Stone", "dr-stone.fandom.com", skip=r"^reboot: chapter"),
+    "hells_paradise": standard_series("hells_paradise", "Hell's Paradise", "jigokuraku.fandom.com"),
+    "dandadan": standard_series("dandadan", "Dandadan", "dandadan.fandom.com"),
+    "sakamoto_days": standard_series("sakamoto_days", "Sakamoto Days", "sakamoto-days.fandom.com",
+                                     skip=r"\(holidays\)"),
+    "fire_force": standard_series("fire_force", "Fire Force", "fireforce.fandom.com"),
+    "haikyuu": SeriesSource(
+        id="haikyuu",
+        title="Haikyu!!",
+        wiki_host="haikyuu.fandom.com",
+        categories=(
+            # Chapters are titled by name; the number is in the infobox ("chapter number = 1").
+            # The category also holds volumes, a poll and one character page.
+            CategorySource("chapter", "Chapters", exclude_titles=NOT_ARTICLES + r"|^category:|one-shot|\(volume\)|"
+                           r"volumes$|\(manga\)$|popularity poll|^michiko umezawa$"),
+            # Episode pages carry no episode number (only the adapted chapter): searchable by
+            # name, not as "episode 5".
+            CategorySource("anime_episode", "Episodes", exclude_titles=NOT_ARTICLES + r"|^category:|^episode guide$"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|\(volume\)|volumes$|"
+                           r"^hyper projection play", exclude_categories=NOISE_CATEGORIES),
+        ),
+    ),
+    # Episodes are numbered per season (R2 restarts at 1): one series per season.
+    "code_geass": SeriesSource(
+        id="code_geass",
+        title="Code Geass: Lelouch of the Rebellion",
+        wiki_host="codegeass.fandom.com",
+        categories=(
+            # Episode 1 uses another template without "season": no season counts as season 1.
+            CategorySource("episode", "Episodes", where=(("season", "1|"),),
+                           exclude_titles=r"^episode list$|of mask \(episode\)$|of the mask \(episode\)$"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("object", "Knightmare Frames", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Battles", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            # Theme-song artists have uncategorised pages: left out by name.
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|\(episode\)$|^(access \(axs\)|"
+                           r"ali project|flow|jinn|orange range|sunset swish)$",
+                           exclude_categories=NOISE_CATEGORIES + ("Voice actors", "Themes")),
+        ),
+    ),
+    "code_geass_r2": SeriesSource(
+        id="code_geass_r2",
+        title="Code Geass R2",
+        wiki_host="codegeass.fandom.com",
+        categories=(CategorySource("episode", "Episodes", where=(("season", "2"),)),),
+        shares_with="code_geass",
+    ),
+    "bleach": SeriesSource(
+        id="bleach",
+        title="Bleach",
+        wiki_host="bleach.fandom.com",
+        categories=(
+            # Episodes are titled by name; the infobox has "episodenumber" (1-366, TYBW from 367).
+            CategorySource("episode", "Episodes", exclude_titles=NOT_ARTICLES + r"|^episodes$"),
+            # No chapter pages: each volume page holds its chapters as "=== 116. Name ===" sections.
+            CategorySource("chapter", "Volumes", exclude_titles=NOT_ARTICLES + r"|^volumes$",
+                           split_sections=r"(-?\d+)\.\s*(.+)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("object", "Zanpakutō", exclude_titles=NOT_ARTICLES),
+            CategorySource("technique", "Techniques", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Important Terms", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("object", "Items", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Fights", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|\(disambiguation\)",
+                           exclude_categories=NOISE_CATEGORIES + ("Watercooler", "Wikia Chat logs", "Volumes",
+                                                                  "Chapters", "Disambiguation")),
+        ),
+    ),
+    "seven_deadly_sins": standard_series(
+        "seven_deadly_sins", "The Seven Deadly Sins", "nanatsu-no-taizai.fandom.com",
+        # Later seasons number episodes per season ("Dragon's Judgement Episode 1"); the sequel
+        # Four Knights of the Apocalypse has its own "Chapter 1 (4KOA)": both left out.
+        skip=r"\(4koa\)|four knights|episode \d+$"),
+    "kaiju_no_8": standard_series("kaiju_no_8", "Kaiju No. 8", "kaiju-no-8.fandom.com"),
+    "oshi_no_ko": standard_series("oshi_no_ko", "Oshi no Ko", "oshinoko.fandom.com", skip=r"^interlude chapter"),
+    "re_zero": standard_series("re_zero", "Re:Zero - Starting Life in Another World", "rezero.fandom.com"),
+    "bungo_stray_dogs": standard_series("bungo_stray_dogs", "Bungo Stray Dogs", "bungostraydogs.fandom.com",
+                                        skip=r"^beast chapter|^wan! "),
+    # Light-novel series: episodes are numbered per season or titled by name, so they are kept as
+    # unnumbered "anime_episode" pages (found by name, not as "episode 5").
+    "sword_art_online": SeriesSource(
+        id="sword_art_online",
+        title="Sword Art Online",
+        wiki_host="swordartonline.fandom.com",
+        categories=(
+            CategorySource("anime_episode", "Anime Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Terminology", exclude_titles=NOT_ARTICLES),
+            CategorySource("object", "Objects", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|sword art offline|"
+                           r"^sword art online wiki$",
+                           exclude_categories=NOISE_CATEGORIES + ("Discography", "Lyrics", "Song", "Creator Publications",
+                                                                  "Manga Volumes", "Light Novel Volumes",
+                                                                  "Video Game Adaptation", "Non-Canon")),
+        ),
+    ),
+    "tensura": SeriesSource(
+        id="tensura",
+        title="That Time I Got Reincarnated as a Slime",
+        wiki_host="tensura.fandom.com",
+        categories=(
+            CategorySource("anime_episode", "Anime episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("ability", "Unique skills", exclude_titles=NOT_ARTICLES),
+            CategorySource("ability", "Extra skills", exclude_titles=NOT_ARTICLES),
+            CategorySource("race", "Species", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Groups", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Terminology", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|volume|^collaborations",
+                           exclude_categories=NOISE_CATEGORIES + ("Manga Chapters", "Episode Galleries",
+                                                                  "Character Galleries")),
+        ),
+    ),
+    "overlord": SeriesSource(
+        id="overlord",
+        title="Overlord",
+        wiki_host="overlordmaruyama.fandom.com",
+        categories=(
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES,
+                           exclude_categories=("Mass for the Dead Characters",)),
+            CategorySource("organization", "Groups and Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("race", "Races", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Terminology", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("event", "Events", exclude_titles=NOT_ARTICLES, exclude_categories=("Mass for the Dead Events",)),
+            CategorySource("object", "Items", exclude_titles=NOT_ARTICLES, exclude_categories=("Mass for the Dead Items",)),
+            # The mobile game Mass for the Dead has its own characters, items and events: left out.
+            # Chibi spin-offs (Pure Pure Pleiades, Isekai Quartet) and Blu-ray extras: left out too.
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|mass for the dead|"
+                           r"pure pure pleiades|isekai quartet|blu-ray|volume \d|booklet",
+                           exclude_categories=NOISE_CATEGORIES + ("Mass for the Dead Items", "Mass for the Dead Events",
+                                                                  "Mass for the Dead Characters", "Manga")),
+        ),
+    ),
+    "evangelion": SeriesSource(
+        id="evangelion",
+        title="Neon Genesis Evangelion",
+        wiki_host="evangelion.fandom.com",
+        categories=(
+            # Episodes are in an "Episode:" namespace (category listings only cover articles): listed
+            # by title. "Episode:25'" (the End of Evangelion versions) is left out.
+            CategorySource("episode", "Episodes", titles=tuple(f"Episode:{n:02d}" for n in range(1, 27))),
+            # Not excluding "Game characters": Shinji, Rei and Misato are in it too.
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("angel", "Angels", exclude_titles=NOT_ARTICLES),
+            CategorySource("mecha", "Evangelions", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Terminology", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Technology", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|^episode:|^file:",
+                           exclude_categories=NOISE_CATEGORIES + ("Pachinko", "Collaboration", "Crossover", "Publications",
+                                                                  "Galleries", "Songs with Lyrics", "Neon Genesis Evangelion ANIMA")),
+        ),
+    ),
+    "gintama": SeriesSource(
+        id="gintama",
+        title="Gintama",
+        wiki_host="gintama.fandom.com",
+        categories=(
+            # "Episode 1-2" is one page for both parts (its infobox number is 1).
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!episode \d+(-\d+)?$)"),
+            # Chapters are "Lesson N" (read as chapter N); "Lesson 360.5" is a bonus.
+            CategorySource("chapter", "Chapters", exclude_titles=r"^(?!lesson \d+$)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|ginpachi|^lessons and volumes$|"
+                           r"^episode |^lesson ", exclude_categories=NOISE_CATEGORIES),
+        ),
+    ),
+    "steins_gate": SeriesSource(
+        id="steins_gate",
+        title="Steins;Gate",
+        wiki_host="steins-gate.fandom.com",
+        categories=(
+            # "S;G (anime) - Ep.01" (number from the infobox's episodeNumber); specials left out.
+            CategorySource("episode", "Episodes", exclude_titles=r"^(?!s;g \(anime\) - ep\.\d+$)"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|^s;g0? \(anime\) - ep|"
+                           r"^s;g chapter", exclude_categories=NOISE_CATEGORIES),
+        ),
+    ),
+    "steins_gate_0": SeriesSource(
+        id="steins_gate_0",
+        title="Steins;Gate 0",
+        wiki_host="steins-gate.fandom.com",
+        categories=(CategorySource("episode", "Episodes", exclude_titles=r"^(?!s;g0 \(anime\) - ep\.\d+$)"),),
+        shares_with="steins_gate",
+    ),
+    "mushoku_tensei": SeriesSource(
+        id="mushoku_tensei",
+        title="Mushoku Tensei: Jobless Reincarnation",
+        wiki_host="mushokutensei.fandom.com",
+        categories=(
+            # Episodes are numbered per season and manga chapters carry no number: unnumbered pages.
+            CategorySource("anime_episode", "Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("manga_chapter", "Chapters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|volume \d",
+                           exclude_categories=NOISE_CATEGORIES),
+        ),
+    ),
+    # Manga-first series.
+    "berserk": SeriesSource(
+        id="berserk",
+        title="Berserk",
+        wiki_host="berserk.fandom.com",
+        categories=(
+            # The manga calls its chapters "episodes" ("Episode 120 (Manga)"), listed by arc.
+            CategorySource("chapter", "Black Swordsman Arc Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Golden Age Arc Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Conviction Arc Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Millennium Falcon Arc Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Fantasia Arc Episodes", exclude_titles=NOT_ARTICLES),
+            # Two anime adaptations with their own episode 1: unnumbered pages.
+            CategorySource("anime_episode", "Episodes (1997 Anime)", exclude_titles=NOT_ARTICLES),
+            CategorySource("anime_episode", "Episodes (2016 Anime)", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Black Swordsman Arc Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Golden Age Arc Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Conviction Arc Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Millennium Falcon Arc Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Fantasia Arc Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("race", "Apostles", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Magic", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Metaphysics", exclude_titles=NOT_ARTICLES),
+            CategorySource("object", "Objects", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|^episode ",
+                           exclude_categories=NOISE_CATEGORIES + ("Interviews",)),
+        ),
+    ),
+    "vagabond": standard_series("vagabond", "Vagabond", "vagabond.fandom.com"),
+    "kagurabachi": standard_series("kagurabachi", "Kagurabachi", "kagurabachi.fandom.com"),
+    # Kingdom's chapter pages ("Chapter 120") are uncategorised: taken from all articles.
+    "kingdom": standard_series("kingdom", "Kingdom", "kingdom.fandom.com",
+                               CategorySource("chapter", ALL_ARTICLES, exclude_titles=r"^(?!chapter \d+$)"),
+                               skip=r"^volumes and chapters|^omake$|^vol\.\d"),
+    # Marvel: the wiki has ~49,000 articles (9,000 characters, mostly minor). Scoped to the
+    # released movies and the pages they link to (~4,000: who and what the movies are about).
+    "mcu": SeriesSource(
+        id="mcu",
+        title="Marvel Cinematic Universe (movies)",
+        wiki_host="marvelcinematicuniverse.fandom.com",
+        categories=(
+            CategorySource("movie", "Released Movies"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
+            CategorySource("object", "Items", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
+            CategorySource("object", "Weapons", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
+            CategorySource("organization", "Teams", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
+            CategorySource("event", "Events", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
         ),
     ),
 }

@@ -1,0 +1,15 @@
+[
+  {"question": "Who is Frieren?", "expect": ["Frieren"], "answer_contains": ["elf", "mage"]},
+  {"question": "Who was Himmel?", "expect": ["Himmel"], "answer_contains": ["hero"]},
+  {"question": "Who is Fern?", "expect": ["Fern"], "answer_contains": ["apprentice", "heiter", "frieren"]},
+  {"question": "Who is Stark?", "expect": ["Stark"], "answer_contains": ["warrior", "eisen"]},
+  {"question": "Who is Aura the Guillotine?", "expect": ["Aura", "Aura the Guillotine Arc"], "answer_contains": ["demon", "scale"]},
+  {"question": "What is Zoltraak?", "expect": ["Zoltraak"], "answer_contains": ["killing", "demon", "magic"]},
+  {"question": "Who is Serie?", "expect": ["Serie"], "answer_contains": ["elf", "great mage", "magic"]},
+  {"question": "Who was Flamme?", "expect": ["Flamme"], "answer_contains": ["frieren", "teacher", "mage"]},
+  {"question": "What is the First-Class Mage Exam?", "expect": ["First-Class Mage Exam", "First-Class Mage Exam Arc"], "answer_contains": ["mage", "exam"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["demon king", "himmel"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["himmel", "frieren"]},
+  {"question": "Who is in the Hero Party?", "expect": ["Hero Party", "Frieren's Party"], "answer_contains": ["himmel", "heiter", "eisen"]},
+  {"question": "What is Frieren's relationship with Himmel?", "expect": ["Frieren/Relationships", "Himmel", "Frieren", "Himmel/Relationships"], "answer_contains": ["himmel"]}
+]

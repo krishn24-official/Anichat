@@ -1,0 +1,93 @@
+[
+ {
+  "question": "Who is Atsushi Nakajima?",
+  "expect": [
+   "Atsushi Nakajima"
+  ],
+  "answer_contains": [
+   "tiger",
+   "agency"
+  ]
+ },
+ {
+  "question": "Who is Osamu Dazai?",
+  "expect": [
+   "Osamu Dazai"
+  ],
+  "answer_contains": [
+   "no longer human",
+   "nullif",
+   "port mafia"
+  ]
+ },
+ {
+  "question": "What is the Armed Detective Agency?",
+  "expect": [
+   "Armed Detective Agency"
+  ],
+  "answer_contains": [
+   "ability",
+   "detective"
+  ]
+ },
+ {
+  "question": "What is the Port Mafia?",
+  "expect": [
+   "Port Mafia"
+  ],
+  "answer_contains": [
+   "yokohama",
+   "mafia"
+  ]
+ },
+ {
+  "question": "Who is Chuuya Nakahara?",
+  "expect": [
+   "Chūya Nakahara"
+  ],
+  "answer_contains": [
+   "gravity",
+   "port mafia"
+  ]
+ },
+ {
+  "question": "Who is Fyodor Dostoevsky?",
+  "expect": [
+   "Fyodor Dostoevsky"
+  ],
+  "answer_contains": [
+   "rats",
+   "decay",
+   "crime and punishment"
+  ]
+ },
+ {
+  "question": "Who is Ranpo Edogawa?",
+  "expect": [
+   "Ranpo Edogawa"
+  ],
+  "answer_contains": [
+   "detective",
+   "deduction"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "atsushi"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "atsushi",
+   "dazai"
+  ]
+ }
+]

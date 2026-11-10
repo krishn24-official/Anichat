@@ -1,0 +1,74 @@
+[
+ {
+  "question": "Who is Rudeus Greyrat?",
+  "expect": [
+   "Rudeus Greyrat"
+  ],
+  "answer_contains": [
+   "reincarnat",
+   "magic"
+  ]
+ },
+ {
+  "question": "Who is Roxy Migurdia?",
+  "expect": [
+   "Roxy Migurdia Greyrat"
+  ],
+  "answer_contains": [
+   "tutor",
+   "magic",
+   "rudeus"
+  ]
+ },
+ {
+  "question": "Who is Eris Boreas Greyrat?",
+  "expect": [
+   "Eris Greyrat"
+  ],
+  "answer_contains": [
+   "rudeus",
+   "sword"
+  ]
+ },
+ {
+  "question": "Who is Ruijerd Superdia?",
+  "expect": [
+   "Ruijerd Superdia"
+  ],
+  "answer_contains": [
+   "superd",
+   "warrior"
+  ]
+ },
+ {
+  "question": "Who is Orsted?",
+  "expect": [
+   "Orsted"
+  ],
+  "answer_contains": [
+   "dragon god",
+   "curse"
+  ]
+ },
+ {
+  "question": "Who is Paul Greyrat?",
+  "expect": [
+   "Paul Greyrat"
+  ],
+  "answer_contains": [
+   "father",
+   "swordsman"
+  ]
+ },
+ {
+  "question": "What is the Ranoa Magic Academy?",
+  "expect": [
+   "Ranoa Magic Academy"
+  ],
+  "answer_contains": [
+   "magic",
+   "school",
+   "academy"
+  ]
+ }
+]

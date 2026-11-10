@@ -1,0 +1,62 @@
+[
+ {
+  "question": "Who is Musashi Miyamoto?",
+  "expect": [
+   "Musashi Miyamoto"
+  ],
+  "answer_contains": [
+   "sword",
+   "takezo"
+  ]
+ },
+ {
+  "question": "Who is Matahachi Honiden?",
+  "expect": [
+   "Matahachi Honiden"
+  ],
+  "answer_contains": [
+   "musashi",
+   "friend"
+  ]
+ },
+ {
+  "question": "Who is Otsu?",
+  "expect": [
+   "Otsu"
+  ],
+  "answer_contains": [
+   "musashi"
+  ]
+ },
+ {
+  "question": "What is the Yoshioka School?",
+  "expect": [
+   "Yoshioka School"
+  ],
+  "answer_contains": [
+   "sword",
+   "kyoto"
+  ]
+ },
+ {
+  "question": "What was the Battle of Sekigahara?",
+  "expect": [
+   "Battle of Sekigahara"
+  ],
+  "answer_contains": [
+   "battle",
+   "musashi"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "takezo",
+   "matahachi",
+   "sekigahara"
+  ]
+ }
+]
