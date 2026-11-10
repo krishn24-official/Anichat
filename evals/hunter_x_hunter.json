@@ -1,0 +1,15 @@
+[
+  {"question": "Who is Gon Freecss?", "expect": ["Gon Freecss"], "answer_contains": ["hunter", "ging", "protagonist"]},
+  {"question": "Who is Killua Zoldyck?", "expect": ["Killua Zoldyck"], "answer_contains": ["zoldyck", "assassin"]},
+  {"question": "What is Nen?", "expect": ["Nen"], "answer_contains": ["aura", "life energy"]},
+  {"question": "Who is the leader of the Phantom Troupe?", "expect": ["Chrollo Lucilfer", "Phantom Troupe"], "answer_contains": ["chrollo"]},
+  {"question": "Who is Meruem?", "expect": ["Meruem"], "answer_contains": ["king", "chimera ant"]},
+  {"question": "Who is Gon's father?", "expect": ["Ging Freecss", "Gon Freecss"], "answer_contains": ["ging"]},
+  {"question": "Who is Hisoka?", "expect": ["Hisoka Morow"], "answer_contains": ["magician", "transmuter", "bungee"]},
+  {"question": "Who is Isaac Netero?", "expect": ["Isaac Netero"], "answer_contains": ["chairman", "hunter association"]},
+  {"question": "Who is Neferpitou?", "expect": ["Neferpitou"], "answer_contains": ["royal guard", "chimera ant"]},
+  {"question": "What is Greed Island?", "expect": ["Greed Island", "Greed Island arc"], "answer_contains": ["game", "joystation", "card"]},
+  {"question": "Why does Kurapika hunt the Phantom Troupe?", "expect": ["Kurapika", "Phantom Troupe"], "answer_contains": ["kurta", "clan", "eyes"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1 (2011)"], "answer_contains": ["gon", "hunter", "ging"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["gon", "hunter", "kite"]}
+]

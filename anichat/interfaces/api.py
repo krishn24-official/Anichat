@@ -2,15 +2,22 @@
 
 Run:  uvicorn anichat.interfaces.api:app --reload
 Docs: http://127.0.0.1:8000/docs  (try POST /chat there)
+
+Endpoints
+  GET  /health   liveness + which chat models are configured
+  GET  /series   the series that have indexed knowledge (for the frontend's series picker)
+  POST /chat     answer one question, with its sources
 """
 
 from contextlib import asynccontextmanager
+from functools import lru_cache
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.concurrency import run_in_threadpool
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from anichat import container
+from anichat import config, container
 from anichat.domain.series import SERIES
 
 
@@ -22,16 +29,21 @@ async def lifespan(app: FastAPI):
     Called by: FastAPI on start/stop
     """
     container.answer_service()
+    # Read the profile cards for name lookups now: otherwise the first question waits ~20 s.
+    await run_in_threadpool(container.retrieval_service().warm_up)
     yield
     container.index().close()
 
 
-app = FastAPI(title="AniChat", version="0.1", lifespan=lifespan)
+app = FastAPI(title="AniChat", version="0.2", lifespan=lifespan)
+# The frontend runs on another origin (Vite dev server, Vercel), so browsers need CORS.
+app.add_middleware(CORSMiddleware, allow_origins=config.CORS_ORIGINS, allow_methods=["GET", "POST"],
+                   allow_headers=["Content-Type"])
 
 
 class ChatRequest(BaseModel):
     question: str = Field(min_length=2, max_length=500, examples=["How did Rengoku die?"])
-    series: str | None = Field(default=None, description=f"limit to one series: {', '.join(SERIES)}")
+    series: str | None = Field(default=None, description="limit to one series (an id from GET /series)")
 
 
 class SourceOut(BaseModel):
@@ -48,20 +60,52 @@ class ChatResponse(BaseModel):
     timings: dict[str, float]
 
 
+class SeriesOut(BaseModel):
+    id: str  # e.g. "naruto_shippuden"
+    title: str  # e.g. "Naruto Shippuden"
+    franchise: str  # the series it shares pages with, else itself ("naruto"): groups the picker
+    chunks: int  # indexed chunks of this series
+
+
+@lru_cache(maxsize=1)
+def _indexed_series() -> tuple[SeriesOut, ...]:
+    """Configured series that have chunks in the index, counted once (the index only changes
+    when scripts/index.py runs; restart the API afterwards).
+
+    Called by: series()
+    """
+    index = container.index()
+    found = []
+    for source in SERIES.values():
+        count = index.count(source.id)
+        if count:
+            found.append(SeriesOut(id=source.id, title=source.title, franchise=source.shares_with or source.id,
+                                   chunks=count))
+    return tuple(found)
+
+
 @app.get("/health")
 def health() -> dict:
     """Liveness check for the host (e.g. Render). Called by: hosting health checks"""
     return {"status": "ok", "models": container.chat_model().name}
 
 
+@app.get("/series", response_model=list[SeriesOut])
+def series() -> list[SeriesOut]:
+    """The series AniChat can answer about. Called by: the frontend's series picker"""
+    return list(_indexed_series())
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest) -> ChatResponse:
     """Answer one question from the knowledge base, with its sources.
 
-    Called by: clients (the anime_ai frontend later), /docs
+    Called by: the AniChat frontend, /docs
     The answer pipeline is blocking (model + HTTP), so it runs in a worker thread.
     """
-    answer = await run_in_threadpool(container.answer_service().answer, req.question, req.series)
+    if req.series and req.series not in SERIES:
+        raise HTTPException(status_code=422, detail=f"Unknown series '{req.series}'. See GET /series.")
+    answer = await run_in_threadpool(container.answer_service().answer, req.question.strip(), req.series)
     return ChatResponse(
         answer=answer.text,
         sources=[SourceOut(numbers=list(s.numbers), title=s.title, section=s.section, url=s.url) for s in answer.sources],

@@ -43,8 +43,10 @@ def _phrases(card: Chunk, series_title: str = "") -> tuple[set[str], set[str]]:
     name = card.title.split(" (")[0]
     identity = {card.title, name}
     if len(name.split()) > 1 and card.kind == "character":
-        # first name ("Tengen"); not for jutsu/arcs: "Naruto Cannon" does not make "Naruto" a name
-        identity.add(name.split()[0])
+        # First and last name ("Tengen"; "Jinwoo" in the Korean order "Sung Jinwoo"). Not for jutsu
+        # or arcs: "Naruto Cannon" does not make "Naruto" a name. A surname shared by many pages
+        # ("Uzumaki") is dropped or resolved to the most linked page by build_phrase_index/lookup.
+        identity.update({name.split()[0], name.split()[-1]})
     for value in _ALIAS_LINE.findall(body):
         identity.update(_split_values(value))
     first_sentence = re.split(r"(?<=[.!?])\s", body.strip(), maxsplit=1)[0]
@@ -90,6 +92,12 @@ def build_phrase_index(cards: list[Chunk], series_title: str = "") -> dict[str, 
     for p, cs in identity_index.items():
         if len(cs) <= MAX_ENTITIES_PER_PHRASE:
             index[p] = cs + [c for c in index.get(p, []) if c not in cs]
+        else:
+            # Too common as a first/last name ("Cell": Cell Jr., Perfect Cell, Cell Max...), but the
+            # page titled exactly by it is still that phrase's entity.
+            exact = [c for c in cs if c.title.lower() == p]
+            if len(exact) == 1:
+                index[p] = exact
     return index
 
 

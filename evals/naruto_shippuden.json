@@ -8,5 +8,6 @@
   {"question": "What happens in episode 1?", "expect": ["Homecoming (episode)"], "answer_contains": ["return", "sakura", "naruto"]},
   {"question": "What happens in chapter 245?", "expect": ["Naruto's Homecoming!!"], "answer_contains": ["naruto", "return", "konoha"]},
   {"question": "What happens in chapter 700?", "expect": ["Naruto Uzumaki!! (chapter 700)"], "answer_contains": ["hokage", "boruto"]},
-  {"question": "How did Naruto defeat Pain?", "expect": ["Nagato", "Naruto Uzumaki", "Pain's Assault"], "answer_contains": ["sage", "nagato", "talk"]}
+  {"question": "How did Naruto defeat Pain?", "expect": ["Nagato", "Naruto Uzumaki", "Pain's Assault"], "answer_contains": ["sage", "nagato", "talk"]},
+  {"question": "What is The Last: Naruto the Movie about?", "expect": ["The Last: Naruto the Movie"], "answer_contains": ["hinata", "toneri", "moon"]}
 ]

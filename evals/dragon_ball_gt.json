@@ -1,0 +1,4 @@
+[
+  {"question": "What happens in episode 1?", "expect": ["A Devastating Wish"], "answer_contains": ["pilaf", "black star", "goku", "wish"]},
+  {"question": "What are the Black Star Dragon Balls?", "expect": ["Black Star Dragon Ball"], "answer_contains": ["planet", "earth", "explode", "one year"]}
+]

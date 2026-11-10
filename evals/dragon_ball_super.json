@@ -1,0 +1,6 @@
+[
+  {"question": "Who is Jiren?", "expect": ["Jiren"], "answer_contains": ["universe 11", "pride trooper", "strongest"]},
+  {"question": "Who is Whis?", "expect": ["Whis"], "answer_contains": ["angel", "beerus", "attendant"]},
+  {"question": "What happens in episode 1?", "expect": ["A Peacetime Reward Who Gets the 100,000,000 Zeni?!"], "answer_contains": ["goku", "zeni", "buu"]},
+  {"question": "What happens in chapter 1?", "expect": ["God of Destruction's Premonition"], "answer_contains": ["beerus", "goku", "god"]}
+]

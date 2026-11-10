@@ -60,7 +60,8 @@ def _number(kind: str, title: str, facts: dict[str, str]) -> int | None:
     """
     if kind not in NUMBER_FACTS:
         return None
-    m = re.fullmatch(r"(?:Episode|Chapter)\s+(\d+)", title.strip(), re.I)
+    # "Episode 12", also with a qualifier: "Episode 1 (2011)" (Hunter x Hunter's two anime)
+    m = re.fullmatch(r"(?:Episode|Chapter)\s+(\d+)(?:\s*\(.*\))?", title.strip(), re.I)
     if m:
         return int(m.group(1))
     for key in NUMBER_FACTS[kind]:
@@ -79,12 +80,15 @@ def _display_title(kind: str, title: str, facts: dict[str, str], number: int | N
     if kind not in NUMBER_FACTS:
         return title
     label = f"{kind.capitalize()} {number}" if number is not None else None
-    if label and title.lower() != label.lower():
+    if label and re.match(rf"{label}:", title, re.I):
+        return title  # already "Chapter 1: The Two Alchemists"
+    numbered_page = label and re.fullmatch(rf"{label}(?:\s*\(.*\))?", title, re.I)  # "Episode 1 (2011)"
+    if label and not numbered_page:
         return f"{label}: {title}"  # page named by its title
     name = facts.get("title") or facts.get("chapter title") or facts.get("ep title") or facts.get("episode title") or facts.get("english")
     if name and name.lower() != title.lower():
-        return f"{title}: {name}"
-    return title
+        return f"{label or title}: {name}"
+    return label or title
 
 
 def _other_names(redirects: str, title: str) -> str:
@@ -109,7 +113,9 @@ def build_document(page: RawPage, series_title: str) -> Document | None:
 
     Called by: application/build_documents.py  BuildDocumentsService.build()
     """
-    parsed = parse_page(page.wikitext)
+    if re.search(r"\{\{\s*disambig", page.wikitext[:500], re.I):
+        return None  # "Episode 1 may refer to...": a list of links, no content
+    parsed = parse_page(page.wikitext, page.title)
     # Facts from Semantic MediaWiki and redirects (page.properties) fill what the infobox lacks.
     facts = {**page.properties, **parsed.infobox}
     if facts.get("also called"):

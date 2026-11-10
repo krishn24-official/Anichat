@@ -1,0 +1,10 @@
+[
+  {"question": "Who is Denji?", "expect": ["Denji"], "answer_contains": ["chainsaw", "devil hunter", "pochita"]},
+  {"question": "Who is Pochita?", "expect": ["Pochita"], "answer_contains": ["chainsaw devil", "denji", "heart"]},
+  {"question": "Who is Makima?", "expect": ["Makima"], "answer_contains": ["control devil", "public safety"]},
+  {"question": "Who is Power?", "expect": ["Power"], "answer_contains": ["fiend", "blood"]},
+  {"question": "What is a Fiend?", "expect": ["Fiend"], "answer_contains": ["devil", "corpse", "body"]},
+  {"question": "Who is Aki Hayakawa?", "expect": ["Aki Hayakawa"], "answer_contains": ["devil hunter", "public safety", "fox"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["denji", "pochita", "debt", "zombie"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["denji", "pochita"]}
+]

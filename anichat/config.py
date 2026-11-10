@@ -23,3 +23,8 @@ GEMINI_MODELS = [m.strip() for m in os.getenv("GEMINI_MODEL", "gemini-2.5-flash,
 GROQ_API_KEY = os.getenv("GROQ_API_KEY") or None
 GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 LLM_PROVIDERS = [p.strip() for p in os.getenv("LLM_PROVIDERS", "gemini,groq").split(",") if p.strip()]
+
+# Browser origins allowed to call the API (the frontend). Comma-separated; the Vite dev server
+# by default. In production, set it to the deployed frontend URL(s).
+CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+                if o.strip()]

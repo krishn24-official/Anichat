@@ -122,3 +122,12 @@ def test_redirect_names_lose_bracketed_qualifiers_and_duplicates():
     from anichat.domain.documents import _other_names
 
     assert _other_names("Haku (Naruto); Haku; Masked man; Masked Man; Tobi", "Haku") == "Masked man; Tobi"
+
+
+def test_a_hand_made_table_at_the_top_is_the_infobox():
+    from anichat.domain.wikitext import parse_page
+
+    page = parse_page('{| class="wikitable"\n! colspan="2" | Chapter 100\n|-\n! Volume\n| 7\n|-\n! Arc\n| Jeju Island Arc\n'
+                      '|-\n! Previous\n| Chapter 99\n|}\n\nChapter 100 is a chapter.')
+    assert page.infobox == {"volume": "7", "arc": "Jeju Island Arc"}  # "previous" is navigation: skipped
+    assert "Chapter 100 is a chapter." in page.lead and "- " not in page.lead

@@ -84,7 +84,12 @@ def test_api_chat_endpoint(monkeypatch):
         def close(self):
             pass
 
+    class NoWarmUp:
+        def warm_up(self):  # the startup step that reads profile cards from the index
+            pass
+
     monkeypatch.setattr(container, "index", lambda: NoIndex())
+    monkeypatch.setattr(container, "retrieval_service", lambda: NoWarmUp())
     with TestClient(api.app) as client:
         r = client.post("/chat", json={"question": "How did Rengoku die?"})
         assert r.status_code == 200

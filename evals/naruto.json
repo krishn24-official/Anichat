@@ -12,5 +12,6 @@
   {"question": "Who is Zabuza Momochi?", "expect": ["Zabuza Momochi"], "answer_contains": ["mist", "swordsm", "kirigakure"]},
   {"question": "Who is Naruto's father?", "expect": ["Minato Namikaze", "Naruto Uzumaki"], "answer_contains": ["minato"]},
   {"question": "What happens in episode 1?", "expect": ["Enter: Naruto Uzumaki!"], "answer_contains": ["mizuki", "iruka", "scroll"]},
-  {"question": "What happens in chapter 1?", "expect": ["Naruto Uzumaki!! (chapter 1)"], "answer_contains": ["iruka", "mizuki", "scroll", "nine-tail"]}
+  {"question": "What happens in chapter 1?", "expect": ["Naruto Uzumaki!! (chapter 1)"], "answer_contains": ["iruka", "mizuki", "scroll", "nine-tail"]},
+  {"question": "What happens in Naruto the Movie: Ninja Clash in the Land of Snow?", "expect": ["Naruto the Movie: Ninja Clash in the Land of Snow"], "answer_contains": ["koyuki", "snow", "doto"]}
 ]

@@ -1,0 +1,11 @@
+[
+  {"question": "Who is Edward Elric?", "expect": ["Edward Elric"], "answer_contains": ["fullmetal", "state alchemist", "automail"]},
+  {"question": "Why is Alphonse's soul in armor?", "expect": ["Alphonse Elric", "Edward Elric"], "answer_contains": ["human transmutation", "mother", "soul", "armor"]},
+  {"question": "What is a Philosopher's Stone?", "expect": ["Philosopher's Stone"], "answer_contains": ["human", "souls", "amplif", "lives"]},
+  {"question": "Who is Roy Mustang?", "expect": ["Roy Mustang"], "answer_contains": ["flame", "colonel", "führer", "fuhrer"]},
+  {"question": "Who is Scar?", "expect": ["Scar"], "answer_contains": ["ishval", "state alchemist"]},
+  {"question": "What is the Gate?", "expect": ["The Gate"], "answer_contains": ["truth", "toll", "transmutation"]},
+  {"question": "Who is Van Hohenheim?", "expect": ["Van Hohenheim"], "answer_contains": ["father", "xerxes", "philosopher's stone"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1 (2009 Anime)"], "answer_contains": ["edward", "alphonse", "ice", "freezing"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1: The Two Alchemists"], "answer_contains": ["edward", "alphonse", "cornello", "liore"]}
+]

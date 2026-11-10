@@ -1,0 +1,14 @@
+[
+  {"question": "Who is Asta?", "expect": ["Asta"], "answer_contains": ["anti magic", "black bull", "magic"]},
+  {"question": "Who is Yuno?", "expect": ["Yuno Grinberryall"], "answer_contains": ["golden dawn", "wind", "spirit"]},
+  {"question": "Who is the captain of the Black Bulls?", "expect": ["Yami Sukehiro", "Black Bull"], "answer_contains": ["yami"]},
+  {"question": "What is Anti Magic?", "expect": ["Anti Magic"], "answer_contains": ["negate", "nullif", "devil", "magic"]},
+  {"question": "What is a grimoire?", "expect": ["Grimoire"], "answer_contains": ["book", "magic", "spell"]},
+  {"question": "Who is the Wizard King?", "expect": ["Wizard King", "Julius Novachrono"], "answer_contains": ["julius", "strongest", "magic knight"]},
+  {"question": "Who is Liebe?", "expect": ["Liebe"], "answer_contains": ["devil", "asta", "grimoire"]},
+  {"question": "Who is Lucifero?", "expect": ["Lucifero"], "answer_contains": ["devil", "gravity", "highest"]},
+  {"question": "Who is Noelle Silva?", "expect": ["Noelle Silva"], "answer_contains": ["water", "royal", "silva"]},
+  {"question": "What is the Golden Dawn?", "expect": ["Golden Dawn"], "answer_contains": ["squad", "magic knight", "yuno"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["asta", "yuno", "grimoire"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["asta", "yuno", "grimoire", "vow"]}
+]

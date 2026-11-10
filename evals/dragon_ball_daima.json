@@ -1,0 +1,3 @@
+[
+  {"question": "What happens in episode 1?", "expect": ["Conspiracy"], "answer_contains": ["gomah", "demon realm", "goku", "small"]}
+]

@@ -1,0 +1,15 @@
+[
+  {"question": "Who is Goku?", "expect": ["Goku"], "answer_contains": ["saiyan", "kakarot"]},
+  {"question": "What are the Dragon Balls?", "expect": ["Dragon Ball (object)"], "answer_contains": ["wish", "shenron", "seven"]},
+  {"question": "What is the Kamehameha?", "expect": ["Kamehameha"], "answer_contains": ["roshi", "energy", "wave"]},
+  {"question": "Who is Shenron?", "expect": ["Shenron"], "answer_contains": ["dragon", "wish"]},
+  {"question": "What is a Super Saiyan?", "expect": ["Super Saiyan"], "answer_contains": ["transformation", "saiyan", "golden", "blond"]},
+  {"question": "What is Ultra Instinct?", "expect": ["Autonomous Ultra Instinct (ability)", "Ultra Instinct (technique)", "Perfected Ultra Instinct"], "answer_contains": ["instinct", "angel", "body"]},
+  {"question": "Who is Frieza?", "expect": ["Frieza"], "answer_contains": ["emperor", "planet vegeta", "tyrant", "frieza force"]},
+  {"question": "Who is Majin Buu?", "expect": ["Majin Buu", "Kid Buu"], "answer_contains": ["bibidi", "babidi", "majin"]},
+  {"question": "Who is Beerus?", "expect": ["Beerus"], "answer_contains": ["god of destruction", "universe 7"]},
+  {"question": "What is the Tournament of Power?", "expect": ["Tournament of Power"], "answer_contains": ["universe", "zeno", "erase"]},
+  {"question": "Who is Goku's father?", "expect": ["Bardock", "Goku"], "answer_contains": ["bardock"]},
+  {"question": "What happens in episode 1?", "expect": ["The Secret of the Dragon Balls"], "answer_contains": ["goku", "bulma", "dragon ball"]},
+  {"question": "What happens in chapter 1?", "expect": ["Bloomers and the Monkey King"], "answer_contains": ["goku", "bulma"]}
+]

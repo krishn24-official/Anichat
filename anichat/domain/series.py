@@ -8,6 +8,13 @@ import re
 from dataclasses import dataclass
 
 
+# Category name meaning "every article of the wiki". Listed last, it collects only the pages no
+# earlier category claimed: small wikis leave many pages uncategorised.
+ALL_ARTICLES = "*"
+# Pages the catch-all skips: sub-pages ("Sung Jinwoo/Gallery") and list pages.
+NOT_ARTICLES = r"/|^list of|^lists? |gallery|^\d{4}$"
+
+
 @dataclass(frozen=True)
 class CategorySource:
     """One kind of page and the wiki category listing those pages.
@@ -24,6 +31,12 @@ class CategorySource:
     where: tuple[tuple[str, str], ...] = ()
     # (field, lowest, highest): keep pages whose infobox number is in range (chapters 1-244).
     number_between: tuple[str, int, int] | None = None
+    # Skip pages whose title matches (case-insensitive), for categories without an infobox flag
+    # to filter on (Naruto's "Movies" also lists "Boruto: Naruto the Movie").
+    exclude_titles: str = ""
+    # Explicit page titles, used instead of the category's members: important pages the wiki
+    # never categorised (Dragon Ball: "Majin Buu", "Dragon Balls", "Tournament of Power").
+    titles: tuple[str, ...] = ()
     # Semantic MediaWiki properties to store as facts: (wiki property, our fact name) pairs.
     properties: tuple[tuple[str, str], ...] = ()
 
@@ -175,6 +188,9 @@ SERIES: dict[str, SeriesSource] = {
             CategorySource("concept", "Naruto Terms"),  # Tailed Beast, chakra...
             CategorySource("concept", "Ninja Ranks"),  # Chūnin Exams, Hokage...
             CategorySource("event", "Battles"),  # Fourth Shinobi World War...
+            # Movies (The Last, Road to Ninja...) and OVAs; Boruto's are a different series.
+            CategorySource("movie", "Movies", exclude_titles=r"^boruto"),
+            CategorySource("ova", "OVA", exclude_titles=r"^boruto"),
             CategorySource("arc", "Arcs"),
         ),
     ),
@@ -217,6 +233,200 @@ SERIES: dict[str, SeriesSource] = {
             CategorySource("concept", "Fighting Styles"),
             CategorySource("concept", "Artifacts"),
             CategorySource("arc", "Story Arcs"),
+        ),
+    ),
+    "vinland_saga": SeriesSource(
+        id="vinland_saga",
+        title="Vinland Saga",
+        wiki_host="vinlandsaga.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes"),
+            CategorySource("chapter", "Chapters"),
+            CategorySource("character", "Characters"),
+            CategorySource("location", "Locations"),
+            CategorySource("arc", "Story Arcs"),
+            # Groups like the Jomsvikings have no category: everything else, as "page".
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES),
+        ),
+    ),
+    "solo_leveling": SeriesSource(
+        id="solo_leveling",
+        title="Solo Leveling",
+        wiki_host="solo-leveling.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes"),
+            CategorySource("chapter", "Chapters"),
+            CategorySource("chapter", "Chapters by Story Arcs", include_subcategories=True),
+            CategorySource("character", "Male"),
+            CategorySource("character", "Female"),
+            CategorySource("character", "Monarchs"),
+            CategorySource("character", "Shadows"),
+            CategorySource("character", "Hunters"),
+            CategorySource("ability", "Abilities"),
+            CategorySource("object", "Items"),
+            CategorySource("race", "Races", include_subcategories=True),
+            CategorySource("organization", "Organizations"),
+            CategorySource("organization", "Guilds"),
+            CategorySource("location", "Locations", include_subcategories=True),
+            CategorySource("arc", "Arcs"),
+            # Many pages (Beru, Antares, the System) have no category at all.
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES),
+        ),
+    ),
+    "hunter_x_hunter": SeriesSource(
+        id="hunter_x_hunter",
+        title="Hunter x Hunter",
+        wiki_host="hunterxhunter.fandom.com",
+        categories=(
+            # The 2011 anime only: the 1999 one would give a second "episode 1".
+            CategorySource("episode", "List of Episodes (2011 series)"),
+            CategorySource("chapter", "Chapters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Male characters"),
+            CategorySource("character", "Female characters"),
+            CategorySource("character", "Chimera Ants"),  # Neferpitou: no gender category
+            CategorySource("organization", "Group"),  # Phantom Troupe, Zoldyck Family, Hunter Association
+            CategorySource("concept", "Terms"),  # Nen, Hunter Code...
+            CategorySource("concept", "Fighting Styles"),
+            CategorySource("object", "Items"),
+            CategorySource("location", "Locations"),
+            CategorySource("arc", "Arcs"),
+        ),
+    ),
+    "black_clover": SeriesSource(
+        id="black_clover",
+        title="Black Clover",
+        wiki_host="blackclover.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes by Arc", include_subcategories=True),
+            CategorySource("chapter", "Chapters by Arc", include_subcategories=True),
+            CategorySource("chapter", "Chapters"),  # the newest chapters are not filed by arc yet
+            CategorySource("character", "Male Characters"),
+            CategorySource("character", "Female Characters"),
+            CategorySource("character", "Devils", include_subcategories=True),
+            CategorySource("magic", "Magic"),
+            CategorySource("magic", "Magic Attributes"),
+            CategorySource("concept", "Terminologies"),
+            CategorySource("object", "Items"),
+            CategorySource("location", "Kingdoms"),
+            CategorySource("location", "Grand Magic Zones"),
+            CategorySource("location", "Clover Kingdom Locations", include_subcategories=True),
+            CategorySource("arc", "Arcs"),
+            # Squads (Black Bulls, Golden Dawn) and spells have no category of their own.
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES),
+        ),
+    ),
+    # dragonball.fandom.com covers every series. Like Naruto: characters, techniques and places
+    # are indexed once under "dragon_ball"; each anime keeps its own episodes ("episode 1" of Z
+    # is not episode 1 of Super), filtered on the episode infobox's "Series" field (written "GT" or "DBGT", "DBS" or
+    # "Dragon Ball Super"...: every spelling is accepted).
+    "dragon_ball": SeriesSource(
+        id="dragon_ball",
+        title="Dragon Ball",
+        wiki_host="dragonball.fandom.com",
+        categories=(
+            CategorySource("episode", "Dragon Ball episodes", where=(("series", "db|dragon ball"),), exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Dragon Ball chapters", exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("transformation", "Transformations", include_subcategories=True, exclude_titles=NOT_ARTICLES),
+            CategorySource("technique", "Techniques", exclude_titles=NOT_ARTICLES),
+            CategorySource("race", "Races", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Planets", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Sagas", include_subcategories=True, exclude_titles=NOT_ARTICLES),
+            CategorySource("movie", "Films", include_subcategories=True, exclude_titles=NOT_ARTICLES + r"|^template:"),
+            # Key pages the wiki left without a category.
+            CategorySource("concept", "uncategorised key pages", titles=(
+                "Majin Buu", "Dragon Ball (object)", "Tournament of Power", "Autonomous Ultra Instinct (ability)",
+                "Super Dragon Balls", "Black Star Dragon Ball", "Senzu Bean", "Potara", "Fusion Dance",
+                "Hyperbolic Time Chamber", "Ki", "Saiyan Power", "Capsule Corporation", "Red Ribbon Army",
+                "World Martial Arts Tournament", "Cell Games", "Tournament of Destroyers", "Multiverse",
+                "Gods of Destruction", "Supreme Kai", "Zeno", "Perfected Ultra Instinct", "Saiyan Army", "Frieza Force",
+                "Galactic Patrol", "Z Fighters", "Ginyu Force", "Universe 7", "Universe 6", "Time Patrol")),
+        ),
+    ),
+    "dragon_ball_z": SeriesSource(
+        id="dragon_ball_z",
+        title="Dragon Ball Z",
+        wiki_host="dragonball.fandom.com",
+        categories=(
+            CategorySource("episode", "Dragon Ball Z episodes", where=(("series", "dbz|dragon ball z"),), exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Dragon Ball Z chapters", exclude_titles=NOT_ARTICLES),
+        ),
+        shares_with="dragon_ball",
+    ),
+    "dragon_ball_gt": SeriesSource(
+        id="dragon_ball_gt",
+        title="Dragon Ball GT",
+        wiki_host="dragonball.fandom.com",
+        categories=(
+            CategorySource("episode", "Dragon Ball GT episodes", where=(("series", "dbgt|gt|dragon ball gt"),), exclude_titles=NOT_ARTICLES),
+        ),
+        shares_with="dragon_ball",
+    ),
+    "dragon_ball_super": SeriesSource(
+        id="dragon_ball_super",
+        title="Dragon Ball Super",
+        wiki_host="dragonball.fandom.com",
+        categories=(
+            CategorySource("episode", "Dragon Ball Super episodes", where=(("series", "dbs|dragon ball super"),), exclude_titles=NOT_ARTICLES),
+            CategorySource("chapter", "Dragon Ball Super manga chapters", exclude_titles=NOT_ARTICLES),
+        ),
+        shares_with="dragon_ball",
+    ),
+    "dragon_ball_daima": SeriesSource(
+        id="dragon_ball_daima",
+        title="Dragon Ball Daima",
+        wiki_host="dragonball.fandom.com",
+        categories=(
+            CategorySource("episode", "Dragon Ball Daima episodes", where=(("series", "dbd|dragon ball daima"),), exclude_titles=NOT_ARTICLES),
+        ),
+        shares_with="dragon_ball",
+    ),
+    "chainsaw_man": SeriesSource(
+        id="chainsaw_man",
+        title="Chainsaw Man",
+        wiki_host="chainsaw-man.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes"),
+            CategorySource("chapter", "Chapters"),
+            CategorySource("character", "Characters"),
+            CategorySource("devil", "Devils", include_subcategories=True),
+            CategorySource("organization", "Groups"),
+            CategorySource("concept", "Terminology"),
+            CategorySource("location", "Locations"),
+            CategorySource("arc", "Story Arcs"),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES),
+        ),
+    ),
+    "spy_x_family": SeriesSource(
+        id="spy_x_family",
+        title="Spy x Family",
+        wiki_host="spy-x-family.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes"),
+            CategorySource("chapter", "Chapters"),
+            CategorySource("character", "Characters"),
+            CategorySource("organization", "Organizations", include_subcategories=True),
+            CategorySource("location", "Locations", include_subcategories=True),
+            CategorySource("arc", "Story Arcs"),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES),
+        ),
+    ),
+    "fullmetal_alchemist": SeriesSource(
+        id="fullmetal_alchemist",
+        title="Fullmetal Alchemist",
+        wiki_host="fma.fandom.com",
+        categories=(
+            # Brotherhood (2009) follows the manga; the 2003 anime would give a second "episode 1".
+            # Only 10 of its 64 episode pages are in the Brotherhood category: listed by title.
+            CategorySource("episode", "Brotherhood episodes",
+                           titles=tuple(f"Episode {n} (2009 Anime)" for n in range(1, 65))),
+            CategorySource("chapter", "Chapters", exclude_titles=NOT_ARTICLES + r"|^chapters and volumes"),
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Alchemy", include_subcategories=True),
+            CategorySource("object", "Items", include_subcategories=True),
+            CategorySource("location", "Locations", include_subcategories=True),
+            CategorySource("arc", "Story Arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + r"|\(2003|live action"),
         ),
     ),
 }

@@ -5,6 +5,7 @@ that logic changes we rebuild from these files instead of downloading again.
 """
 
 import asyncio
+import re
 from dataclasses import replace
 from datetime import datetime, timezone
 
@@ -44,10 +45,13 @@ class CollectService:
         for source in series.categories:
             if kinds and source.kind not in kinds:
                 continue
-            titles = await self._wiki.category_pages(series.wiki_host, source.category, source.include_subcategories)
+            titles = list(source.titles) or await self._wiki.category_pages(
+                series.wiki_host, source.category, source.include_subcategories)
             # A page in two kinds' categories (Attack on Titan: "Eren Yeager" is in Characters and
             # Titans) is kept once, under the first kind listed in SERIES, not indexed twice.
             titles = [t for t in titles if claimed.setdefault(t, source.kind) == source.kind]
+            if source.exclude_titles:
+                titles = [t for t in titles if not re.search(source.exclude_titles, t, re.I)]
             # A kind may come from several categories (Death Note: manga + anime characters):
             # counts add up, and a page already saved (from another category) is not fetched twice.
             report.listed[source.kind] = report.listed.get(source.kind, 0) + len(titles)

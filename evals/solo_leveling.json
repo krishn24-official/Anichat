@@ -1,0 +1,14 @@
+[
+  {"question": "Who is Sung Jinwoo?", "expect": ["Sung Jinwoo"], "answer_contains": ["hunter", "shadow monarch", "e-rank"]},
+  {"question": "Who is the Shadow Monarch?", "expect": ["Sung Jinwoo", "Ashborn", "Monarchs"], "answer_contains": ["ashborn", "jinwoo"]},
+  {"question": "Who is Igris?", "expect": ["Igris"], "answer_contains": ["shadow", "knight"]},
+  {"question": "Who is Beru?", "expect": ["Beru"], "answer_contains": ["ant king", "shadow"]},
+  {"question": "Who is Antares?", "expect": ["Antares"], "answer_contains": ["dragon", "monarch", "destruction"]},
+  {"question": "What is the System?", "expect": ["System"], "answer_contains": ["jinwoo", "quest", "level", "player"]},
+  {"question": "What is Shadow Extraction?", "expect": ["Shadow Extraction"], "answer_contains": ["shadow", "soldier", "dead"]},
+  {"question": "Who is Cha Hae-In?", "expect": ["Cha Hae-In"], "answer_contains": ["s-rank", "hunter", "guild"]},
+  {"question": "Who is Thomas Andre?", "expect": ["Thomas Andre"], "answer_contains": ["national level", "american", "scavenger"]},
+  {"question": "What happens in the Jeju Island Arc?", "expect": ["Jeju Island Arc"], "answer_contains": ["ant", "jeju"]},
+  {"question": "Who is Jinwoo's father?", "expect": ["Sung Il-Hwan", "Sung Jinwoo"], "answer_contains": ["il-hwan", "ilhwan"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["dungeon", "jinwoo", "hunter"]}
+]

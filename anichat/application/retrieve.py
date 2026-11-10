@@ -59,14 +59,27 @@ class RetrievalService:
         self._reranker = reranker  # None = hybrid search order only
         self._candidates = candidates
         self._phrase_indexes: dict = {}  # per search scope (series id or ids), built on first use
+        self._cards: list[Chunk] | None = None  # every profile card, read from the index once
+
+    def warm_up(self) -> None:
+        """Read all profile cards now (~20 s for 25k cards) instead of during the first question.
+
+        Called by: interfaces/api.py on startup; _phrases() if not called before
+        """
+        if self._cards is None:
+            self._cards = self._index.profile_cards(None)
 
     def _phrases(self, series: str | tuple[str, ...] | None) -> dict:
-        """The name/alias/title -> profile card table for a series (built once from the index).
+        """The name/alias/title -> profile card table for a series, built (once per scope) from
+        the cards read by warm_up().
 
         Called by: retrieve()
         """
         if series not in self._phrase_indexes:
-            self._phrase_indexes[series] = build_phrase_index(self._index.profile_cards(series))
+            self.warm_up()
+            wanted = {series} if isinstance(series, str) else set(series or ())
+            cards = [c for c in self._cards if not wanted or c.series in wanted]
+            self._phrase_indexes[series] = build_phrase_index(cards)
         return self._phrase_indexes[series]
 
     def retrieve(self, question: str, series: str | None = None, limit: int = 5) -> Retrieval:

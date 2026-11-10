@@ -5,6 +5,7 @@ Qdrant Cloud when hosted:  QdrantIndex(url="https://...", api_key="...")
 Everything else stays the same.
 """
 
+import time
 import uuid
 from dataclasses import asdict
 
@@ -16,7 +17,8 @@ from anichat.domain.ports import Embedded, SearchHit
 COLLECTION = "anichat"
 DENSE = "dense"  # named vectors inside each point
 SPARSE = "bm25"
-UPSERT_BATCH = 256
+UPSERT_BATCH = 128
+UPSERT_RETRIES = 5  # a busy server (optimizing after a big upload) can time out a batch
 FUSION_CANDIDATES = 30  # per vector type, before fusing
 
 
@@ -92,8 +94,23 @@ class QdrantIndex:
             for c, v in zip(chunks, vectors)
         ]
         for i in range(0, len(points), UPSERT_BATCH):
-            self._client.upsert(COLLECTION, points=points[i:i + UPSERT_BATCH])
+            self._upsert(points[i:i + UPSERT_BATCH])
         return len(points)
+
+    def _upsert(self, points: list) -> None:
+        """Store one batch, retrying with a growing pause when the server times out (it may be
+        busy optimizing segments after a large upload). Upserting the same ids twice is harmless.
+
+        Called by: replace_series()
+        """
+        for attempt in range(UPSERT_RETRIES):
+            try:
+                self._client.upsert(COLLECTION, points=points)
+                return
+            except Exception:  # timeouts surface as ResponseHandlingException / httpx errors
+                if attempt == UPSERT_RETRIES - 1:
+                    raise
+                time.sleep(15 * (attempt + 1))
 
     def count(self, series: str | None = None) -> int:
         """Number of stored chunks (of one series, or all).

@@ -1,0 +1,9 @@
+[
+  {"question": "Who is Loid Forger?", "expect": ["Loid Forger"], "answer_contains": ["twilight", "spy", "wise"]},
+  {"question": "Who is Yor Forger?", "expect": ["Yor Forger"], "answer_contains": ["assassin", "thorn princess", "garden"]},
+  {"question": "Who is Anya Forger?", "expect": ["Anya Forger"], "answer_contains": ["telepath", "mind", "eden"]},
+  {"question": "What is Operation Strix?", "expect": ["Operation Strix"], "answer_contains": ["desmond", "eden", "mission"]},
+  {"question": "Who is Bond Forger?", "expect": ["Bond Forger"], "answer_contains": ["dog", "future", "precognit"]},
+  {"question": "What is Eden Academy?", "expect": ["Eden Academy"], "answer_contains": ["school", "elite", "imperial scholar"]},
+  {"question": "What happens in episode 1?", "expect": ["Episode 1"], "answer_contains": ["loid", "anya", "adopt", "twilight"]}
+]

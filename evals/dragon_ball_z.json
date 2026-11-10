@@ -1,0 +1,7 @@
+[
+  {"question": "Who killed Cell?", "expect": ["Cell", "Gohan"], "answer_contains": ["gohan"]},
+  {"question": "Who is Raditz?", "expect": ["Raditz"], "answer_contains": ["brother", "saiyan"]},
+  {"question": "What are the Cell Games?", "expect": ["Cell Games", "Cell Games Saga", "Cell"], "answer_contains": ["tournament", "cell", "gohan"]},
+  {"question": "Who is Vegeta?", "expect": ["Vegeta"], "answer_contains": ["prince", "saiyan"]},
+  {"question": "What happens in episode 1?", "expect": ["The New Threat"], "answer_contains": ["raditz", "goku", "gohan"]}
+]

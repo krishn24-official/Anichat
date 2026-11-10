@@ -76,3 +76,11 @@ def test_a_qualified_title_does_not_beat_the_main_holder_of_a_name():
     obito = replace(card("Obito Uchiha", "Obito Uchiha was a shinobi.\nAlias: Tobi; Masked Man"), importance=120)
     zetsu = replace(card("Tobi (Zetsu)", "Tobi was a White Zetsu."), importance=15)
     assert lookup("Who is Tobi?", build_phrase_index([obito, zetsu]), limit=1)[0].title == "Obito Uchiha"
+
+
+def test_a_name_shared_by_many_pages_still_finds_the_page_titled_by_it():
+    cells = [card(t, f"{t} is a Bio-Android.") for t in ("Cell", "Cell Jr", "Cell Max", "Perfect Cell",
+                                                         "Imperfect Cell", "Super Cell")]
+    index = build_phrase_index(cells)
+    assert [c.title for c in index["cell"]] == ["Cell"]
+    assert [c.title for c in lookup("Who killed Cell?", index)][0] == "Cell"

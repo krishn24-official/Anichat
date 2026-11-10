@@ -45,7 +45,14 @@ def chat_model() -> FallbackChatModel:
 
 
 @lru_cache(maxsize=None)
+def retrieval_service() -> RetrievalService:
+    """Stage 5 retrieval (no reranker: see application/retrieve.py), shared by everything.
+    Called by: answer_service(); interfaces/api.py on startup (warm_up)"""
+    return RetrievalService(FastEmbedEmbedder(), index())
+
+
+@lru_cache(maxsize=None)
 def answer_service() -> AnswerService:
-    """Retrieval (stage 5, no reranker: see application/retrieve.py) + the chat model.
+    """Retrieval + the chat model.
     Called by: interfaces/api.py, scripts/chat.py"""
-    return AnswerService(RetrievalService(FastEmbedEmbedder(), index()), chat_model())
+    return AnswerService(retrieval_service(), chat_model())

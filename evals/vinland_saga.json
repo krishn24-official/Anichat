@@ -1,0 +1,14 @@
+[
+  {"question": "Who is Thorfinn?", "expect": ["Thorfinn"], "answer_contains": ["thors", "askeladd", "son"]},
+  {"question": "Who is Askeladd?", "expect": ["Askeladd"], "answer_contains": ["band", "leader", "mercenar", "viking"]},
+  {"question": "Who killed Thors?", "expect": ["Thors Snorresson", "Askeladd"], "answer_contains": ["askeladd"]},
+  {"question": "Who killed Askeladd?", "expect": ["Askeladd", "Canute", "Thorfinn"], "answer_contains": ["thorfinn", "canute"]},
+  {"question": "Who is Canute?", "expect": ["Canute"], "answer_contains": ["prince", "king"]},
+  {"question": "Who is Thorkell?", "expect": ["Thorkell"], "answer_contains": ["jomsviking", "giant", "uncle", "warrior"]},
+  {"question": "Who is Einar?", "expect": ["Einar"], "answer_contains": ["slave", "farm", "thorfinn"]},
+  {"question": "What is Vinland?", "expect": ["Vinland"], "answer_contains": ["land", "america", "west"]},
+  {"question": "Who is Leif Ericson?", "expect": ["Leif Ericson"], "answer_contains": ["explorer", "vinland", "thors"]},
+  {"question": "What is the Slave Arc?", "expect": ["Slave Arc"], "answer_contains": ["ketil", "farm", "einar", "slave"]},
+  {"question": "What happens in episode 24?", "expect": ["Episode 24"], "answer_contains": ["askeladd", "canute"]},
+  {"question": "What happens in chapter 1?", "expect": ["Chapter 1"], "answer_contains": ["thorfinn", "askeladd", "normanni"]}
+]

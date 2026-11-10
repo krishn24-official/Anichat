@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import httpx
 
 from anichat.domain.entities import RawPage
+from anichat.domain.series import ALL_ARTICLES
 
 USER_AGENT = "AniChat/0.1 (personal, non-commercial anime knowledge project)"
 CONCURRENCY = 4  # simultaneous requests per run
@@ -77,11 +78,28 @@ class FandomClient:
 
         Called by: application/collect.py  CollectService.collect()
         """
+        if category == ALL_ARTICLES:
+            return await self._all_articles(host)
         titles = await self._members(host, category, "page")
         if include_subcategories:
             for sub in await self._members(host, category, "subcat"):
                 titles += await self._members(host, sub.removeprefix("Category:"), "page")
         return list(dict.fromkeys(titles))
+
+    async def _all_articles(self, host: str) -> list[str]:
+        """Every article of the wiki (main namespace, redirects excluded). Small wikis leave many
+        pages uncategorised (Solo Leveling: Beru, Antares), so they are collected this way.
+
+        Called by: category_pages() for the ALL_ARTICLES category
+        """
+        titles, cont = [], {}
+        while True:
+            data = await self._api(host, {"action": "query", "list": "allpages", "apnamespace": 0,
+                                          "apfilterredir": "nonredirects", "aplimit": 500, **cont})
+            titles += [p["title"] for p in data.get("query", {}).get("allpages", [])]
+            if "continue" not in data:
+                return titles
+            cont = data["continue"]
 
     async def redirects_to(self, host: str, titles: list[str]) -> dict[str, list[str]]:
         """Redirect titles pointing at each page, 50 pages per request ("Nagato" -> ["Pain",

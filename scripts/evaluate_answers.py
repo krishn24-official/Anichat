@@ -16,6 +16,7 @@ minute. Full results are saved to data/evals/ for review.
 
 import argparse
 import json
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -44,6 +45,7 @@ def score(case: dict, answer, retrieved_titles: list[str]) -> dict:
     Called by: main()
     """
     text = answer.text.lower().replace("’", "'")  # models often write "don’t" with a curly apostrophe
+    text = re.sub("[‐-―−]", "-", text)  # and "Il‑Hwan" with a non-breaking hyphen
     return {
         "question": case["question"],
         "found": any(is_expected(t, case["expect"]) for t in retrieved_titles),

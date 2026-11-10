@@ -98,6 +98,24 @@ python -m scripts.chat                               # interactive
 uvicorn anichat.interfaces.api:app --reload          # API: open http://127.0.0.1:8000/docs
 ```
 
+API endpoints: `GET /health`, `GET /series` (indexed series, for the picker; restart the API after
+indexing a new series), `POST /chat` (`{"question": ..., "series": optional id}` -> answer, cited
+sources, model, timings). Browser origins allowed by CORS come from `CORS_ORIGINS` in `.env`
+(default: the Vite dev server). On startup the API loads the embedding models and every profile
+card (~1-2 min with ~150k chunks); after that a question takes ~1 s to retrieve plus the model's time.
+
+## Frontend
+
+A standalone chat UI in `frontend/` (React + Vite + TypeScript + Tailwind). With the API running:
+
+```
+cd frontend
+npm install
+npm run dev            # http://localhost:5173
+```
+
+See `frontend/README.md`.
+
 ## Data source and license
 
 Wiki content comes from fandom wikis (CC BY-SA 3.0). Every collected page keeps its

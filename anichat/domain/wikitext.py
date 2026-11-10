@@ -59,7 +59,7 @@ def _strip_noise(text: str) -> str:
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     text = re.sub(r"<ref[^>]*/>|<ref[^>]*>.*?</ref>", "", text, flags=re.S | re.I)
     text = re.sub(r"<(gallery|imagemap)[^>]*>.*?</\1>", "", text, flags=re.S | re.I)  # media blocks
-    text = re.sub(r"<tabber>(.*?)</tabber>", _tab_labels, text, flags=re.S | re.I)
+    text = re.sub(r"<tabber[^>]*>(.*?)</tabber>", _tab_labels, text, flags=re.S | re.I)  # <tabber widths="400">
     return re.sub(r"__[A-Z]+__", "", text)
 
 
@@ -69,7 +69,8 @@ def _tab_labels(m: re.Match) -> str:
 
     Called by: _strip_noise() (as the re.sub replacement for each <tabber> block)
     """
-    body = re.sub(r"(?:^|\|-\|)\s*([^=\n|{}\[\]]{1,40}?)\s*=", r"\n**\1**\n", m.group(1), flags=re.M)
+    # Labels never contain markup: in '<p style="...">' the "=" is an HTML attribute, not a tab.
+    body = re.sub(r"(?:^|\|-\|)\s*([^=\n|{}\[\]<>]{1,40}?)\s*=", r"\n**\1**\n", m.group(1), flags=re.M)
     return "\n" + body + "\n"
 
 
@@ -177,28 +178,44 @@ def _render_templates(text: str, infobox: dict[str, str]) -> str:
     return re.sub(r"(?<!\{)\{[^{}\n]{1,200}\}\}", "", text)
 
 
-def _convert_tables(text: str) -> str:
+def _convert_tables(text: str, infobox: dict[str, str] | None = None) -> str:
     """{| wikitable |} -> one line per row, cells separated by " | ".
+    A table at the very top of a page without an infobox template, made of "label | value"
+    rows, is the page's infobox written by hand (Solo Leveling chapters): its rows become facts.
 
     Called by: parse_page()
     """
     def convert(m: re.Match) -> str:
-        rows, current = [], []
-        for line in m.group(1).splitlines():
-            line = line.strip()
-            if line.startswith("|-") or line.startswith("|+"):
-                if current:
-                    rows.append(current)
-                current = []
-            elif line.startswith(("|", "!")):
-                cells = re.split(r"\|\||!!", line[1:])
-                # "style=... | value": keep what follows the attribute part
-                current += [c.split("|")[-1].strip() for c in cells if c.strip()]
-        if current:
-            rows.append(current)
+        rows = _table_rows(m.group(1))
+        pairs = [r for r in rows if len(r) == 2]
+        at_top = not text[:m.start()].strip()
+        if infobox is not None and not infobox and at_top and len(pairs) >= 3 and len(pairs) >= len(rows) - 1:
+            for label, value in pairs:
+                key, value = _plain(label).lower(), _plain(value)
+                if key not in SKIP_FACTS and value:
+                    infobox[key] = value
+            return ""
         return "\n" + "\n".join("- " + " | ".join(r) for r in rows if any(r)) + "\n"
 
     return re.sub(r"\{\|.*?\n(.*?)\n\|\}", convert, text, flags=re.S)
+
+
+def _table_rows(body: str) -> list[list[str]]:
+    """Cells of each row of a wikitable body. Called by: _convert_tables()"""
+    rows, current = [], []
+    for line in body.splitlines():
+        line = line.strip()
+        if line.startswith("|-") or line.startswith("|+"):
+            if current:
+                rows.append(current)
+            current = []
+        elif line.startswith(("|", "!")):
+            cells = re.split(r"\|\||!!", line[1:])
+            # "style=... | value": keep what follows the attribute part
+            current += [c.split("|")[-1].strip() for c in cells if c.strip()]
+    if current:
+        rows.append(current)
+    return rows
 
 
 def _plain(text: str) -> str:
@@ -210,6 +227,8 @@ def _plain(text: str) -> str:
     text = re.sub(r"<br\s*/?>", "; ", text, flags=re.I)
     text = re.sub(r"'{2,}", "", text)
     text = re.sub(r"<[^>]+>", "", text)
+    # Links broken in the source ("[[Woble Hui Guo Rou|Woble]", "[[Kite#Gender"): keep the label.
+    text = re.sub(r"\[\[(?:[^\[\]|]*\|)?", "", text).replace("]]", "")
     text = re.sub(r"[ \t]+", " ", text)
     return text.strip(" ;\n")
 
@@ -241,18 +260,20 @@ def _finish(text: str) -> str:
     return text.strip()
 
 
-def parse_page(wikitext: str) -> ParsedPage:
+def parse_page(wikitext: str, title: str = "") -> ParsedPage:
     """Clean a page and split it into infobox facts, lead text and sections.
     Media, navigation and citation sections are dropped.
 
     Called by: domain/documents.py  build_document()
     """
     page = ParsedPage()
+    # Magic words for the page's own name ("'''{{PAGENAME}}''' is the main protagonist").
+    wikitext = re.sub(r"\{\{\s*(?:BASE)?PAGENAMEE?\s*\}\}", title.split(" (")[0], wikitext)
     text = _strip_noise(wikitext)
     text = _remove_file_links(text)
     text = _resolve_links(text, page.mentions)
     text = _render_templates(text, page.infobox)
-    text = _convert_tables(text)
+    text = _convert_tables(text, page.infobox)
 
     headings = list(_HEADING.finditer(text))
     page.lead = _finish(text[: headings[0].start()] if headings else text)
