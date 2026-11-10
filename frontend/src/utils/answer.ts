@@ -12,6 +12,15 @@ export type Block = { kind: 'paragraph'; text: string } | { kind: 'list'; items:
 
 const CITATIONS = /((?:\[\d+(?:\s*,\s*\d+)*\])+)/ // "[2]", "[2][3]", "[2, 3]"
 const BOLD = /\*\*([^*]+)\*\*/
+const ALT_CITATION = /【(\d+)(?:†[^】]*)?】/g // gpt-oss on Groq cites as 【1】 or 【1†L3-L5】
+
+/**
+ * Rewrite other citation styles as [n]. The API does this for finished answers; streamed
+ * text arrives raw. Called by: parseBlocks()
+ */
+export function normalizeCitations(text: string): string {
+  return text.replace(ALT_CITATION, '[$1]')
+}
 
 /**
  * Split an answer into paragraphs and bullet lists ("- item" / "* item" lines).
@@ -19,7 +28,7 @@ const BOLD = /\*\*([^*]+)\*\*/
  */
 export function parseBlocks(text: string): Block[] {
   const blocks: Block[] = []
-  for (const chunk of text.trim().split(/\n\s*\n/)) {
+  for (const chunk of normalizeCitations(text).trim().split(/\n\s*\n/)) {
     const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean)
     if (lines.length && lines.every((l) => /^[-*•]\s+/.test(l))) {
       blocks.push({ kind: 'list', items: lines.map((l) => l.replace(/^[-*•]\s+/, '')) })

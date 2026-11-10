@@ -8,6 +8,7 @@ import sys
 
 from anichat import container
 from anichat.application.answer import Answer
+from anichat.domain.conversation import Turn
 
 
 def show(answer: Answer) -> None:
@@ -33,8 +34,11 @@ def main(question: str | None) -> None:
         if question:
             show(service.answer(question))
             return
+        history: list[Turn] = []  # the conversation so far: follow-ups ("who is his brother?") work
         while (q := input("You: ").strip()):
-            show(service.answer(q))
+            answer = service.answer(q, history=history)
+            show(answer)
+            history.append(Turn(q, answer.text))
     finally:
         container.index().close()
 

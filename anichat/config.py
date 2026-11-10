@@ -28,3 +28,10 @@ LLM_PROVIDERS = [p.strip() for p in os.getenv("LLM_PROVIDERS", "gemini,groq").sp
 # by default. In production, set it to the deployed frontend URL(s).
 CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
                 if o.strip()]
+
+# Chat questions allowed per visitor (IP address); 0 = no limit. Protects the free model quotas.
+CHAT_PER_MINUTE = int(os.getenv("CHAT_PER_MINUTE", "10"))
+CHAT_PER_DAY = int(os.getenv("CHAT_PER_DAY", "200"))
+# Behind a hosting proxy (Render, Fly, Railway...) the visitor's IP is in X-Forwarded-For.
+# Only enable when deployed behind one: otherwise anyone could fake the header.
+TRUST_PROXY = os.getenv("TRUST_PROXY", "0").lower() in ("1", "true", "yes")

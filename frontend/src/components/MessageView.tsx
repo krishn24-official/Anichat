@@ -9,7 +9,11 @@ interface Props {
   onRetry: (id: string) => void
 }
 
-/** One message: the user's question, an answer with sources, or an error with a retry. Called by: App.tsx */
+/**
+ * One message: the user's question, an answer with sources (a cursor while it is being
+ * written), or an error with a retry.
+ * Called by: App.tsx
+ */
 export function MessageView({ message, seriesTitle, onRetry }: Props) {
   if (message.role === 'user') {
     const scope = seriesTitle(message.series)
@@ -32,13 +36,20 @@ export function MessageView({ message, seriesTitle, onRetry }: Props) {
     )
   }
   return (
-    <article className="rounded-2xl rounded-bl-md border border-line bg-panel px-4 py-3.5">
+    <article aria-busy={message.streaming ?? false} className="rounded-2xl rounded-bl-md border border-line bg-panel px-4 py-3.5">
       <AnswerText text={message.text} sources={message.sources} answerId={message.id} />
-      <SourceList sources={message.sources} answerId={message.id} />
-      <p className="mt-2 text-[0.7rem] text-muted">
-        {message.model ? `${message.model} · ` : ''}
-        {message.seconds.toFixed(1)} s
-      </p>
+      {message.streaming ? (
+        <span aria-hidden className="cursor ml-0.5 inline-block h-4 w-1.5 translate-y-0.5 rounded-sm bg-accent" />
+      ) : (
+        <>
+          <SourceList sources={message.sources} answerId={message.id} />
+          <p className="mt-2 text-[0.7rem] text-muted">
+            {message.stopped ? 'Stopped · ' : ''}
+            {message.model ? `${message.model} · ` : ''}
+            {message.seconds.toFixed(1)} s
+          </p>
+        </>
+      )}
     </article>
   )
 }

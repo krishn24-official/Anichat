@@ -12,8 +12,9 @@ class FakeAnswers:
     def __init__(self):
         self.asked = []
 
-    def answer(self, question, series=None):
+    def answer(self, question, series=None, history=()):
         self.asked.append((question, series))
+        self.history = list(history)
         return Answer(question, "Rengoku died fighting Akaza [1].",
                       [Source((1,), "Kyojuro Rengoku", "Death", "https://example/wiki/Rengoku")],
                       "gemini:gemini-2.5-flash", {"retrieve": 0.21234, "generate": 1.5})
@@ -62,3 +63,12 @@ def test_cors_allows_the_frontend_origin(monkeypatch):
     http, _ = client(monkeypatch)
     r = http.options("/chat", headers={"Origin": "http://localhost:5173", "Access-Control-Request-Method": "POST"})
     assert r.headers.get("access-control-allow-origin") == "http://localhost:5173"
+
+
+def test_chat_passes_the_conversation_history(monkeypatch):
+    http, answers = client(monkeypatch)
+    history = [{"question": "Who is Akaza?", "answer": "Upper Rank Three [1]."}]
+    assert http.post("/chat", json={"question": "Who killed him?", "history": history}).status_code == 200
+    assert [(t.question, t.answer) for t in answers.history] == [("Who is Akaza?", "Upper Rank Three [1].")]
+    too_long = [{"question": "q", "answer": "a"}] * 21
+    assert http.post("/chat", json={"question": "Who killed him?", "history": too_long}).status_code == 422

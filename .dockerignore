@@ -1,0 +1,12 @@
+# Only requirements.txt and anichat/ are copied into the image; keep the build context small.
+.venv/
+.env
+data/
+models/
+frontend/
+tests/
+evals/
+scripts/
+**/__pycache__/
+.pytest_cache/
+.git/

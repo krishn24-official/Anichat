@@ -31,7 +31,7 @@ class FakeRetrieval:
     def __init__(self, chunks):
         self.chunks = chunks
 
-    def retrieve(self, question, series=None, limit=5):
+    def retrieve(self, question, series=None, limit=5, context=""):
         return Retrieval(question, [RetrievedChunk(c, 1.0, "search") for c in self.chunks], {"total": 0.1})
 
 

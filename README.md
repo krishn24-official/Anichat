@@ -98,11 +98,38 @@ python -m scripts.chat                               # interactive
 uvicorn anichat.interfaces.api:app --reload          # API: open http://127.0.0.1:8000/docs
 ```
 
-API endpoints: `GET /health`, `GET /series` (indexed series, for the picker; restart the API after
-indexing a new series), `POST /chat` (`{"question": ..., "series": optional id}` -> answer, cited
-sources, model, timings). Browser origins allowed by CORS come from `CORS_ORIGINS` in `.env`
-(default: the Vite dev server). On startup the API loads the embedding models and every profile
-card (~1-2 min with ~150k chunks); after that a question takes ~1 s to retrieve plus the model's time.
+The interactive chat remembers the conversation, so follow-ups work ("Who is Raditz?" then
+"Who killed him?").
+
+API endpoints:
+
+| Endpoint | What it does |
+|---|---|
+| `GET /health` | liveness + configured chat models |
+| `GET /series` | indexed series, for the picker (restart the API after indexing a new series) |
+| `POST /chat` | `{"question", "series"?, "history"?}` -> answer, cited sources, model, timings |
+| `POST /chat/stream` | the same as server-sent events: `{"type": "delta", "text"}` while the model writes, then `{"type": "done", ...}` with the cleaned answer and sources |
+
+`history` is the earlier turns, oldest first (`[{"question", "answer"}]`); the API is stateless
+and uses the last 3. A question that refers back ("he", "that", "what about...") is searched
+together with the previous question, and the earlier turns go into the prompt.
+
+Each visitor (IP) may ask `CHAT_PER_MINUTE` (10) and `CHAT_PER_DAY` (200) questions; more get
+HTTP 429 with `Retry-After`. Set `TRUST_PROXY=1` when hosted behind a proxy (Render, Fly...) so the
+visitor's IP is read from `X-Forwarded-For`. Browser origins allowed by CORS come from
+`CORS_ORIGINS` (default: the Vite dev server). On startup the API loads the embedding models and
+every profile card; after that a question takes ~1 s to retrieve plus the model's time.
+
+### Docker
+
+The `Dockerfile` builds the API only (the embedding models are downloaded into the image; ~800 MB):
+
+```
+docker build -t anichat-api .
+docker run --rm -p 8000:8000 --env-file .env -e QDRANT_URL=http://host.docker.internal:6333 anichat-api
+```
+
+It listens on `$PORT` (default 8000), as hosts like Render expect.
 
 ## Frontend
 

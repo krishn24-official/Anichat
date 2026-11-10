@@ -42,7 +42,8 @@ export default function App() {
           ) : (
             <div className="space-y-5 pt-6">
               {messages.map((m) => <MessageView key={m.id} message={m} seriesTitle={seriesTitle} onRetry={retry} />)}
-              {pending && <Thinking />}
+              {/* Until the first words of the answer arrive. */}
+              {pending && messages.at(-1)?.role === 'user' && <Thinking />}
             </div>
           )}
           <div ref={bottom} />

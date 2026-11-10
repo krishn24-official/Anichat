@@ -1,7 +1,7 @@
 """Chat model vocabulary, independent of any provider. Pure Python, no I/O."""
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Iterator, Protocol
 
 
 @dataclass(frozen=True)
@@ -42,4 +42,9 @@ class ChatModel(Protocol):
 
     def complete(self, messages: list[ChatMessage]) -> ModelReply:
         """One answer for the conversation. Raises ModelUnavailable to let another provider try."""
+        ...
+
+    def stream(self, messages: list[ChatMessage]) -> Iterator[str]:
+        """The answer in pieces as the model writes it. Raises ModelUnavailable before the first
+        piece to let another provider try; a failure later raises ModelUnavailable mid-stream."""
         ...

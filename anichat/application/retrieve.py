@@ -82,10 +82,15 @@ class RetrievalService:
             self._phrase_indexes[series] = build_phrase_index(cards)
         return self._phrase_indexes[series]
 
-    def retrieve(self, question: str, series: str | None = None, limit: int = 5) -> Retrieval:
+    def retrieve(self, question: str, series: str | None = None, limit: int = 5, context: str = "") -> Retrieval:
         """The `limit` best chunks for the question (optionally within one series).
 
-        Called by: scripts/ask.py, scripts/evaluate.py; stage 6 (answer generation)
+        `context` is the previous question when this one is a follow-up ("Who is his brother?"
+        after "Who is Goku?"): it is searched together with the question, and its names are
+        looked up when the question names no one. Exact episode/chapter lookups use the
+        question alone ("episode 2" after "episode 1" means episode 2).
+
+        Called by: scripts/ask.py, scripts/evaluate.py; application/answer.py AnswerService.answer()
         """
         timings, started = {}, time.perf_counter()
 
@@ -102,7 +107,8 @@ class RetrievalService:
         #    The exact lookups above stay within `series`: "episode 1" is that series' episode 1.
         scope = search_scope(series)
         t = time.perf_counter()
-        hits = self._index.search(self._embedder.embed_query(question), self._candidates, scope)
+        query = f"{context} {question}".strip()
+        hits = self._index.search(self._embedder.embed_query(query), self._candidates, scope)
         timings["search"] = time.perf_counter() - t
 
         # 3. Rerank.
@@ -131,7 +137,9 @@ class RetrievalService:
         # Only the best matches (longest phrase) are considered: if "Eren Yeager"'s card is already
         # there, the weaker "Yeager" match must not push it out of the last slot.
         present = {c.chunk.id for c in chosen}
-        entities = [c for c in lookup(question, self._phrases(scope))[:ENTITY_SLOTS] if c.id not in present]
+        phrases = self._phrases(scope)
+        named = lookup(question, phrases) or (lookup(context, phrases) if context else [])
+        entities = [c for c in named[:ENTITY_SLOTS] if c.id not in present]
         if entities:
             chosen = chosen[: limit - len(entities)] + [RetrievedChunk(c, 1.0, "entity") for c in entities]
         timings["entity"] = time.perf_counter() - t

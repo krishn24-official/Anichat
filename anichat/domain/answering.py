@@ -9,6 +9,7 @@ import re
 from dataclasses import dataclass
 
 from anichat.domain.chunking import Chunk
+from anichat.domain.conversation import Turn, history_messages
 from anichat.domain.llm import ChatMessage
 
 SYSTEM_PROMPT = """You are AniChat, a friendly anime expert.
@@ -19,6 +20,9 @@ Answer the user's question using ONLY the numbered sources provided. Rules:
 - Be concise: a few sentences, or a short bulleted list for several items.
 - Mention episode or chapter numbers when the sources give them.
 - Plain text only: no tables or headings."""
+# Added when earlier turns are included: they only say who "he"/"that" refers to.
+FOLLOW_UP_RULE = """
+- Earlier messages are only there to tell you what the new question refers to ("he", "that fight"). Facts still come only from the numbered sources of the latest question."""
 
 NO_SOURCES_ANSWER = "I couldn't find anything about that in my knowledge base yet."
 _CITATION = re.compile(r"\[(\d+(?:\s*,\s*\d+)*)\]")
@@ -44,14 +48,15 @@ def normalize_citations(answer: str) -> str:
     return _ALT_CITATION.sub(r"[\1]", answer)
 
 
-def build_messages(question: str, chunks: list[Chunk]) -> list[ChatMessage]:
-    """System rules + the numbered sources + the question.
+def build_messages(question: str, chunks: list[Chunk], history: list[Turn] | None = None) -> list[ChatMessage]:
+    """System rules + earlier turns (if any) + the numbered sources + the question.
 
     Called by: application/answer.py  AnswerService.answer()
     """
     sources = "\n\n".join(f"[{i}] {c.text}" for i, c in enumerate(chunks, 1))
     return [
-        ChatMessage("system", SYSTEM_PROMPT),
+        ChatMessage("system", SYSTEM_PROMPT + (FOLLOW_UP_RULE if history else "")),
+        *history_messages(history or []),
         ChatMessage("user", f"Sources:\n\n{sources}\n\nQuestion: {question}"),
     ]
 

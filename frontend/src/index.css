@@ -56,3 +56,6 @@ body {
 .dot:nth-child(2) { animation-delay: 0.2s; }
 .dot:nth-child(3) { animation-delay: 0.4s; }
 @media (prefers-reduced-motion: reduce) { .dot { animation: none; opacity: 0.6; } }
+/* The cursor after an answer that is still being written. */
+.cursor { animation: blink 1s infinite both; }
+@media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }

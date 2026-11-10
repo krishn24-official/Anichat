@@ -5,7 +5,9 @@ Both free providers speak this format:
 - Groq:   https://api.groq.com/openai/v1
 """
 
+import json
 import time
+from typing import Iterator
 
 import httpx
 
@@ -77,3 +79,37 @@ class OpenAICompatibleModel:
             raise ModelUnavailable(f"{self.name}: HTTP {r.status_code} {_error_message(r)}", retry_after=_retry_after(r))
         message = (r.json().get("choices") or [{}])[0].get("message") or {}
         return ModelReply(text=(message.get("content") or "").strip(), model=self.name)
+
+    def stream(self, messages: list[ChatMessage]) -> Iterator[str]:
+        """The answer in pieces as it is generated (the provider's server-sent events).
+        Failing before the first piece raises ModelUnavailable, so the fallback can try another
+        provider; a dropped connection later raises it mid-stream.
+
+        Called by: application/llm_fallback.py  FallbackChatModel.stream()
+        """
+        if not self._key:
+            raise ModelUnavailable(f"{self.name}: no API key in .env")
+        body = {"model": self._model, "stream": True,
+                "messages": [{"role": m.role, "content": m.content} for m in messages]}
+        headers = {"Authorization": f"Bearer {self._key}"}
+        try:
+            with httpx.Client(timeout=self._timeout) as http, http.stream("POST", self._url, json=body,
+                                                                          headers=headers) as r:
+                if r.status_code != 200:
+                    r.read()
+                    raise ModelUnavailable(f"{self.name}: HTTP {r.status_code} {_error_message(r)}",
+                                           retry_after=_retry_after(r))
+                for line in r.iter_lines():
+                    if not line.startswith("data:"):
+                        continue
+                    data = line[5:].strip()
+                    if data == "[DONE]":
+                        break
+                    try:
+                        delta = (json.loads(data).get("choices") or [{}])[0].get("delta") or {}
+                    except (ValueError, AttributeError):
+                        continue  # a keep-alive or malformed event: skip it
+                    if delta.get("content"):
+                        yield delta["content"]
+        except httpx.HTTPError as e:
+            raise ModelUnavailable(f"{self.name}: {e}") from e

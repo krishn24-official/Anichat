@@ -16,6 +16,12 @@ export interface Source {
   url: string
 }
 
+/** An earlier question and its answer, sent with a new question (follow-ups). */
+export interface Turn {
+  question: string
+  answer: string
+}
+
 /** POST /chat response. */
 export interface ChatResponse {
   answer: string
@@ -24,8 +30,20 @@ export interface ChatResponse {
   timings: Record<string, number> // seconds: retrieve, generate
 }
 
+/** One server-sent event of POST /chat/stream: a piece of text, or the finished answer. */
+export type StreamEvent = { type: 'delta'; text: string } | ({ type: 'done' } & ChatResponse)
+
 /** One message in the conversation. */
 export type Message =
   | { id: string; role: 'user'; text: string; series: string | null }
-  | { id: string; role: 'assistant'; text: string; sources: Source[]; model: string | null; seconds: number }
+  | {
+      id: string
+      role: 'assistant'
+      text: string
+      sources: Source[]
+      model: string | null
+      seconds: number
+      streaming?: boolean // still being written
+      stopped?: boolean // the user pressed stop: the text is incomplete
+    }
   | { id: string; role: 'error'; text: string; question: string; series: string | null }

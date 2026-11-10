@@ -2,7 +2,8 @@
 
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Callable
+from itertools import chain
+from typing import Callable, Iterator
 
 from anichat.domain.llm import ChatMessage, ChatModel, ModelReply, ModelUnavailable
 
@@ -47,4 +48,27 @@ class FallbackChatModel:
             except ModelUnavailable as e:
                 logger.warning("model %s unavailable, trying the next: %s", model.name, e)
                 self._cooling[model.name] = now + (timedelta(seconds=e.retry_after) if e.retry_after else COOLDOWN)
+        raise AllModelsUnavailable("no chat model available")
+
+    def stream(self, messages: list[ChatMessage]) -> tuple[str, Iterator[str]]:
+        """(model name, the answer in pieces) from the first model that starts answering.
+        A provider is only switched before its first piece: once text was shown, a failure
+        is the caller's to report.
+
+        Called by: application/answer.py  AnswerService.stream()
+        """
+        now = self._clock()
+        ready = [m for m in self._models if self._cooling.get(m.name, now) <= now]
+        for model in ready or self._models:
+            pieces = model.stream(messages)
+            try:
+                first = next(pieces)
+            except StopIteration:
+                first = ""  # an empty answer: still this model's answer
+            except ModelUnavailable as e:
+                logger.warning("model %s unavailable, trying the next: %s", model.name, e)
+                self._cooling[model.name] = now + (timedelta(seconds=e.retry_after) if e.retry_after else COOLDOWN)
+                continue
+            self._cooling.pop(model.name, None)
+            return model.name, chain([first], pieces)
         raise AllModelsUnavailable("no chat model available")

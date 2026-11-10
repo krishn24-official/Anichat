@@ -26,4 +26,8 @@ describe('parseBlocks', () => {
       { kind: 'list', items: ['Near [1]', 'Mello [2]'] },
     ])
   })
+
+  it('reads streamed 【1】 citations as [1]', () => {
+    expect(parseBlocks('Piccolo【1】【7†L3-L5】.')).toEqual([{ kind: 'paragraph', text: 'Piccolo[1][7].' }])
+  })
 })
