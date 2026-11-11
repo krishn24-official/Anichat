@@ -3,7 +3,7 @@ import { type FormEvent, type ReactNode, useState } from 'react'
 import { type Field, formatValue, parseDayRows } from '../../api/_records'
 import { AdminError, deleteRecord, getHistory, type MovieRecord, saveRecord } from './adminApi'
 import { type DayRowText, type EditorState, fromEditor, move, parseCastLines, rowsTotal, toEditor } from './recordForm'
-import { card, inputClass, labelClass, type Notice, primaryButton, secondaryButton } from './ui'
+import { card, inputBox, inputClass, labelClass, type Notice, primaryButton, secondaryButton } from './ui'
 
 interface Props {
   password: string
@@ -56,10 +56,10 @@ function DayRows({ field, rows, onChange }: { field: Field; rows: DayRowText[]; 
       <div className="space-y-1.5">
         {rows.map((row, i) => (
           <div key={i} className="flex gap-2">
-            <input aria-label="Day" value={row.label} placeholder={`Day ${i + 1}`} className={`${inputClass} w-1/2`}
+            <input aria-label="Day" value={row.label} placeholder={`Day ${i + 1}`} className={`${inputBox} w-1/2 min-w-0`}
                    onChange={(e) => onChange(rows.map((r, j) => (j === i ? { ...r, label: e.target.value } : r)))} />
             <input aria-label={`Amount in ${field.unit || field.currency}`} value={row.value} inputMode="decimal"
-                   placeholder={field.unit || '0'} className={`${inputClass} flex-1`}
+                   placeholder={field.unit || '0'} className={`${inputBox} min-w-0 flex-1`}
                    onChange={(e) => onChange(rows.map((r, j) => (j === i ? { ...r, value: e.target.value } : r)))} />
             <button type="button" aria-label="Remove row" onClick={() => onChange(rows.filter((_, j) => j !== i))}
                     className="px-1 text-muted hover:text-text"><X size={16} /></button>
@@ -197,9 +197,9 @@ export function MovieEditor({ password, fields, record, baseVersion, onSaved, on
             {state.cast.map((c, i) => (
               <div key={i} className={`flex items-center gap-1.5 ${i === 5 ? 'border-b border-dashed border-line pb-1.5' : ''}`}>
                 <span className="w-6 shrink-0 text-right text-xs text-muted">{i + 1}</span>
-                <input aria-label="Actor" value={c.name} placeholder="Actor" className={`${inputClass} w-2/5 py-2`}
+                <input aria-label="Actor" value={c.name} placeholder="Actor" className={`${inputBox} w-2/5 min-w-0 py-2`}
                        onChange={(e) => update({ cast: state.cast.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })} />
-                <input aria-label="Character" value={c.character} placeholder="as character" className={`${inputClass} flex-1 py-2`}
+                <input aria-label="Character" value={c.character} placeholder="as character" className={`${inputBox} min-w-0 flex-1 py-2`}
                        onChange={(e) => update({ cast: state.cast.map((x, j) => (j === i ? { ...x, character: e.target.value } : x)) })} />
                 <button type="button" aria-label="Move up" disabled={i === 0} onClick={() => update({ cast: move(state.cast, i, -1) })}
                         className="text-muted hover:text-text disabled:opacity-30"><ArrowUp size={15} /></button>

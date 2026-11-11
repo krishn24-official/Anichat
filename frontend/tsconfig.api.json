@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "noUnusedLocals": true
   },
-  "include": ["api"]
+  "include": ["api", "dev"]
 }

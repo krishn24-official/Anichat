@@ -39,3 +39,13 @@ describe('movie editor state', () => {
     expect(rowsTotal([{ label: 'Day 1', value: '55.4' }, { label: 'Day 2', value: '1,035.3' }, { label: 'x', value: '?' }])).toBeCloseTo(1090.7)
   })
 })
+
+describe('day-wise rows when saving', () => {
+  it('fix an amount typed into the day box and unnamed rows, keep rows missing an amount', async () => {
+    const { tidyDayRows } = await import('./recordForm')
+    expect(tidyDayRows([{ label: '64.85', value: '' }, { label: ' ', value: ' ' }, { label: '', value: '48.05' },
+      { label: 'Day 3 [1st Sunday]', value: '69.8' }, { label: 'Day 4', value: '' }]))
+      .toEqual([{ label: 'Day 1', value: '64.85' }, { label: 'Day 2', value: '48.05' },
+        { label: 'Day 3 [1st Sunday]', value: '69.8' }, { label: 'Day 4', value: '' }])
+  })
+})

@@ -50,12 +50,31 @@ export function toEditor(r: Partial<MovieRecord>, fields: Field[]): EditorState 
   }
 }
 
+const NUMBER = /^[₹$]?\s*-?[\d,]*\.?\d+\s*(?:cr(?:ore)?)?$/i
+
+/**
+ * Day-wise rows as typed, made whole where the intent is clear: empty rows dropped, an amount
+ * typed into the day box ("64.85" | "") moved to the amount, a row without a day named "Day N".
+ * Rows still missing an amount stay, so the server names them.
+ * Called by: fromEditor(); tests
+ */
+export function tidyDayRows(rows: DayRowText[]): DayRowText[] {
+  return rows
+    .map((r) => ({ label: r.label.trim(), value: r.value.trim() }))
+    .filter((r) => r.label || r.value)
+    .map((r, i) => {
+      if (!r.value && NUMBER.test(r.label)) return { label: `Day ${i + 1}`, value: r.label }
+      if (!r.label) return { label: `Day ${i + 1}`, value: r.value }
+      return r
+    })
+}
+
 /** Editor state as the record to save (the server parses the text). Called by: MovieEditor save */
 export function fromEditor(s: EditorState): Partial<MovieRecord> {
   const values: Record<string, FieldValue> = {}
   for (const [id, v] of Object.entries(s.values)) {
     if (Array.isArray(v)) {
-      const rows = v.filter((r) => r.label.trim() || r.value.trim())
+      const rows = tidyDayRows(v)
       if (rows.length) values[id] = rows as unknown as DayRow[] // values as typed: the server reads the numbers
     } else if (v.trim()) {
       values[id] = v.trim()

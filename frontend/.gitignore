@@ -25,3 +25,6 @@ dist-ssr
 
 # Local settings (copy .env.example)
 .env
+
+# Local admin preview data (dev/adminPreview.ts)
+.preview-store.json

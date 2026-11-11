@@ -5,7 +5,7 @@ import {
   getRecord, listRecords, type MovieRecord, type RecordSummary, searchTmdb, type TmdbHit, tmdbMovie,
 } from './adminApi'
 import { MovieEditor } from './MovieEditor'
-import { card, inputClass, type Notice, primaryButton, secondaryButton } from './ui'
+import { card, inputBox, inputClass, type Notice, primaryButton, secondaryButton } from './ui'
 
 interface Props {
   password: string
@@ -27,6 +27,7 @@ export function MoviesTab({ password, fields, notify }: Props) {
   const [adding, setAdding] = useState(false)
   const [query, setQuery] = useState({ q: '', year: '' })
   const [hits, setHits] = useState<TmdbHit[] | null>(null)
+  const [sample, setSample] = useState(false) // local preview without a TMDb key
   const [busy, setBusy] = useState(false)
 
   /** Reload the list. Called by: first render, after closing the editor */
@@ -43,7 +44,9 @@ export function MoviesTab({ password, fields, notify }: Props) {
     e.preventDefault()
     setBusy(true)
     try {
-      setHits(await searchTmdb(password, query.q, query.year))
+      const found = await searchTmdb(password, query.q, query.year)
+      setHits(found.results)
+      setSample(Boolean(found.sample))
     } catch (err) {
       notify({ kind: 'error', text: (err as Error).message })
     } finally {
@@ -99,14 +102,21 @@ export function MoviesTab({ password, fields, notify }: Props) {
         <div className={`${card} space-y-4`}>
           <form onSubmit={search} className="flex gap-2">
             <input aria-label="Movie name" value={query.q} onChange={(e) => setQuery({ ...query, q: e.target.value })}
-                   placeholder="Movie name" className={inputClass} autoFocus />
+                   placeholder="Movie name" className={`${inputBox} min-w-0 flex-1`} autoFocus />
             <input aria-label="Year" value={query.year} onChange={(e) => setQuery({ ...query, year: e.target.value })}
-                   placeholder="Year" inputMode="numeric" className={`${inputClass} w-24`} />
-            <button type="submit" disabled={busy || !query.q.trim()} className={primaryButton} aria-label="Search TMDb">
+                   placeholder="Year" inputMode="numeric" maxLength={4} className={`${inputBox} w-24 shrink-0`} />
+            <button type="submit" disabled={busy || !query.q.trim()} className={`${primaryButton} shrink-0`} aria-label="Search TMDb">
               <Search size={18} />
             </button>
           </form>
-          {hits && hits.length === 0 && <p className="text-sm text-muted">TMDb found nothing. Check the spelling, or add it by hand.</p>}
+          {sample && (
+            <p className="rounded-lg bg-panel-2 px-3 py-2 text-sm text-muted">
+              Local preview without a TMDb key: only the sample movies <b>Iron Man</b> and <b>Stree 2</b> can be found.
+              Put <code>TMDB_READ_TOKEN</code> in AniChat's <code>.env</code> and restart the preview to search every movie,
+              or add this one by hand.
+            </p>
+          )}
+          {hits && hits.length === 0 && !sample && <p className="text-sm text-muted">TMDb found nothing. Check the spelling, or add it by hand.</p>}
           {hits && hits.length > 0 && (
             <ul className="divide-y divide-line">
               {hits.map((h) => (

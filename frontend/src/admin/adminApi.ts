@@ -81,7 +81,8 @@ export const deleteRecord = (pw: string, id: string) =>
   call(pw, `/api/records?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
 
 /** TMDb through the server. Called by: MoviesTab */
-export const searchTmdb = async (pw: string, q: string, year: string) =>
-  (await call<{ results: TmdbHit[] }>(pw, `/api/tmdb?${new URLSearchParams({ q, year })}`)).results
+/** `sample`: the local preview without a TMDb key, which only knows a few sample movies. */
+export const searchTmdb = (pw: string, q: string, year: string) =>
+  call<{ results: TmdbHit[]; sample?: boolean }>(pw, `/api/tmdb?${new URLSearchParams({ q, year })}`)
 export const tmdbMovie = (pw: string, tmdbId: number) =>
   call<{ record: Partial<MovieRecord>; existing: string | null }>(pw, `/api/tmdb?id=${tmdbId}`)

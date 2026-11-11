@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { call, fakeUpstash } from './_fake'
+import { call, memoryRedis } from './_fake'
 import { parseDayRows, SUGGESTED_FIELDS, slug, tmdbRecord, validateField, validateRecord, type Field } from './_records'
 import * as fieldsApi from './fields'
 import * as recordsApi from './records'
@@ -56,8 +56,14 @@ describe('records', () => {
   it('parse day-wise rows pasted from a box office site', () => {
     expect(parseDayRows('Day\tIndia Net Collection\tChange\nDay 1 [1st Thursday]\t₹ 55.4 Cr\t-\nDay 2 [1st Friday]\t₹ 35.3 Cr\t-36.28%\nTotal\t₹ 90.7 Cr\t'))
       .toEqual([{ label: 'Day 1 [1st Thursday]', value: 55.4 }, { label: 'Day 2 [1st Friday]', value: 35.3 }])
-    expect(parseDayRows('Day 1: ₹ 1,021.5 Cr\nWeek 2 - 41 crore\nnothing here'))
-      .toEqual([{ label: 'Day 1', value: 1021.5 }, { label: 'Week 2', value: 41 }])
+    expect(parseDayRows('Day 1: ₹ 1,021.5 Cr\nWeek 2 - 41 crore\nnothing here\nDay 9 [2nd Friday] ₹ 21 Cr'))
+      .toEqual([{ label: 'Day 1', value: 1021.5 }, { label: 'Week 2', value: 41 }, { label: 'Day 9 [2nd Friday]', value: 21 }])
+    // Each cell on its own line (how some browsers copy a table), with a header and change cells.
+    expect(parseDayRows('Day\nIndia Net Collection\nDay 1 [1st Friday]\n₹ 64.85 Cr\n-\nDay 2 [1st Saturday]\n₹ 48.05 Cr\n-25.9%\nTotal\n₹ 112.9 Cr'))
+      .toEqual([{ label: 'Day 1 [1st Friday]', value: 64.85 }, { label: 'Day 2 [1st Saturday]', value: 48.05 }])
+    // A column of amounts only.
+    expect(parseDayRows('64.85\n48.05\n69.80')).toEqual([{ label: 'Day 1', value: 64.85 }, { label: 'Day 2', value: 48.05 },
+      { label: 'Day 3', value: 69.8 }])
   })
 
   it('come from TMDb with crew, cast and the USD money fields that exist', () => {
@@ -77,7 +83,7 @@ describe('records function', () => {
     vi.stubEnv('ADMIN_PASSWORD', PW)
     vi.stubEnv('KV_REST_API_URL', 'https://fake.upstash.io')
     vi.stubEnv('KV_REST_API_TOKEN', 'token')
-    vi.stubGlobal('fetch', fakeUpstash())
+    vi.stubGlobal('fetch', vi.fn(memoryRedis()))
   })
   afterEach(() => {
     vi.unstubAllEnvs()
@@ -113,5 +119,13 @@ describe('records function', () => {
   it('refuses a value for a field that was never created', async () => {
     const res = await recordsApi.PUT(call('/api/records', 'PUT', PW, { record: { title: 'x', values: { collection: 5 } }, base_version: 0 }))
     expect(res.status).toBe(400)
+  })
+})
+
+describe('day-wise validation', () => {
+  it('names the row that is incomplete', () => {
+    const f: Field = { id: 'd', label: 'India net (day-wise)', type: 'daywise', group: 'Box office', applies_to: ['movie'], order: 0 }
+    expect(validateRecord({ title: 'x', values: { d: [{ label: 'Day 1', value: 5 }, { label: 'Day 2', value: '' as unknown as number }] } }, [f]))
+      .toBe('India net (day-wise): row 2 (Day 2) has no amount. Fill it in or remove the row.')
   })
 })

@@ -176,8 +176,10 @@ function checkValue(field: Field, value: unknown): Checked {
     case 'daywise': {
       if (!Array.isArray(value)) return { error: `${field.label}: expected rows` }
       const rows = value.slice(0, 500).map((r) => ({ label: clean((r as DayRow).label, 60), value: toNumber((r as DayRow).value) }))
-      const bad = rows.find((r) => !r.label || !Number.isFinite(r.value))
-      return bad ? { error: `${field.label}: every row needs a day and a number` } : { value: rows }
+      const i = rows.findIndex((r) => !r.label || !Number.isFinite(r.value))
+      if (i < 0) return { value: rows }
+      const what = rows[i].label ? `row ${i + 1} (${rows[i].label}) has no amount` : `row ${i + 1} has no day`
+      return { error: `${field.label}: ${what}. Fill it in or remove the row.` }
     }
     case 'url': {
       const u = clean(value, 500)
@@ -223,28 +225,51 @@ export function validateRecord(input: Partial<MovieRecord>, fields: Field[]): Om
   }
 }
 
+// An amount alone: "₹ 64.85 Cr", "64.85", "Rs 1,021.5 crore" (not "-36.28%": a change, not an amount).
+const AMOUNT_ONLY = /^(?:₹|rs\.?|inr|\$)?\s*(-?[\d,]*\.?\d+)\s*(?:cr(?:ore)?s?|l(?:akh)?s?|m(?:illion)?)?\.?$/i
+// A label then an amount on one line: "Day 1 [1st Friday] ₹ 21 Cr", "Week 2 - 41 crore".
+const LABEL_THEN_AMOUNT = /^(.*?\D)\s*(?:₹|rs\.?|inr|\$)\s*(-?[\d,]*\.?\d+)\s*(?:cr(?:ore)?s?|l(?:akh)?s?)?\.?$|^(.*?)[\s:\-–|]+(-?[\d,]*\.?\d+)\s*(?:cr(?:ore)?s?|l(?:akh)?s?)\.?$|^(.*?):\s*(-?[\d,]*\.?\d+)$/i
+
 /**
- * Rows pasted from a box office site, one per line: "Day 1 [1st Friday] ₹ 21 Cr" ->
- * {label: "Day 1 [1st Friday]", value: 21}. Lines without a number (headers) are skipped;
- * a "Total" line is skipped (the sum is not a day).
+ * Rows pasted from a box office site, in any of the shapes copying a table gives:
+ *   "Day 1 [1st Friday]\t₹ 64.85 Cr\t-"       one row per line, cells separated by tabs
+ *   "Day 1 [1st Friday] ₹ 64.85 Cr"           one row per line
+ *   "Day 1 [1st Friday]" then "₹ 64.85 Cr"    each cell on its own line
+ *   "64.85" (a column of amounts only)        -> "Day 1", "Day 2"...
+ * Headers, "-" and "+12%" change cells are skipped, and so is a "Total" row (not a day).
  * Called by: the admin form's day-wise editor; tests
  */
 export function parseDayRows(text: string): DayRow[] {
   const rows: DayRow[] = []
-  for (const line of text.split(/\r?\n/)) {
-    const cells = line.split('\t').map((c) => c.trim()).filter(Boolean)
-    // A table copied from a web page: "Day 1 [1st Friday]\t₹ 21 Cr\t-" (label, then the amount).
-    let label = cells.length > 1 ? cells[0] : ''
-    let amountText = cells.length > 1 ? cells[1] : ''
-    if (!label) {
-      const m = line.trim().match(/^(.*?)\s*(?:₹|rs\.?|inr|\$)?\s*(-?[\d,]+(?:\.\d+)?)\s*(?:cr(?:ore)?s?|l(?:akh)?s?)?\b[^\d]*$/i)
-      if (!m) continue
-      label = m[1].replace(/[:\-–|]+$/, '').trim()
-      amountText = m[2]
-    }
+  let pending = '' // a label line still waiting for its amount
+  const add = (label: string, amountText: string) => {
     const value = toNumber(amountText)
-    if (!label || !Number.isFinite(value) || /^total\b/i.test(label)) continue
-    rows.push({ label, value })
+    const name = label.replace(/[:\-–|]+$/, '').trim() || `Day ${rows.length + 1}`
+    if (Number.isFinite(value) && !/^total\b/i.test(name)) rows.push({ label: name, value })
+  }
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim()
+    if (!line || /^[-–—]$/.test(line) || /^[+-]?[\d.,]+\s*%$/.test(line)) continue // empty, "no change", "+12%"
+    const cells = line.split('\t').map((c) => c.trim()).filter(Boolean)
+    if (cells.length > 1) {
+      const amountAt = cells.findIndex((c, i) => i > 0 && AMOUNT_ONLY.test(c))
+      if (amountAt > 0) add(cells.slice(0, amountAt).join(' '), cells[amountAt])
+      pending = ''
+      continue
+    }
+    const alone = line.match(AMOUNT_ONLY)
+    if (alone) {
+      add(pending, alone[1])
+      pending = ''
+      continue
+    }
+    const both = line.match(LABEL_THEN_AMOUNT)
+    if (both) {
+      add(both[1] ?? both[3] ?? both[5] ?? '', both[2] ?? both[4] ?? both[6] ?? '')
+      pending = ''
+      continue
+    }
+    pending = /^total\b/i.test(line) ? 'Total' : line // a label (or a header: replaced by the next label)
   }
   return rows
 }

@@ -4,7 +4,7 @@ import type { Field } from '../../api/_records'
 import { addEntry, deleteEntry, type Entry, listEntries } from './adminApi'
 import { type EntryType, type FormState, emptyForm, problem, toInput } from './form'
 import seriesList from './series.json'
-import { card, inputClass, labelClass, load, type Notice, primaryButton, store } from './ui'
+import { card, inputBox, inputClass, labelClass, load, type Notice, primaryButton, store } from './ui'
 
 const DRAFT_KEY = 'anichat-admin-draft'
 const TYPES: { id: EntryType; label: string }[] = [{ id: 'anime', label: 'Anime' }, { id: 'series', label: 'Series' }, { id: 'other', label: 'Other' }]
@@ -117,12 +117,12 @@ export function EntriesTab({ password, fields, notify }: Props) {
               <div className="space-y-2">
                 {form.facts.map((row, i) => (
                   <div key={i} className="flex gap-2">
-                    <select aria-label="Field" value={row.key} className={`${inputClass} w-2/5`}
+                    <select aria-label="Field" value={row.key} className={`${inputBox} w-2/5 min-w-0`}
                             onChange={(e) => update({ facts: form.facts.map((r, j) => (j === i ? { ...r, key: e.target.value } : r)) })}>
                       <option value="">Field…</option>
                       {usable.map((f) => <option key={f.id} value={f.label}>{f.label}</option>)}
                     </select>
-                    <input aria-label="Value" value={row.value} className={`${inputClass} flex-1`}
+                    <input aria-label="Value" value={row.value} className={`${inputBox} min-w-0 flex-1`}
                            onChange={(e) => update({ facts: form.facts.map((r, j) => (j === i ? { ...r, value: e.target.value } : r)) })} />
                     <button type="button" aria-label="Remove this fact" disabled={form.facts.length === 1}
                             onClick={() => update({ facts: form.facts.filter((_, j) => j !== i) })}

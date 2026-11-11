@@ -5,11 +5,12 @@ Auth: a v4 "API Read Access Token" (TMDB_READ_TOKEN, sent as a Bearer header) or
 (Settings -> API).
 """
 
+import re
 import time
 
 import httpx
 
-API = "https://api.themoviedb.org/3"
+API = "https://api.tmdb.org/3"  # TMDb's alias of api.themoviedb.org, which some Indian ISPs block
 USER_AGENT = "AniChat/0.1 (personal, non-commercial project)"
 RETRIES = 3
 
@@ -22,10 +23,13 @@ class TmdbClient:
     def __init__(self, read_token: str | None = None, api_key: str | None = None):
         if not (read_token or api_key):
             raise ValueError("TMDb needs TMDB_READ_TOKEN or TMDB_API_KEY in .env (free: themoviedb.org -> Settings -> API)")
+        # Either kind works in either setting: a 32-character v3 "API Key" goes as ?api_key=, the
+        # long v4 "Read Access Token" as a Bearer header.
+        given = [v for v in (read_token, api_key) if v]
+        self._key = next((v for v in given if re.fullmatch(r"[0-9a-fA-F]{32}", v)), None)
         headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
-        if read_token:
-            headers["Authorization"] = f"Bearer {read_token}"
-        self._key = None if read_token else api_key
+        if not self._key:
+            headers["Authorization"] = f"Bearer {given[0]}"
         self._http = httpx.Client(timeout=20, headers=headers)
 
     def close(self) -> None:

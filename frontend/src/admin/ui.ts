@@ -1,6 +1,8 @@
 /** Shared look and small helpers of the admin pages. */
 
-export const inputClass = 'w-full rounded-lg border border-line bg-panel px-3 py-2.5 text-base outline-none focus:border-accent'
+/** An input without a width, for rows that size their inputs (w-1/2, flex-1...). */
+export const inputBox = 'rounded-lg border border-line bg-panel px-3 py-2.5 text-base outline-none focus:border-accent'
+export const inputClass = `w-full ${inputBox}`
 export const labelClass = 'mb-1 block text-sm font-medium text-muted'
 export const primaryButton = 'rounded-lg bg-accent px-4 py-2.5 font-medium text-white disabled:opacity-50'
 export const secondaryButton = 'rounded-lg border border-line px-3 py-2 text-sm hover:bg-panel-2 disabled:opacity-50'

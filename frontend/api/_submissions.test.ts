@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { call, fakeUpstash } from './_fake'
+import { call, memoryRedis } from './_fake'
 import { DELETE, GET, POST } from './submissions'
 
 const path = '/api/submissions'
@@ -9,7 +9,7 @@ describe('submissions function', () => {
     vi.stubEnv('ADMIN_PASSWORD', 'secret-pass')
     vi.stubEnv('KV_REST_API_URL', 'https://fake.upstash.io')
     vi.stubEnv('KV_REST_API_TOKEN', 'token')
-    vi.stubGlobal('fetch', fakeUpstash())
+    vi.stubGlobal('fetch', vi.fn(memoryRedis()))
   })
   afterEach(() => {
     vi.unstubAllEnvs()
