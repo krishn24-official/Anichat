@@ -104,7 +104,7 @@ _NARUTO_CHARACTER_FACTS = (("Parent", "parents"), ("Affiliation", "affiliation")
                            ("Species", "species"), ("Status", "status"))
 
 # Pages every wiki has that answer no question about the story (catch-all "page" sources).
-WIKI_NOISE = (r"|^community:|^user:|^board thread:|^volume \d|soundtrack|^blu-ray|popularity poll|"
+WIKI_NOISE = (r"|^community:|^user:|^board thread:| wiki:|^volume \d|soundtrack|^blu-ray|popularity poll|"
               r"^(chapters|episodes|characters|episode guide|episode list|story arcs|locations)$|^chapters and volumes$")
 NOISE_CATEGORIES = ("Music", "Songs", "Video Games", "Games", "Merchandise")
 
@@ -883,5 +883,104 @@ SERIES: dict[str, SeriesSource] = {
             CategorySource("event", "Events", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
             CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES, linked_from="Released Movies"),
         ),
+    ),
+    "yu_yu_hakusho": standard_series("yu_yu_hakusho", "Yu Yu Hakusho", "yuyuhakusho.fandom.com"),
+    # Yashahime (the sequel) has its own "Episode 1 (Hanyō no Yashahime)": left out by the standard rule.
+    "inuyasha": standard_series("inuyasha", "Inuyasha", "inuyasha.fandom.com",
+                                CategorySource("character", "Individuals", exclude_titles=NOT_ARTICLES),  # its "Characters"
+                                skip=r"yashahime"),
+    "mashle": standard_series("mashle", "Mashle: Magic and Muscles", "mashle.fandom.com"),
+    "undead_unluck": standard_series("undead_unluck", "Undead Unluck", "undead-unluck.fandom.com"),
+    "noragami": standard_series("noragami", "Noragami", "noragami.fandom.com", skip=r"^aragoto episode"),
+    "akame_ga_kill": standard_series("akame_ga_kill", "Akame ga Kill!", "akamegakill.fandom.com",
+                                     skip=r"\(zero\)|\(hinowa ga yuku!\)"),
+    "dorohedoro": standard_series("dorohedoro", "Dorohedoro", "dorohedoro.fandom.com"),
+    # JoJo: chapter numbers restart with each Part (infobox "chapter = 1 (114)"), so each Part is a
+    # series with its own chapters, sharing the base series' characters, Stands and episodes.
+    "jojo": SeriesSource(
+        id="jojo",
+        title="JoJo's Bizarre Adventure",
+        wiki_host="jojo.fandom.com",
+        categories=(
+            CategorySource("character", "Characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("stand", "Stands", exclude_titles=NOT_ARTICLES),
+            CategorySource("concept", "Concepts", exclude_titles=NOT_ARTICLES),
+            CategorySource("arc", "Story arcs", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+            # Episodes are titled by name and numbered per season: unnumbered pages.
+            CategorySource("anime_episode", "Season 1 Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("anime_episode", "Season 2 Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("anime_episode", "Season 3 Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("anime_episode", "Season 4 Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("anime_episode", "Season 5 Episodes", exclude_titles=NOT_ARTICLES),
+            CategorySource("page", ALL_ARTICLES, exclude_titles=NOT_ARTICLES + WIKI_NOISE + r"|\(chapter\)$|"
+                           r"^(sbr|jjl|tjl) chapter|author's note|^volume \d",
+                           exclude_categories=NOISE_CATEGORIES + ("Song", "Manga volumes", "Real People", "Animator")),
+        ),
+    ),
+    "jojo_phantom_blood": SeriesSource(
+        id="jojo_phantom_blood", title="JoJo Part 1: Phantom Blood", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Phantom Blood Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_battle_tendency": SeriesSource(
+        id="jojo_battle_tendency", title="JoJo Part 2: Battle Tendency", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Battle Tendency Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_stardust_crusaders": SeriesSource(
+        id="jojo_stardust_crusaders", title="JoJo Part 3: Stardust Crusaders", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Stardust Crusaders Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_diamond_is_unbreakable": SeriesSource(
+        id="jojo_diamond_is_unbreakable", title="JoJo Part 4: Diamond Is Unbreakable", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Diamond Is Unbreakable Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_golden_wind": SeriesSource(
+        id="jojo_golden_wind", title="JoJo Part 5: Golden Wind", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Vento Aureo Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_stone_ocean": SeriesSource(
+        id="jojo_stone_ocean", title="JoJo Part 6: Stone Ocean", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Stone Ocean Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_steel_ball_run": SeriesSource(
+        id="jojo_steel_ball_run", title="JoJo Part 7: Steel Ball Run", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "Steel Ball Run Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_jojolion": SeriesSource(
+        id="jojo_jojolion", title="JoJo Part 8: JoJolion", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "JoJolion Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    "jojo_jojolands": SeriesSource(
+        id="jojo_jojolands", title="JoJo Part 9: The JOJOLands", wiki_host="jojo.fandom.com",
+        categories=(CategorySource("chapter", "The JOJOLands Chapters", exclude_titles=NOT_ARTICLES + r"|author's note"),),
+        shares_with="jojo",
+    ),
+    # Boruto lives on naruto.fandom.com: the same infobox flags that keep it out of Naruto select it
+    # here. Characters are shared with Naruto (Boruto, Kawaki and Sarada are already collected there).
+    "boruto": SeriesSource(
+        id="boruto",
+        title="Boruto: Naruto Next Generations",
+        wiki_host="naruto.fandom.com",
+        categories=(
+            CategorySource("episode", "Episodes", where=(("boruto anime", "yes"),)),
+            CategorySource("chapter", "Chapters", where=(("boruto", "yes"), ("blue vortex", "no|"))),
+        ),
+        shares_with="naruto",
+    ),
+    # Two Blue Vortex restarts at chapter 1.
+    "boruto_two_blue_vortex": SeriesSource(
+        id="boruto_two_blue_vortex",
+        title="Boruto: Two Blue Vortex",
+        wiki_host="naruto.fandom.com",
+        categories=(CategorySource("chapter", "Chapters", where=(("blue vortex", "yes"),)),),
+        shares_with="naruto",
     ),
 }

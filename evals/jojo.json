@@ -1,0 +1,84 @@
+[
+ {
+  "question": "Who is Jotaro Kujo?",
+  "expect": [
+   "Jotaro Kujo"
+  ],
+  "answer_contains": [
+   "star platinum",
+   "stand"
+  ]
+ },
+ {
+  "question": "Who is Dio Brando?",
+  "expect": [
+   "Dio Brando"
+  ],
+  "answer_contains": [
+   "vampire",
+   "the world",
+   "jonathan"
+  ]
+ },
+ {
+  "question": "What is a Stand?",
+  "expect": [
+   "Stand"
+  ],
+  "answer_contains": [
+   "spirit",
+   "power"
+  ]
+ },
+ {
+  "question": "What is Star Platinum?",
+  "expect": [
+   "Star Platinum"
+  ],
+  "answer_contains": [
+   "jotaro",
+   "stand"
+  ]
+ },
+ {
+  "question": "Who is Giorno Giovanna?",
+  "expect": [
+   "Giorno Giovanna"
+  ],
+  "answer_contains": [
+   "gold experience",
+   "passione"
+  ]
+ },
+ {
+  "question": "Who is Jolyne Cujoh?",
+  "expect": [
+   "Jolyne Cujoh"
+  ],
+  "answer_contains": [
+   "stone free",
+   "jotaro"
+  ]
+ },
+ {
+  "question": "Who is Enrico Pucci?",
+  "expect": [
+   "Enrico Pucci"
+  ],
+  "answer_contains": [
+   "priest",
+   "dio",
+   "made in heaven"
+  ]
+ },
+ {
+  "question": "What is the Stone Mask?",
+  "expect": [
+   "Stone Mask"
+  ],
+  "answer_contains": [
+   "vampire",
+   "pillar men"
+  ]
+ }
+]

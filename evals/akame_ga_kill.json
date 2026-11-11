@@ -1,0 +1,72 @@
+[
+ {
+  "question": "Who is Akame?",
+  "expect": [
+   "Akame"
+  ],
+  "answer_contains": [
+   "night raid",
+   "murasame",
+   "assassin"
+  ]
+ },
+ {
+  "question": "Who is Tatsumi?",
+  "expect": [
+   "Tatsumi"
+  ],
+  "answer_contains": [
+   "night raid",
+   "incursio"
+  ]
+ },
+ {
+  "question": "What is Night Raid?",
+  "expect": [
+   "Night Raid"
+  ],
+  "answer_contains": [
+   "assassin",
+   "revolutionary"
+  ]
+ },
+ {
+  "question": "Who is Esdeath?",
+  "expect": [
+   "Esdeath"
+  ],
+  "answer_contains": [
+   "general",
+   "ice",
+   "empire"
+  ]
+ },
+ {
+  "question": "What are Teigu?",
+  "expect": [
+   "Teigu"
+  ],
+  "answer_contains": [
+   "imperial arms",
+   "weapon"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "tatsumi"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "tatsumi"
+  ]
+ }
+]

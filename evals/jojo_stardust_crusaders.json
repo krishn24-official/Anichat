@@ -1,0 +1,22 @@
+[
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Jotaro Kujo, Part 1 (Chapter)"
+  ],
+  "answer_contains": [
+   "jotaro",
+   "jail",
+   "prison"
+  ]
+ },
+ {
+  "question": "Who is Jean Pierre Polnareff?",
+  "expect": [
+   "Jean Pierre Polnareff"
+  ],
+  "answer_contains": [
+   "silver chariot"
+  ]
+ }
+]

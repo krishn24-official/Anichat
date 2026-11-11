@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 # template); the one with the most fields wins (see _render_templates).
 INFOBOX_TEMPLATES = {"episode", "chapter infobox", "character", "ability", "location", "story arc"}
 INFOBOX_MIN_FIELDS = 3
-NOT_INFOBOX = {"parenttab", "tabs", "for", "for2", "quote", "quotebox", "stub", "toc limit", "cropwh"}
+NOT_INFOBOX = {"parenttab", "tabs", "for", "for2", "quote", "quotebox", "quote box", "stub", "toc limit", "cropwh"}
 # Infobox parameters that are layout, not facts.
 SKIP_FACTS = {"image", "caption", "name", "next", "previous", "cover", "image2", "gallery"}
 # Sections that are only media, navigation or citations.
@@ -146,7 +146,9 @@ def _render_templates(text: str, infobox: dict[str, str]) -> str:
 
     def render(m: re.Match) -> str:
         name, positional, named = _split_params(m.group(1))
-        known = name in INFOBOX_TEMPLATES or "infobox" in name
+        # "... box" infoboxes too (JoJo's {{Chapter box}}): a {{Characters}} list on the same page
+        # has more fields, and would otherwise win.
+        known = name in INFOBOX_TEMPLATES or "infobox" in name or name.endswith(" box")
         if (known or len(named) >= INFOBOX_MIN_FIELDS) and name not in NOT_INFOBOX and not name.startswith(KEEP_CONTENT):
             facts = {}
             for key, value in named.items():

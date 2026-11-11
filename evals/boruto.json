@@ -1,0 +1,54 @@
+[
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Boruto Uzumaki!! (episode)"
+  ],
+  "answer_contains": [
+   "boruto"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Boruto Uzumaki!!"
+  ],
+  "answer_contains": [
+   "boruto",
+   "kawaki"
+  ]
+ },
+ {
+  "question": "Who is Kawaki?",
+  "expect": [
+   "Kawaki"
+  ],
+  "answer_contains": [
+   "kara",
+   "vessel",
+   "karma"
+  ]
+ },
+ {
+  "question": "Who is Boruto Uzumaki?",
+  "expect": [
+   "Boruto Uzumaki"
+  ],
+  "answer_contains": [
+   "naruto",
+   "son",
+   "karma"
+  ]
+ },
+ {
+  "question": "Who is Isshiki Otsutsuki?",
+  "expect": [
+   "Isshiki Ōtsutsuki"
+  ],
+  "answer_contains": [
+   "ōtsutsuki",
+   "otsutsuki",
+   "kara"
+  ]
+ }
+]

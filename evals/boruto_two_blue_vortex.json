@@ -1,0 +1,22 @@
+[
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Boruto (chapter)"
+  ],
+  "answer_contains": [
+   "boruto",
+   "sarada"
+  ]
+ },
+ {
+  "question": "Who is Sarada Uchiha?",
+  "expect": [
+   "Sarada Uchiha"
+  ],
+  "answer_contains": [
+   "sasuke",
+   "sharingan"
+  ]
+ }
+]

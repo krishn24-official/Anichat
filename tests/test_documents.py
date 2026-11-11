@@ -138,3 +138,12 @@ def test_a_hand_made_table_at_the_top_is_the_infobox():
                       '|-\n! Previous\n| Chapter 99\n|}\n\nChapter 100 is a chapter.')
     assert page.infobox == {"volume": "7", "arc": "Jeju Island Arc"}  # "previous" is navigation: skipped
     assert "Chapter 100 is a chapter." in page.lead and "- " not in page.lead
+
+
+def test_a_named_box_infobox_beats_a_bigger_list_template():
+    text = ("{{Chapter box\n|title = D'Arby the Gambler, Part 1\n|vol = 12\n|chapter = 98 (211)\n}}\n"
+            + "Jotaro and his friends meet D'Arby, a gambler who steals souls. " * 10
+            + "\n==Characters==\n{{Characters\n|av1=a.png|name1=Jotaro Kujo\n|av2=b.png|name2=Joseph Joestar\n"
+            "|av3=c.png|name3=Iggy\n|av4=d.png|name4=DIO\n}}\n")
+    doc = build_document(page(text, "chapter", "D'Arby the Gambler, Part 1 (Chapter)"), "JoJo")
+    assert doc.number == 98 and doc.display_title == "Chapter 98: D'Arby the Gambler, Part 1"

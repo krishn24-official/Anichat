@@ -84,3 +84,40 @@ def test_a_name_shared_by_many_pages_still_finds_the_page_titled_by_it():
     index = build_phrase_index(cells)
     assert [c.title for c in index["cell"]] == ["Cell"]
     assert [c.title for c in lookup("Who killed Cell?", index)][0] == "Cell"
+
+
+def test_names_with_long_vowels_match_how_people_type_them():
+    toru = card("Tōru Oikawa", "Tōru Oikawa is the captain of Aoba Johsai.")
+    hinata = card("Shōyō Hinata", "Shōyō Hinata is a middle blocker.\nAlias: Oikawa (by himself)")
+    takeru = card("Takeru Oikawa", "Takeru Oikawa is Tōru's nephew.")
+    index = build_phrase_index([toru, hinata, takeru])
+    for question in ("Who is Tooru Oikawa?", "Who is Toru Oikawa?", "Who is Touru Oikawa?", "Who is Tōru Oikawa?"):
+        assert [c.title for c in lookup(question, index)][0] == "Tōru Oikawa", question
+
+
+def test_being_the_x_does_not_outrank_the_page_titled_x():
+    amanto = card("Amanto", "Amanto is the name for the aliens of Gintama.")
+    ane = card("Ane", "Ane is the Amanto of the Harusame.")
+    mone = card("Mone", "Mone is the Amanto who runs a shop.")
+    assert [c.title for c in lookup("What are the Amanto?", build_phrase_index([ane, mone, amanto]))][0] == "Amanto"
+
+
+def test_an_alias_beats_a_first_name_shared_by_many_pages():
+    xin = card("Li Xin", "Li Xin is the main protagonist of Kingdom.\nAlias: Ri Shin; Shin")
+    others = [card(t, f"{t} is a general of Qin.") for t in ("Shin Shou", "Shin Ri Kan", "Shin Sei Jou",
+                                                             "Chou Shin", "Geki Shin", "Shin Kaku Gaku")]
+    index = build_phrase_index(others + [xin])
+    assert [c.title for c in lookup("Who is Shin?", index)] == ["Li Xin"]
+
+
+def test_a_name_in_the_question_comes_before_an_event_mentioned_on_minor_pages():
+    tanjiro = card("Tanjiro Kamado", "Tanjiro Kamado is the main protagonist.")
+    uraga = card("Uraga", "Uraga is a minor character. He passed the same Final Selection as Sanemi.")
+    town = card("Northwest Town", "Northwest Town is a location. Tanjiro went there after the Final Selection.")
+    found = lookup("Who trained Tanjiro before the Final Selection?", build_phrase_index([uraga, town, tanjiro]))
+    assert found[0].title == "Tanjiro Kamado"
+
+
+def test_a_short_nickname_quoted_in_the_first_sentence_is_a_name():
+    mob = card("Shigeo Kageyama", 'Shigeo Kageyama, nicknamed "Mob", is the main protagonist.\nAlias: Shige, Mob')
+    assert [c.title for c in lookup("Who is Mob?", build_phrase_index([mob]))] == ["Shigeo Kageyama"]

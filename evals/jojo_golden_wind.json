@@ -1,0 +1,22 @@
+[
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Gold Experience, Part 1 (Chapter)"
+  ],
+  "answer_contains": [
+   "giorno",
+   "koichi"
+  ]
+ },
+ {
+  "question": "Who is Bruno Bucciarati?",
+  "expect": [
+   "Bruno Bucciarati"
+  ],
+  "answer_contains": [
+   "sticky fingers",
+   "passione"
+  ]
+ }
+]

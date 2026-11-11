@@ -1,0 +1,23 @@
+[
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "SBR Chapter 1"
+  ],
+  "answer_contains": [
+   "race",
+   "johnny",
+   "gyro"
+  ]
+ },
+ {
+  "question": "Who is Gyro Zeppeli?",
+  "expect": [
+   "Gyro Zeppeli"
+  ],
+  "answer_contains": [
+   "spin",
+   "steel balls"
+  ]
+ }
+]

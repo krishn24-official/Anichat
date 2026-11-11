@@ -1,0 +1,65 @@
+[
+ {
+  "question": "Who is Kaiman?",
+  "expect": [
+   "Kaiman"
+  ],
+  "answer_contains": [
+   "lizard",
+   "head",
+   "hole"
+  ]
+ },
+ {
+  "question": "Who is Nikaido?",
+  "expect": [
+   "Nikaido"
+  ],
+  "answer_contains": [
+   "kaiman",
+   "gyoza",
+   "hungry bug"
+  ]
+ },
+ {
+  "question": "Who is En?",
+  "expect": [
+   "En"
+  ],
+  "answer_contains": [
+   "sorcerer",
+   "mushroom",
+   "boss"
+  ]
+ },
+ {
+  "question": "What is the Hole?",
+  "expect": [
+   "Hole"
+  ],
+  "answer_contains": [
+   "city",
+   "sorcerer"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "kaiman",
+   "nikaido"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "kaiman",
+   "nikaido"
+  ]
+ }
+]

@@ -180,7 +180,7 @@ def chunk_document(doc: SourceDocument, importance: int = 0) -> list[Chunk]:
 
 
 # Entity kinds (not episodes/chapters) get a profile card: a short "who/what is X" chunk.
-CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit", "movie", "ova", "ability", "race", "page", "magic", "transformation", "devil", "quirk", "angel", "mecha"}
+CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit", "movie", "ova", "ability", "race", "page", "magic", "transformation", "devil", "quirk", "angel", "mecha", "stand"}
 CARD_FACTS = ("alias", "affiliation", "occupation", "rank", "race", "species", "status", "relatives", "user", "creator",
               "killed by", "parents", "children", "clan", "classification", "quirk")
 # Wiki sections listing whom a character killed ("People killed" on Attack on Titan pages).
@@ -227,7 +227,8 @@ def killers_by_victim(docs: list[SourceDocument]) -> dict[str, list[str]]:
     return found
 # Each wiki names the alias field differently ("aka" on the Death Note wiki): all are shown as "Alias".
 ALIAS_FACTS = ("alias", "aliases", "aka", "also known as", "nickname", "nicknames", "epithet", "epithets",
-               "also called")  # "also called": redirect titles (application/collect.py _add_aliases)
+               "also called",  # "also called": redirect titles (application/collect.py _add_aliases)
+               "romaji")  # the Japanese name in Latin letters: "Shin" (Li Xin), "Uzumaki Naruto"
 CARD_SENTENCES = 2
 
 
