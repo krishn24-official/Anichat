@@ -271,14 +271,23 @@ def parse_page(wikitext: str, title: str = "") -> ParsedPage:
     page = ParsedPage()
     # Magic words for the page's own name ("'''{{PAGENAME}}''' is the main protagonist").
     wikitext = re.sub(r"\{\{\s*(?:BASE)?PAGENAMEE?\s*\}\}", title.split(" (")[0], wikitext)
+    # Template parameters left in a page ("{{Character/{{{1|Article}}}": a template name built
+    # from a parameter) take their default, so the template around them still parses.
+    wikitext = re.sub(r"\{\{\{[^{}|]*\|([^{}]*)\}\}\}", r"\1", wikitext)
+    wikitext = re.sub(r"\{\{\{[^{}|]*\}\}\}", "", wikitext)
     text = _strip_noise(wikitext)
     text = _remove_file_links(text)
     text = _resolve_links(text, page.mentions)
     text = _render_templates(text, page.infobox)
     text = _convert_tables(text, page.infobox)
+    # Image file names are not facts ("lnimagey1 = Airi Sakura LN visual.png").
+    for key in [k for k, v in page.infobox.items() if re.search(r"\.(?:png|jpe?g|gif|webp|svg)$", v, re.I)]:
+        del page.infobox[key]
 
     headings = list(_HEADING.finditer(text))
     page.lead = _finish(text[: headings[0].start()] if headings else text)
+    if not page.lead and page.infobox.get("intro"):  # You-Zitsu keeps the intro in the infobox
+        page.lead = page.infobox.pop("intro")
     skipping_level = None
     for i, h in enumerate(headings):
         level, heading = len(h.group(1)), _plain(h.group(2))

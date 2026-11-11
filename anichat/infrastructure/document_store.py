@@ -38,8 +38,11 @@ class DocumentStore:
     Used by:    application/build_documents.py  BuildDocumentsService.build()
     """
 
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, *also_read: Path):
+        """`also_read`: more folders with the same layout whose documents iter_documents() also
+        yields (data/added/: TMDb movies and admin-form entries, which a wiki rebuild must not delete)."""
         self._root = Path(root)
+        self._also = [Path(p) for p in also_read]
 
     def clear(self, series: str) -> None:
         """Delete the series' previous documents before a rebuild.
@@ -55,8 +58,9 @@ class DocumentStore:
 
         Called by: application/chunk_documents.py  ChunkDocumentsService.chunk()
         """
-        for path in sorted((self._root / series).glob("*/*.md")):
-            yield parse_markdown(path.read_text(encoding="utf-8"))
+        for root in (self._root, *self._also):
+            for path in sorted((root / series).glob("*/*.md")):
+                yield parse_markdown(path.read_text(encoding="utf-8"))
 
     def save(self, doc: Document) -> None:
         """Write the document as Markdown.

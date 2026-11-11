@@ -147,3 +147,23 @@ def test_a_named_box_infobox_beats_a_bigger_list_template():
             "|av3=c.png|name3=Iggy\n|av4=d.png|name4=DIO\n}}\n")
     doc = build_document(page(text, "chapter", "D'Arby the Gambler, Part 1 (Chapter)"), "JoJo")
     assert doc.number == 98 and doc.display_title == "Chapter 98: D'Arby the Gambler, Part 1"
+
+
+def test_chapters_named_act_reincarnation_or_by_a_numbered_title():
+    story = "\n==Summary==\n" + "The wandering swordsman keeps his vow never to kill again. " * 10
+    act = build_document(page("{{Chapter\n|title = Kenshin Himura\n|volume = 1\n|arc = Tokyo\n}}" + story, "chapter", "Act 1"), "Rurouni Kenshin")
+    assert act.number == 1 and act.display_title == "Chapter 1: Kenshin Himura"
+    reincarnation = build_document(page(story, "chapter", "Reincarnation 12"), "Shaman King")
+    assert reincarnation.number == 12
+    butler = build_document(page(story, "chapter", "001. The Butler, Skilled"), "Black Butler")
+    assert butler.number == 1 and butler.display_title == "Chapter 1: The Butler, Skilled"
+
+
+def test_a_template_name_built_from_a_parameter_still_parses():
+    from anichat.domain.wikitext import parse_page
+
+    page = parse_page("<onlyinclude>{{Character/{{{1|Article}}}\n|ImageY1 = Airi visual.png\n|name = Airi Sakura\n"
+                      "|status = Active\n|age = 17\n|intro = Airi Sakura is one of the heroines of the series.\n}}"
+                      "</onlyinclude>\n==Appearance==\nPink hair.")
+    assert page.infobox == {"status": "Active", "age": "17"}  # no image file names (the name is the title)
+    assert page.lead == "Airi Sakura is one of the heroines of the series."

@@ -20,6 +20,7 @@ MAX_MENTIONS = 40
 TRIVIA_FACTS = {
     "height", "weight", "hair_color", "eye_color", "allrelatives", "image_size", "blood_type",
     "birthday_image", "anime_debut", "manga_debut", "game_debut", "japanese_va", "english_va",
+    "also added by hand", "tmdb id",  # bookkeeping of domain/added.py
 }
 
 
@@ -43,6 +44,7 @@ class Document:
     facts: dict[str, str] = field(default_factory=dict)
     mentions: list[str] = field(default_factory=list)
     body: str = ""
+    license: str = LICENSE  # wiki text; TMDb data and hand-added entries say so instead
 
 
 # Where each wiki keeps the number; "overall" first (per-season/per-volume numbers restart at 1).
@@ -62,8 +64,14 @@ def _number(kind: str, title: str, facts: dict[str, str]) -> int | None:
         return None
     # "Episode 12", also with a qualifier: "Episode 1 (2011)" (Hunter x Hunter's two anime), or a
     # sequel's prefix: "Re: Episode 1" (Tokyo Ghoul:re), or a colon: "Episode:01" (Evangelion).
-    # Gintama calls chapters "Lesson 12". Not "Chapter 23.5" (a bonus chapter).
-    m = re.fullmatch(r"(?:.*[\s:])?(?:Episode|Chapter|Lesson)(?:\s+|:)(\d+)(?:\s*\(.*\))?", title.strip(), re.I)
+    # Gintama calls chapters "Lesson 12", Rurouni Kenshin "Act 12", Shaman King "Reincarnation 12".
+    # Not "Chapter 23.5" (a bonus chapter).
+    m = re.fullmatch(r"(?:.*[\s:])?(?:Episode|Chapter|Lesson|Act|Reincarnation)(?:\s+|:)(\d+)(?:\s*\(.*\))?",
+                     title.strip(), re.I)
+    if m:
+        return int(m.group(1))
+    # Black Butler: "001. The Butler, Skilled".
+    m = re.match(r"(\d{1,4})\.\s+\D", title.strip()) if kind == "chapter" else None
     if m:
         return int(m.group(1))
     for key in NUMBER_FACTS[kind]:
@@ -86,11 +94,13 @@ def _display_title(kind: str, title: str, facts: dict[str, str], number: int | N
     if label and re.match(rf"{label}:", title, re.I):
         return title  # already "Chapter 1: The Two Alchemists"
     # "Episode 1", "Episode 1 (2011)", "Episode:01", or a sequel's "FT100YQ Episode 1"
-    words = r"chapter|lesson" if kind == "chapter" else r"episode|ep\."  # "S;G (anime) - Ep.01"
+    words = r"chapter|lesson|act|reincarnation" if kind == "chapter" else r"episode|ep\."  # "S;G (anime) - Ep.01"
     numbered_page = label and re.search(rf"\b(?:{words})(?:\s+|:)?0*{number}(?:\s*\(.*\))?$", title, re.I)
     if label and not numbered_page:
         # Page named by its title; "Assassin from the Past (episode)" loses the redundant qualifier.
-        return f"{label}: {re.sub(r'\s*\((?:episode|chapter)\)$', '', title, flags=re.I)}"
+        name = re.sub(r"\s*\((?:episode|chapter)\)$", "", title, flags=re.I)
+        name = re.sub(rf"^0*{number}\.\s+", "", name)  # "001. The Butler, Skilled" -> "The Butler, Skilled"
+        return f"{label}: {name}"
     name = (facts.get("title") or facts.get("chapter title") or facts.get("ep title") or facts.get("episode title")
             or facts.get("english") or facts.get("engname") or facts.get("entitle") or facts.get("ename"))
     if name and number is not None:  # "Episode 01: Prologue..." -> "Prologue..."
@@ -169,14 +179,16 @@ def to_markdown(doc: Document) -> str:
         "number": doc.number,
         "source": doc.source_url,
         "revision": doc.revision_id,
-        "license": LICENSE,
+        "license": doc.license,
         "facts": doc.facts,
         "mentions": doc.mentions,
     }
     front = "\n".join(f"{k}: {json.dumps(v, ensure_ascii=False)}" for k, v in meta.items())
     shown = {k: v for k, v in doc.facts.items() if k not in TRIVIA_FACTS}
-    facts = "\n".join(f"- **{k.replace('_', ' ').capitalize()}:** {v}" for k, v in shown.items())
-    header = f"# {doc.display_title}\n\n*{doc.series_title}* · Source: [{doc.title}]({doc.source_url}) ({LICENSE})"
+    # First letter up, the rest as written: wiki keys are lower-case already; form labels keep "OTT".
+    facts = "\n".join(f"- **{k.replace('_', ' ')[:1].upper()}{k.replace('_', ' ')[1:]}:** {v}" for k, v in shown.items())
+    source = f"[{doc.title}]({doc.source_url})" if doc.source_url else doc.title
+    header = f"# {doc.display_title}\n\n*{doc.series_title}* · Source: {source} ({doc.license})"
     # Intro first, then facts: the intro ("Akaza ... held the position of Upper Rank Three")
     # becomes its own chunk, so its embedding is about who/what the page is, not hair colour.
     intro, sep, rest = doc.body.partition("\n## ")

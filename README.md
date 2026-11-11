@@ -107,6 +107,47 @@ On a GTX 1650 (4 GB) this embeds ~15 chunks/s, about 5x the laptop CPU, with the
 chunks overflow a 4 GB card and halve the speed. Don't run CPU indexing that embeds at the same
 time: both need the CPU and slow each other down.
 
+## Adding movies and your own facts
+
+Wikis lack some facts (box office collections, OTT platform, a movie's full cast). The admin
+form (`/admin` on the deployed frontend) adds and edits them from anywhere, a phone included,
+while the laptop is off: everything waits in a free Upstash Redis store until the laptop syncs.
+
+- **Fields** tab: the names every record uses, defined once ("India net collection": money, ₹,
+  in crore; "OTT platform": a list; "India net (day-wise)": a day -> amount table). A field's id
+  never changes, so renaming a label never splits the data; fields are archived, not deleted.
+  "Suggested fields" adds the usual box office and streaming ones in one click.
+- **Movies** tab: search TMDb, pick a movie and its details, cast, crew, budget and worldwide gross
+  are filled in; add only what's missing. Every movie stays editable: collections after a
+  re-release, a new OTT platform, actors added or moved up the cast (the first six are
+  "starring"). Day-wise collections can be pasted from Sacnilk. Each save is a new version
+  (the last 20 are kept, and can be loaded back); an edit made on another device in between is
+  never overwritten silently.
+- **Other entries** tab: facts about anime characters, series or anything else, using the fields
+  defined for that type; merged with earlier entries about the same title.
+
+Then, on the laptop:
+
+```
+python -m scripts.sync_submissions --list      # what changed since the last sync
+python -m scripts.sync_submissions             # rebuild changed movies, add entries, re-index
+python -m scripts.add_movie "Iron Man" --year 2008   # the same as "Add a movie", from the terminal
+```
+
+Movies become documents of the `movies` series, entries pages of kind "added" in their series;
+both live under `data/added/` (a wiki rebuild never deletes them) and are chunked with the wiki
+pages. Only changed chunks are re-embedded.
+
+Setup, once, on Vercel (import the repo with root directory `frontend/`):
+1. Storage tab -> connect an **Upstash for Redis** store (free plan). Vercel adds
+   `KV_REST_API_URL` and `KV_REST_API_TOKEN` to the project.
+2. Settings -> Environment Variables -> add `ADMIN_PASSWORD` (a long password of your own) and
+   `TMDB_READ_TOKEN` (free: themoviedb.org -> Settings -> API -> "API Read Access Token").
+3. Copy `KV_REST_API_URL`, `KV_REST_API_TOKEN` and `TMDB_READ_TOKEN` into the laptop's `.env`.
+
+Wrong passwords are counted per IP (10 per 15 minutes). After adding series, run
+`python -m scripts.export_series` so the entries form suggests them.
+
 ## Chat
 
 Put your keys in `.env` (copy `.env.example`), then:

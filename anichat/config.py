@@ -35,3 +35,13 @@ CHAT_PER_DAY = int(os.getenv("CHAT_PER_DAY", "200"))
 # Behind a hosting proxy (Render, Fly, Railway...) the visitor's IP is in X-Forwarded-For.
 # Only enable when deployed behind one: otherwise anyone could fake the header.
 TRUST_PROXY = os.getenv("TRUST_PROXY", "0").lower() in ("1", "true", "yes")
+
+# TMDb (movies added one by one with scripts/add_movie.py): a free key from themoviedb.org ->
+# Settings -> API. Either the "API Read Access Token" (preferred) or the "API Key".
+TMDB_READ_TOKEN = os.getenv("TMDB_READ_TOKEN") or None
+TMDB_API_KEY = os.getenv("TMDB_API_KEY") or None
+
+# The admin form's cloud store (Upstash Redis, connected to the Vercel project): the same
+# KV_REST_API_URL / KV_REST_API_TOKEN that Vercel gives the form's function.
+KV_REST_API_URL = os.getenv("KV_REST_API_URL") or os.getenv("UPSTASH_REDIS_REST_URL") or None
+KV_REST_API_TOKEN = os.getenv("KV_REST_API_TOKEN") or os.getenv("UPSTASH_REDIS_REST_TOKEN") or None

@@ -983,4 +983,42 @@ SERIES: dict[str, SeriesSource] = {
         categories=(CategorySource("chapter", "Chapters", where=(("blue vortex", "yes"),)),),
         shares_with="naruto",
     ),
+    # No wiki: filled by scripts/add_movie.py (chosen movies from TMDb) and by the admin form
+    # (scripts/sync_submissions.py). "other": facts that belong to no series.
+    "movies": SeriesSource(id="movies", title="Movies", wiki_host="", categories=()),
+    "other": SeriesSource(id="other", title="Other", wiki_host="", categories=()),
+    # Wikis with the usual layout; their other pages (named chapters, later seasons' "Season 3
+    # Episode 1", ...) come in through the catch-all as pages.
+    "promised_neverland": standard_series("promised_neverland", "The Promised Neverland",
+                                          "promisedneverland.fandom.com"),
+    "blue_exorcist": standard_series("blue_exorcist", "Blue Exorcist", "blueexorcist.fandom.com"),
+    "d_gray_man": standard_series("d_gray_man", "D.Gray-man", "dgrayman.fandom.com", skip=r"\(hallow\)"),
+    "parasyte": standard_series("parasyte", "Parasyte", "parasyte.fandom.com"),
+    "delicious_in_dungeon": standard_series("delicious_in_dungeon", "Delicious in Dungeon",
+                                            "delicious-in-dungeon.fandom.com"),
+    "made_in_abyss": standard_series("made_in_abyss", "Made in Abyss", "madeinabyss.fandom.com"),
+    "apothecary_diaries": standard_series("apothecary_diaries", "The Apothecary Diaries",
+                                          "kusuriya-no-hitorigoto.fandom.com"),
+    "soul_eater": standard_series("soul_eater", "Soul Eater", "souleater.fandom.com"),
+    "hellsing": standard_series("hellsing", "Hellsing", "hellsing.fandom.com"),
+    "slam_dunk": standard_series("slam_dunk", "Slam Dunk", "slamdunk.fandom.com"),
+    "tower_of_god": standard_series("tower_of_god", "Tower of God", "towerofgod.fandom.com"),
+    # Lookism is a webtoon: its "Episode N" pages are the chapters.
+    "lookism": standard_series("lookism", "Lookism", "lookism.fandom.com"),
+    "classroom_of_the_elite": standard_series("classroom_of_the_elite", "Classroom of the Elite",
+                                              "you-zitsu.fandom.com"),
+    "konosuba": standard_series("konosuba", "KonoSuba: God's Blessing on This Wonderful World!",
+                                "konosuba.fandom.com"),
+    "danmachi": standard_series("danmachi", "Is It Wrong to Try to Pick Up Girls in a Dungeon? (DanMachi)",
+                                "danmachi.fandom.com"),
+    # Wikis that name chapters differently: "001. The Butler, Skilled", "Act 1", "Reincarnation 1".
+    "black_butler": standard_series("black_butler", "Black Butler (Kuroshitsuji)", "kuroshitsuji.fandom.com",
+                                    CategorySource("chapter", "Chapters", exclude_titles=r"^(?!\d+\. )")),
+    "rurouni_kenshin": standard_series("rurouni_kenshin", "Rurouni Kenshin", "rurounikenshin.fandom.com",
+                                       CategorySource("chapter", "Chapters", exclude_titles=r"^(?!act \d+$)")),
+    "shaman_king": standard_series("shaman_king", "Shaman King", "shamanking.fandom.com",
+                                   CategorySource("chapter", "Chapters", exclude_titles=r"^(?!reincarnation \d+$)")),
+    # Cowboy Bebop's episodes are "Sessions", named by title ("Asteroid Blues").
+    "cowboy_bebop": standard_series("cowboy_bebop", "Cowboy Bebop", "cowboybebop.fandom.com",
+                                    CategorySource("episode", "Sessions", exclude_titles=NOT_ARTICLES + r"|^session list")),
 }

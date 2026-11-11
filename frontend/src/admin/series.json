@@ -1,0 +1,386 @@
+[
+ {
+  "id": "akame_ga_kill",
+  "title": "Akame ga Kill!"
+ },
+ {
+  "id": "attack_on_titan",
+  "title": "Attack on Titan"
+ },
+ {
+  "id": "berserk",
+  "title": "Berserk"
+ },
+ {
+  "id": "black_butler",
+  "title": "Black Butler (Kuroshitsuji)"
+ },
+ {
+  "id": "black_clover",
+  "title": "Black Clover"
+ },
+ {
+  "id": "bleach",
+  "title": "Bleach"
+ },
+ {
+  "id": "blue_exorcist",
+  "title": "Blue Exorcist"
+ },
+ {
+  "id": "blue_lock",
+  "title": "Blue Lock"
+ },
+ {
+  "id": "boruto",
+  "title": "Boruto: Naruto Next Generations"
+ },
+ {
+  "id": "boruto_two_blue_vortex",
+  "title": "Boruto: Two Blue Vortex"
+ },
+ {
+  "id": "bungo_stray_dogs",
+  "title": "Bungo Stray Dogs"
+ },
+ {
+  "id": "chainsaw_man",
+  "title": "Chainsaw Man"
+ },
+ {
+  "id": "classroom_of_the_elite",
+  "title": "Classroom of the Elite"
+ },
+ {
+  "id": "code_geass_r2",
+  "title": "Code Geass R2"
+ },
+ {
+  "id": "code_geass",
+  "title": "Code Geass: Lelouch of the Rebellion"
+ },
+ {
+  "id": "cowboy_bebop",
+  "title": "Cowboy Bebop"
+ },
+ {
+  "id": "d_gray_man",
+  "title": "D.Gray-man"
+ },
+ {
+  "id": "dandadan",
+  "title": "Dandadan"
+ },
+ {
+  "id": "death_note",
+  "title": "Death Note"
+ },
+ {
+  "id": "delicious_in_dungeon",
+  "title": "Delicious in Dungeon"
+ },
+ {
+  "id": "demon_slayer",
+  "title": "Demon Slayer: Kimetsu no Yaiba"
+ },
+ {
+  "id": "dorohedoro",
+  "title": "Dorohedoro"
+ },
+ {
+  "id": "dr_stone",
+  "title": "Dr. Stone"
+ },
+ {
+  "id": "dragon_ball",
+  "title": "Dragon Ball"
+ },
+ {
+  "id": "dragon_ball_daima",
+  "title": "Dragon Ball Daima"
+ },
+ {
+  "id": "dragon_ball_gt",
+  "title": "Dragon Ball GT"
+ },
+ {
+  "id": "dragon_ball_super",
+  "title": "Dragon Ball Super"
+ },
+ {
+  "id": "dragon_ball_z",
+  "title": "Dragon Ball Z"
+ },
+ {
+  "id": "fairy_tail",
+  "title": "Fairy Tail"
+ },
+ {
+  "id": "fairy_tail_100_years_quest",
+  "title": "Fairy Tail: 100 Years Quest"
+ },
+ {
+  "id": "fire_force",
+  "title": "Fire Force"
+ },
+ {
+  "id": "frieren",
+  "title": "Frieren: Beyond Journey's End"
+ },
+ {
+  "id": "fullmetal_alchemist",
+  "title": "Fullmetal Alchemist"
+ },
+ {
+  "id": "gintama",
+  "title": "Gintama"
+ },
+ {
+  "id": "haikyuu",
+  "title": "Haikyu!!"
+ },
+ {
+  "id": "hells_paradise",
+  "title": "Hell's Paradise"
+ },
+ {
+  "id": "hellsing",
+  "title": "Hellsing"
+ },
+ {
+  "id": "hunter_x_hunter",
+  "title": "Hunter x Hunter"
+ },
+ {
+  "id": "inuyasha",
+  "title": "Inuyasha"
+ },
+ {
+  "id": "danmachi",
+  "title": "Is It Wrong to Try to Pick Up Girls in a Dungeon? (DanMachi)"
+ },
+ {
+  "id": "jojo_phantom_blood",
+  "title": "JoJo Part 1: Phantom Blood"
+ },
+ {
+  "id": "jojo_battle_tendency",
+  "title": "JoJo Part 2: Battle Tendency"
+ },
+ {
+  "id": "jojo_stardust_crusaders",
+  "title": "JoJo Part 3: Stardust Crusaders"
+ },
+ {
+  "id": "jojo_diamond_is_unbreakable",
+  "title": "JoJo Part 4: Diamond Is Unbreakable"
+ },
+ {
+  "id": "jojo_golden_wind",
+  "title": "JoJo Part 5: Golden Wind"
+ },
+ {
+  "id": "jojo_stone_ocean",
+  "title": "JoJo Part 6: Stone Ocean"
+ },
+ {
+  "id": "jojo_steel_ball_run",
+  "title": "JoJo Part 7: Steel Ball Run"
+ },
+ {
+  "id": "jojo_jojolion",
+  "title": "JoJo Part 8: JoJolion"
+ },
+ {
+  "id": "jojo_jojolands",
+  "title": "JoJo Part 9: The JOJOLands"
+ },
+ {
+  "id": "jojo",
+  "title": "JoJo's Bizarre Adventure"
+ },
+ {
+  "id": "jujutsu_kaisen",
+  "title": "Jujutsu Kaisen"
+ },
+ {
+  "id": "kagurabachi",
+  "title": "Kagurabachi"
+ },
+ {
+  "id": "kaiju_no_8",
+  "title": "Kaiju No. 8"
+ },
+ {
+  "id": "kingdom",
+  "title": "Kingdom"
+ },
+ {
+  "id": "konosuba",
+  "title": "KonoSuba: God's Blessing on This Wonderful World!"
+ },
+ {
+  "id": "lookism",
+  "title": "Lookism"
+ },
+ {
+  "id": "made_in_abyss",
+  "title": "Made in Abyss"
+ },
+ {
+  "id": "mcu",
+  "title": "Marvel Cinematic Universe (movies)"
+ },
+ {
+  "id": "mashle",
+  "title": "Mashle: Magic and Muscles"
+ },
+ {
+  "id": "mob_psycho_100",
+  "title": "Mob Psycho 100"
+ },
+ {
+  "id": "movies",
+  "title": "Movies"
+ },
+ {
+  "id": "mushoku_tensei",
+  "title": "Mushoku Tensei: Jobless Reincarnation"
+ },
+ {
+  "id": "my_hero_academia",
+  "title": "My Hero Academia"
+ },
+ {
+  "id": "naruto",
+  "title": "Naruto"
+ },
+ {
+  "id": "naruto_shippuden",
+  "title": "Naruto Shippuden"
+ },
+ {
+  "id": "evangelion",
+  "title": "Neon Genesis Evangelion"
+ },
+ {
+  "id": "noragami",
+  "title": "Noragami"
+ },
+ {
+  "id": "one_piece",
+  "title": "One Piece"
+ },
+ {
+  "id": "one_punch_man",
+  "title": "One Punch Man"
+ },
+ {
+  "id": "oshi_no_ko",
+  "title": "Oshi no Ko"
+ },
+ {
+  "id": "other",
+  "title": "Other"
+ },
+ {
+  "id": "overlord",
+  "title": "Overlord"
+ },
+ {
+  "id": "parasyte",
+  "title": "Parasyte"
+ },
+ {
+  "id": "re_zero",
+  "title": "Re:Zero - Starting Life in Another World"
+ },
+ {
+  "id": "rurouni_kenshin",
+  "title": "Rurouni Kenshin"
+ },
+ {
+  "id": "sakamoto_days",
+  "title": "Sakamoto Days"
+ },
+ {
+  "id": "shaman_king",
+  "title": "Shaman King"
+ },
+ {
+  "id": "slam_dunk",
+  "title": "Slam Dunk"
+ },
+ {
+  "id": "solo_leveling",
+  "title": "Solo Leveling"
+ },
+ {
+  "id": "soul_eater",
+  "title": "Soul Eater"
+ },
+ {
+  "id": "spy_x_family",
+  "title": "Spy x Family"
+ },
+ {
+  "id": "steins_gate",
+  "title": "Steins;Gate"
+ },
+ {
+  "id": "steins_gate_0",
+  "title": "Steins;Gate 0"
+ },
+ {
+  "id": "sword_art_online",
+  "title": "Sword Art Online"
+ },
+ {
+  "id": "tensura",
+  "title": "That Time I Got Reincarnated as a Slime"
+ },
+ {
+  "id": "apothecary_diaries",
+  "title": "The Apothecary Diaries"
+ },
+ {
+  "id": "promised_neverland",
+  "title": "The Promised Neverland"
+ },
+ {
+  "id": "seven_deadly_sins",
+  "title": "The Seven Deadly Sins"
+ },
+ {
+  "id": "tokyo_ghoul",
+  "title": "Tokyo Ghoul"
+ },
+ {
+  "id": "tokyo_ghoul_re",
+  "title": "Tokyo Ghoul:re"
+ },
+ {
+  "id": "tokyo_revengers",
+  "title": "Tokyo Revengers"
+ },
+ {
+  "id": "tower_of_god",
+  "title": "Tower of God"
+ },
+ {
+  "id": "undead_unluck",
+  "title": "Undead Unluck"
+ },
+ {
+  "id": "vagabond",
+  "title": "Vagabond"
+ },
+ {
+  "id": "vinland_saga",
+  "title": "Vinland Saga"
+ },
+ {
+  "id": "yu_yu_hakusho",
+  "title": "Yu Yu Hakusho"
+ }
+]

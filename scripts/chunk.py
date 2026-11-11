@@ -4,6 +4,7 @@
     python -m scripts.chunk --series demon_slayer --show 3     # also print 3 sample chunks
 
 Input:  data/documents/<series>/<kind>/*.md   (from scripts/build_documents.py, or hand-written)
+        data/added/<series>/<kind>/*.md       (from scripts/add_movie.py and scripts/sync_submissions.py)
 Output: data/chunks/<series>.jsonl             (one chunk per line, replaced each run)
 """
 
@@ -27,7 +28,7 @@ def main(series_id: str, show: int) -> None:
     Called by: this file's __main__ block (command line)
     """
     store = ChunkStore(DATA / "chunks")
-    report, chunks = ChunkDocumentsService(DocumentStore(DATA / "documents"), store).chunk(series_id)
+    report, chunks = ChunkDocumentsService(DocumentStore(DATA / "documents", DATA / "added"), store).chunk(series_id)
     print(f"{'kind':16} {'documents':>9} {'chunks':>7}")
     for kind in sorted(report.chunks):
         print(f"{kind:16} {report.documents[kind]:9} {report.chunks[kind]:7}")
