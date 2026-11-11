@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, Film, Plus, Search } from 'lucide-react'
+import { CheckCircle2, Clock, Film, Loader2, Plus, Search } from 'lucide-react'
 import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import type { Field } from '../../api/_records'
 import {
@@ -29,6 +29,7 @@ export function MoviesTab({ password, fields, notify }: Props) {
   const [hits, setHits] = useState<TmdbHit[] | null>(null)
   const [sample, setSample] = useState(false) // local preview without a TMDb key
   const [busy, setBusy] = useState(false)
+  const [opening, setOpening] = useState<string | null>(null) // the movie being loaded (the server can take a few seconds to wake up)
 
   /** Reload the list. Called by: first render, after closing the editor */
   const reload = useCallback(
@@ -77,11 +78,15 @@ export function MoviesTab({ password, fields, notify }: Props) {
 
   /** Open a saved movie. Called by: the list */
   const edit = async (id: string) => {
+    if (opening) return // already opening one: ignore repeated taps
+    setOpening(id)
     try {
       const saved = await getRecord(password, id)
       setOpen({ record: saved, version: saved.version })
     } catch (err) {
       notify({ kind: 'error', text: (err as Error).message })
+    } finally {
+      setOpening(null)
     }
   }
 
@@ -158,14 +163,17 @@ export function MoviesTab({ password, fields, notify }: Props) {
           <ul className="space-y-2">
             {shown.map((r) => (
               <li key={r.id}>
-                <button type="button" onClick={() => void edit(r.id)}
-                        className="flex w-full items-center gap-3 rounded-xl border border-line bg-panel px-4 py-3 text-left text-sm hover:bg-panel-2">
-                  {r.synced ? <CheckCircle2 size={16} className="shrink-0 text-green-500" aria-label="in AniChat" />
-                    : <Clock size={16} className="shrink-0 text-muted" aria-label="waiting for the laptop's sync" />}
+                <button type="button" onClick={() => void edit(r.id)} aria-busy={opening === r.id}
+                        disabled={opening !== null && opening !== r.id}
+                        className="flex w-full items-center gap-3 rounded-xl border border-line bg-panel px-4 py-3 text-left text-sm hover:bg-panel-2 disabled:opacity-60">
+                  {opening === r.id ? <Loader2 size={16} className="shrink-0 animate-spin text-accent" aria-label="opening" />
+                    : r.synced ? <CheckCircle2 size={16} className="shrink-0 text-green-500" aria-label="in AniChat" />
+                      : <Clock size={16} className="shrink-0 text-muted" aria-label="waiting for the laptop's sync" />}
                   <span className="min-w-0 flex-1">
                     <span className="font-medium">{r.title}</span> <span className="text-muted">{r.year ?? ''}</span>
                     <span className="block text-xs text-muted">
-                      {r.cast} cast · {r.values} values · edited {new Date(r.updated_at).toLocaleDateString()}
+                      {opening === r.id ? 'Opening…'
+                        : `${r.cast} cast · ${r.values} values · edited ${new Date(r.updated_at).toLocaleDateString()}`}
                     </span>
                   </span>
                 </button>
