@@ -1,0 +1,56 @@
+[
+ {
+  "question": "Who is Kazuma Satou?",
+  "expect": [
+   "Kazuma Satou"
+  ],
+  "answer_contains": [
+   "adventurer"
+  ]
+ },
+ {
+  "question": "Who is Aqua?",
+  "expect": [
+   "Aqua"
+  ],
+  "answer_contains": [
+   "goddess"
+  ]
+ },
+ {
+  "question": "Who is Megumin?",
+  "expect": [
+   "Megumin"
+  ],
+  "answer_contains": [
+   "explosion"
+  ]
+ },
+ {
+  "question": "Who is Darkness?",
+  "expect": [
+   "Darkness"
+  ],
+  "answer_contains": [
+   "crusader"
+  ]
+ },
+ {
+  "question": "Who is Wiz?",
+  "expect": [
+   "Wiz"
+  ],
+  "answer_contains": [
+   "lich"
+  ]
+ },
+ {
+  "question": "Who is Vanir?",
+  "expect": [
+   "Vanir"
+  ],
+  "answer_contains": [
+   "devil"
+  ]
+ }
+]

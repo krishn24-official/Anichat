@@ -1,0 +1,61 @@
+[
+ {
+  "question": "Who is Laios?",
+  "expect": [
+   "Laios Touden"
+  ],
+  "answer_contains": [
+   "dungeon",
+   "monster"
+  ]
+ },
+ {
+  "question": "Who is Marcille?",
+  "expect": [
+   "Marcille Donato"
+  ],
+  "answer_contains": [
+   "elf",
+   "mage"
+  ]
+ },
+ {
+  "question": "Who is Senshi?",
+  "expect": [
+   "Senshi"
+  ],
+  "answer_contains": [
+   "dwarf",
+   "cook"
+  ]
+ },
+ {
+  "question": "Who is Chilchuck?",
+  "expect": [
+   "Chilchuck Tims"
+  ],
+  "answer_contains": [
+   "half-foot",
+   "lock"
+  ]
+ },
+ {
+  "question": "Who is Falin?",
+  "expect": [
+   "Falin Touden"
+  ],
+  "answer_contains": [
+   "red dragon",
+   "sister"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "laios"
+  ]
+ }
+]

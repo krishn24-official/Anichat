@@ -1,0 +1,68 @@
+[
+ {
+  "question": "Who is Emma?",
+  "expect": [
+   "Emma"
+  ],
+  "answer_contains": [
+   "grace field",
+   "orphan"
+  ]
+ },
+ {
+  "question": "Who is Norman?",
+  "expect": [
+   "Norman"
+  ],
+  "answer_contains": [
+   "genius"
+  ]
+ },
+ {
+  "question": "Who is Ray?",
+  "expect": [
+   "Ray"
+  ],
+  "answer_contains": [
+   "mom"
+  ]
+ },
+ {
+  "question": "Who is Isabella?",
+  "expect": [
+   "Isabella"
+  ],
+  "answer_contains": [
+   "mama",
+   "caretaker"
+  ]
+ },
+ {
+  "question": "What is Grace Field House?",
+  "expect": [
+   "Grace Field House"
+  ],
+  "answer_contains": [
+   "plant",
+   "orphan"
+  ]
+ },
+ {
+  "question": "Who is Sister Krone?",
+  "expect": [
+   "Krone"
+  ],
+  "answer_contains": [
+   "sister"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "conny"
+  ]
+ }
+]

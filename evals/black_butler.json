@@ -1,0 +1,59 @@
+[
+ {
+  "question": "Who is Ciel Phantomhive?",
+  "expect": [
+   "Ciel Phantomhive"
+  ],
+  "answer_contains": [
+   "earl",
+   "contract"
+  ]
+ },
+ {
+  "question": "Who is Sebastian Michaelis?",
+  "expect": [
+   "Sebastian Michaelis"
+  ],
+  "answer_contains": [
+   "butler",
+   "demon"
+  ]
+ },
+ {
+  "question": "Who is Grell Sutcliff?",
+  "expect": [
+   "Grelle Sutcliff"
+  ],
+  "answer_contains": [
+   "reaper"
+  ]
+ },
+ {
+  "question": "Who is the Undertaker?",
+  "expect": [
+   "Undertaker"
+  ],
+  "answer_contains": [
+   "reaper"
+  ]
+ },
+ {
+  "question": "Who is Elizabeth Midford?",
+  "expect": [
+   "Elizabeth Midford"
+  ],
+  "answer_contains": [
+   "fiancée",
+   "ciel"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "001. The Butler, Skilled"
+  ],
+  "answer_contains": [
+   "ciel"
+  ]
+ }
+]

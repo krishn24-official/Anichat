@@ -1,0 +1,47 @@
+[
+ {
+  "question": "Who is Maomao?",
+  "expect": [
+   "Maomao"
+  ],
+  "answer_contains": [
+   "apothecary"
+  ]
+ },
+ {
+  "question": "Who is Jinshi?",
+  "expect": [
+   "Jinshi"
+  ],
+  "answer_contains": [
+   "eunuch"
+  ]
+ },
+ {
+  "question": "Who is Gyokuyou?",
+  "expect": [
+   "Gyokuyou"
+  ],
+  "answer_contains": [
+   "consort"
+  ]
+ },
+ {
+  "question": "Who is Gaoshun?",
+  "expect": [
+   "Gaoshun"
+  ],
+  "answer_contains": [
+   "jinshi"
+  ]
+ },
+ {
+  "question": "Who is Lakan?",
+  "expect": [
+   "Lakan"
+  ],
+  "answer_contains": [
+   "strategist"
+  ]
+ }
+]

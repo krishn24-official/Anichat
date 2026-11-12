@@ -121,3 +121,9 @@ def test_a_name_in_the_question_comes_before_an_event_mentioned_on_minor_pages()
 def test_a_short_nickname_quoted_in_the_first_sentence_is_a_name():
     mob = card("Shigeo Kageyama", 'Shigeo Kageyama, nicknamed "Mob", is the main protagonist.\nAlias: Shige, Mob')
     assert [c.title for c in lookup("Who is Mob?", build_phrase_index([mob]))] == ["Shigeo Kageyama"]
+
+
+def test_a_short_alias_that_is_part_of_a_longer_name_counts():
+    baam = card("Twenty-Fifth Baam", "Twenty-Fifth Baam is an Irregular.\nAlias: Baam; Viole; Bam; Twenty-Fifth Bam")
+    ball = card("BALL", "BALL is a Ranker.")
+    assert [c.title for c in lookup("Who is Bam?", build_phrase_index([ball, baam]))] == ["Twenty-Fifth Baam"]

@@ -1,0 +1,56 @@
+[
+ {
+  "question": "Who is Bell Cranel?",
+  "expect": [
+   "Bell Cranel"
+  ],
+  "answer_contains": [
+   "adventurer"
+  ]
+ },
+ {
+  "question": "Who is Hestia?",
+  "expect": [
+   "Hestia"
+  ],
+  "answer_contains": [
+   "goddess"
+  ]
+ },
+ {
+  "question": "Who is Ais Wallenstein?",
+  "expect": [
+   "Ais Wallenstein"
+  ],
+  "answer_contains": [
+   "sword princess"
+  ]
+ },
+ {
+  "question": "Who is Freya?",
+  "expect": [
+   "Freya"
+  ],
+  "answer_contains": [
+   "goddess"
+  ]
+ },
+ {
+  "question": "Who is Lili?",
+  "expect": [
+   "Liliruca Arde"
+  ],
+  "answer_contains": [
+   "supporter"
+  ]
+ },
+ {
+  "question": "What is Orario?",
+  "expect": [
+   "Orario"
+  ],
+  "answer_contains": [
+   "dungeon"
+  ]
+ }
+]

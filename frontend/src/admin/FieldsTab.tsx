@@ -117,6 +117,18 @@ export function FieldsTab({ password, fields, onChange, notify }: Props) {
               </div>
             </div>
           )}
+          {draft.type === 'daywise' && (
+            <div>
+              <label htmlFor="f-sum" className={labelClass}>Adds up into (optional)</label>
+              <select id="f-sum" value={draft.sum_into ?? ''} className={inputClass}
+                      onChange={(e) => setDraft({ ...draft, sum_into: e.target.value || undefined })}>
+                <option value="">Nothing: no automatic total</option>
+                {fields.filter((f) => f.type === 'money' && !f.archived && f.currency === (draft.currency ?? 'INR')
+                  && (f.unit ?? '') === (draft.unit ?? '')).map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
+              </select>
+              <p className="mt-1 text-xs text-muted">The movie editor fills this total with the sum of the day rows (money fields in the same currency and unit).</p>
+            </div>
+          )}
           <fieldset>
             <legend className={labelClass}>Used for</legend>
             <div className="flex flex-wrap gap-4">
@@ -156,6 +168,7 @@ export function FieldsTab({ password, fields, onChange, notify }: Props) {
                   <p className="font-medium">{f.label}{f.archived && ' (archived)'}</p>
                   <p className="text-xs text-muted">
                     <code>{f.id}</code> · {TYPE_HELP[f.type]}{f.currency ? ` · ${f.currency}` : ''}{f.unit ? ` in ${f.unit}` : ''} · {f.applies_to.join(', ')}
+                    {f.sum_into && ` · adds up into ${fields.find((t) => t.id === f.sum_into)?.label ?? f.sum_into}`}
                   </p>
                 </div>
                 <button type="button" aria-label={`Edit ${f.label}`} onClick={() => setDraft(f)} className="text-muted hover:text-text">

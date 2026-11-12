@@ -1,0 +1,57 @@
+[
+ {
+  "question": "Who is Kiyotaka Ayanokoji?",
+  "expect": [
+   "Kiyotaka Ayanokōji"
+  ],
+  "answer_contains": [
+   "white room",
+   "class"
+  ]
+ },
+ {
+  "question": "Who is Suzune Horikita?",
+  "expect": [
+   "Suzune Horikita"
+  ],
+  "answer_contains": [
+   "class"
+  ]
+ },
+ {
+  "question": "Who is Kikyou Kushida?",
+  "expect": [
+   "Kikyō Kushida"
+  ],
+  "answer_contains": [
+   "class"
+  ]
+ },
+ {
+  "question": "Who is Kakeru Ryuuen?",
+  "expect": [
+   "Kakeru Ryūen"
+  ],
+  "answer_contains": [
+   "class c"
+  ]
+ },
+ {
+  "question": "What is Advanced Nurturing High School?",
+  "expect": [
+   "Advanced Nurturing High School"
+  ],
+  "answer_contains": [
+   "school"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "ayanokoji"
+  ]
+ }
+]

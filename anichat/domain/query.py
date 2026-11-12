@@ -29,7 +29,10 @@ def _number(unit: str, text: str) -> int | None:
     Called by: parse_question()
     """
     short = {"chapter": "ch", "episode": "ep"}[unit]
-    m = re.search(rf"\b(?:{unit}s?|{short}\.?)\s*#?\s*(\d{{1,4}})\b", text, re.I)
+    # What some wikis call them instead: Gintama "Lesson 12", Rurouni Kenshin "Act 12", Shaman
+    # King "Reincarnation 12"; Cowboy Bebop's episodes are "sessions". Only with a number after.
+    other = {"chapter": "lesson|act|reincarnation", "episode": "session"}[unit]
+    m = re.search(rf"\b(?:{unit}s?|{short}\.?|(?:{other})s?)\s*#?\s*(\d{{1,4}})\b", text, re.I)
     if m:
         return int(m.group(1))
     m = re.search(rf"\b({'|'.join(k for k, v in ORDINALS.items() if v)})\s+{unit}\b", text, re.I)

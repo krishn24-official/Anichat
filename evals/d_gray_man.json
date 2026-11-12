@@ -1,0 +1,65 @@
+[
+ {
+  "question": "Who is Allen Walker?",
+  "expect": [
+   "Allen Walker"
+  ],
+  "answer_contains": [
+   "exorcist"
+  ]
+ },
+ {
+  "question": "What is Innocence?",
+  "expect": [
+   "Innocence"
+  ],
+  "answer_contains": [
+   "god"
+  ]
+ },
+ {
+  "question": "Who is the Millennium Earl?",
+  "expect": [
+   "The Earl of Millennium"
+  ],
+  "answer_contains": [
+   "akuma"
+  ]
+ },
+ {
+  "question": "Who is Lenalee Lee?",
+  "expect": [
+   "Lenalee Lee"
+  ],
+  "answer_contains": [
+   "exorcist"
+  ]
+ },
+ {
+  "question": "What is the Black Order?",
+  "expect": [
+   "Black Order"
+  ],
+  "answer_contains": [
+   "exorcist"
+  ]
+ },
+ {
+  "question": "Who is Yu Kanda?",
+  "expect": [
+   "Yu Kanda"
+  ],
+  "answer_contains": [
+   "mugen"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "allen"
+  ]
+ }
+]

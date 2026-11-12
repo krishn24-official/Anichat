@@ -1,0 +1,57 @@
+[
+ {
+  "question": "Who is Riko?",
+  "expect": [
+   "Riko"
+  ],
+  "answer_contains": [
+   "cave raider",
+   "abyss"
+  ]
+ },
+ {
+  "question": "Who is Reg?",
+  "expect": [
+   "Reg"
+  ],
+  "answer_contains": [
+   "robot"
+  ]
+ },
+ {
+  "question": "Who is Nanachi?",
+  "expect": [
+   "Nanachi"
+  ],
+  "answer_contains": [
+   "hollow"
+  ]
+ },
+ {
+  "question": "Who is Bondrewd?",
+  "expect": [
+   "Bondrewd"
+  ],
+  "answer_contains": [
+   "white whistle"
+  ]
+ },
+ {
+  "question": "What is the Curse of the Abyss?",
+  "expect": [
+   "The Curse of the Abyss"
+  ],
+  "answer_contains": [
+   "ascend"
+  ]
+ },
+ {
+  "question": "Who is Ozen?",
+  "expect": [
+   "Ozen"
+  ],
+  "answer_contains": [
+   "white whistle"
+  ]
+ }
+]

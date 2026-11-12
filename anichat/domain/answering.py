@@ -40,12 +40,22 @@ class Source:
     url: str
 
 
-def normalize_citations(answer: str) -> str:
-    """Rewrite other citation styles as [n], so they are parsed and shown consistently.
+_CITATION_MARK = re.compile(r"\s*\[\d+(?:\s*,\s*\d+)*\]")  # a citation, with the space before it
+# The whole answer only says the sources don't have it ("I don't have that information [1][2]."):
+# its citation numbers point at sources that did not answer, so they are dropped.
+_NOT_FOUND = re.compile(r"(?:(?:i'?m )?sorry,?\s*)?i (?:do not|don'?t) have (?:(?:that|this|enough|any|the) )?information"
+                        r"(?: (?:about|on|regarding) [^.]{0,120})?\.?", re.I)
 
-    Called by: application/answer.py  AnswerService.answer()
+
+def normalize_citations(answer: str) -> str:
+    """Rewrite other citation styles as [n], so they are parsed and shown consistently, and drop
+    the citations of an answer that only says the information isn't there (no sources to show).
+
+    Called by: application/answer.py  AnswerService.answer() and stream()
     """
-    return _ALT_CITATION.sub(r"[\1]", answer)
+    answer = _ALT_CITATION.sub(r"[\1]", answer)
+    bare = _CITATION_MARK.sub("", answer).strip()
+    return bare if _NOT_FOUND.fullmatch(bare) else answer
 
 
 def build_messages(question: str, chunks: list[Chunk], history: list[Turn] | None = None) -> list[ChatMessage]:

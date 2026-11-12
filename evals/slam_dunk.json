@@ -1,0 +1,47 @@
+[
+ {
+  "question": "Who is Hanamichi Sakuragi?",
+  "expect": [
+   "Hanamichi Sakuragi"
+  ],
+  "answer_contains": [
+   "basketball"
+  ]
+ },
+ {
+  "question": "Who is Kaede Rukawa?",
+  "expect": [
+   "Kaede Rukawa"
+  ],
+  "answer_contains": [
+   "shohoku"
+  ]
+ },
+ {
+  "question": "Who is Takenori Akagi?",
+  "expect": [
+   "Takenori Akagi"
+  ],
+  "answer_contains": [
+   "captain"
+  ]
+ },
+ {
+  "question": "Who is Haruko Akagi?",
+  "expect": [
+   "Haruko Akagi"
+  ],
+  "answer_contains": [
+   "sister"
+  ]
+ },
+ {
+  "question": "What is Shohoku High?",
+  "expect": [
+   "Shohoku High"
+  ],
+  "answer_contains": [
+   "basketball"
+  ]
+ }
+]

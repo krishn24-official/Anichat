@@ -1,0 +1,56 @@
+[
+ {
+  "question": "Who is Kenshin Himura?",
+  "expect": [
+   "Himura Kenshin"
+  ],
+  "answer_contains": [
+   "battosai"
+  ]
+ },
+ {
+  "question": "Who is Kaoru Kamiya?",
+  "expect": [
+   "Kamiya Kaoru"
+  ],
+  "answer_contains": [
+   "dojo"
+  ]
+ },
+ {
+  "question": "Who is Makoto Shishio?",
+  "expect": [
+   "Shishio Makoto"
+  ],
+  "answer_contains": [
+   "bandage"
+  ]
+ },
+ {
+  "question": "Who is Sanosuke Sagara?",
+  "expect": [
+   "Sagara Sanosuke"
+  ],
+  "answer_contains": [
+   "fighter"
+  ]
+ },
+ {
+  "question": "What is the Sakabato?",
+  "expect": [
+   "Sakabatō"
+  ],
+  "answer_contains": [
+   "reverse"
+  ]
+ },
+ {
+  "question": "What happens in Act 1?",
+  "expect": [
+   "Act 1"
+  ],
+  "answer_contains": [
+   "kenshin"
+  ]
+ }
+]

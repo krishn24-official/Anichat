@@ -104,3 +104,13 @@ def test_other_citation_styles_and_same_section_sources_are_merged():
                   "Episode 33: Set Your Heart Ablaze", "Synopsis", 33, "https://w/wiki/Episode_33", [])
     sources = cited_sources("A [1]. B [2]. C [3].", [EP33, part2, AKAZA])
     assert [(s.numbers, s.title) for s in sources] == [((1, 2), "Episode 33: Set Your Heart Ablaze"), ((3,), "Akaza")]
+
+
+def test_a_not_found_answer_cites_nothing_but_a_partial_one_keeps_its_citations():
+    from anichat.domain.answering import normalize_citations
+
+    assert normalize_citations("I don't have that information [1][2][3][4].") == "I don't have that information."
+    assert normalize_citations("Sorry, I do not have information about day 7 [2].") == "Sorry, I do not have information about day 7."
+    partial = "Yash played Ravana [1], but I don't have that information about his fee [2]."
+    assert normalize_citations(partial) == partial
+    assert normalize_citations("Rengoku died fighting Akaza【3†source】.") == "Rengoku died fighting Akaza[3]."

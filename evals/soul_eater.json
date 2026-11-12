@@ -1,0 +1,67 @@
+[
+ {
+  "question": "Who is Maka Albarn?",
+  "expect": [
+   "Maka Albarn"
+  ],
+  "answer_contains": [
+   "meister",
+   "soul"
+  ]
+ },
+ {
+  "question": "Who is Soul Evans?",
+  "expect": [
+   "Soul Evans"
+  ],
+  "answer_contains": [
+   "scythe"
+  ]
+ },
+ {
+  "question": "Who is Death the Kid?",
+  "expect": [
+   "Death the Kid"
+  ],
+  "answer_contains": [
+   "shinigami",
+   "symmetry"
+  ]
+ },
+ {
+  "question": "Who is Black Star?",
+  "expect": [
+   "Black☆Star"
+  ],
+  "answer_contains": [
+   "assassin"
+  ]
+ },
+ {
+  "question": "What is the DWMA?",
+  "expect": [
+   "Death Weapon Meister Academy"
+  ],
+  "answer_contains": [
+   "academy"
+  ]
+ },
+ {
+  "question": "Who is Medusa?",
+  "expect": [
+   "Medusa Gorgon"
+  ],
+  "answer_contains": [
+   "witch"
+  ]
+ },
+ {
+  "question": "Who is Asura?",
+  "expect": [
+   "Asura"
+  ],
+  "answer_contains": [
+   "kishin"
+  ]
+ }
+]

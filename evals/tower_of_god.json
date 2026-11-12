@@ -1,0 +1,57 @@
+[
+ {
+  "question": "Who is Bam?",
+  "expect": [
+   "Twenty-Fifth Baam"
+  ],
+  "answer_contains": [
+   "irregular"
+  ]
+ },
+ {
+  "question": "Who is Khun Aguero Agnis?",
+  "expect": [
+   "Khun Aguero Agnis"
+  ],
+  "answer_contains": [
+   "bam"
+  ]
+ },
+ {
+  "question": "Who is Rachel?",
+  "expect": [
+   "Rachel"
+  ],
+  "answer_contains": [
+   "star"
+  ]
+ },
+ {
+  "question": "Who is Rak Wraithraiser?",
+  "expect": [
+   "Rak Wraithraiser"
+  ],
+  "answer_contains": [
+   "turtle",
+   "spear"
+  ]
+ },
+ {
+  "question": "What is Shinsu?",
+  "expect": [
+   "Shinsu"
+  ],
+  "answer_contains": [
+   "tower"
+  ]
+ },
+ {
+  "question": "Who is Jyu Viole Grace?",
+  "expect": [
+   "Twenty-Fifth Baam"
+  ],
+  "answer_contains": [
+   "fug"
+  ]
+ }
+]

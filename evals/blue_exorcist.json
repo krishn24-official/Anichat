@@ -1,0 +1,66 @@
+[
+ {
+  "question": "Who is Rin Okumura?",
+  "expect": [
+   "Rin Okumura"
+  ],
+  "answer_contains": [
+   "satan",
+   "son"
+  ]
+ },
+ {
+  "question": "Who is Yukio Okumura?",
+  "expect": [
+   "Yukio Okumura"
+  ],
+  "answer_contains": [
+   "brother"
+  ]
+ },
+ {
+  "question": "Who is Shiro Fujimoto?",
+  "expect": [
+   "Shiro Fujimoto"
+  ],
+  "answer_contains": [
+   "paladin"
+  ]
+ },
+ {
+  "question": "What is the Kurikara?",
+  "expect": [
+   "Kurikara"
+  ],
+  "answer_contains": [
+   "sword"
+  ]
+ },
+ {
+  "question": "Who is Mephisto Pheles?",
+  "expect": [
+   "Mephisto Pheles"
+  ],
+  "answer_contains": [
+   "demon"
+  ]
+ },
+ {
+  "question": "What is True Cross Academy?",
+  "expect": [
+   "True Cross Academy"
+  ],
+  "answer_contains": [
+   "exorcist"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "rin"
+  ]
+ }
+]

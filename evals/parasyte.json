@@ -1,0 +1,48 @@
+[
+ {
+  "question": "Who is Shinichi Izumi?",
+  "expect": [
+   "Shinichi Izumi"
+  ],
+  "answer_contains": [
+   "migi"
+  ]
+ },
+ {
+  "question": "Who is Migi?",
+  "expect": [
+   "Migi"
+  ],
+  "answer_contains": [
+   "right hand",
+   "parasite"
+  ]
+ },
+ {
+  "question": "Who is Reiko Tamura?",
+  "expect": [
+   "Reiko Tamura"
+  ],
+  "answer_contains": [
+   "parasite"
+  ]
+ },
+ {
+  "question": "Who is Gotou?",
+  "expect": [
+   "Gotou"
+  ],
+  "answer_contains": [
+   "parasite"
+  ]
+ },
+ {
+  "question": "What happens in chapter 1?",
+  "expect": [
+   "Chapter 1"
+  ],
+  "answer_contains": [
+   "shinichi"
+  ]
+ }
+]

@@ -1,0 +1,57 @@
+[
+ {
+  "question": "Who is Daniel Park?",
+  "expect": [
+   "Daniel Park"
+  ],
+  "answer_contains": [
+   "body",
+   "two"
+  ]
+ },
+ {
+  "question": "Who is Zack Lee?",
+  "expect": [
+   "Zack Lee"
+  ],
+  "answer_contains": [
+   "boxing"
+  ]
+ },
+ {
+  "question": "Who is Vasco?",
+  "expect": [
+   "Euntae Lee"
+  ],
+  "answer_contains": [
+   "burn knuckles"
+  ]
+ },
+ {
+  "question": "Who is Johan Seong?",
+  "expect": [
+   "Johan Seong"
+  ],
+  "answer_contains": [
+   "copy"
+  ]
+ },
+ {
+  "question": "Who is Gun Park?",
+  "expect": [
+   "Gun Park"
+  ],
+  "answer_contains": [
+   "fist"
+  ]
+ },
+ {
+  "question": "What happens in episode 1?",
+  "expect": [
+   "Episode 1"
+  ],
+  "answer_contains": [
+   "daniel"
+  ]
+ }
+]

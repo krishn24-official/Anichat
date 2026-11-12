@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { call, memoryRedis } from './_fake'
-import { parseDayRows, SUGGESTED_FIELDS, slug, tmdbRecord, validateField, validateRecord, type Field } from './_records'
+import { dayWiseTotals, parseDayRows, SUGGESTED_FIELDS, slug, tmdbRecord, validateField, validateRecord, type Field } from './_records'
 import * as fieldsApi from './fields'
 import * as recordsApi from './records'
 
@@ -127,5 +127,28 @@ describe('day-wise validation', () => {
     const f: Field = { id: 'd', label: 'India net (day-wise)', type: 'daywise', group: 'Box office', applies_to: ['movie'], order: 0 }
     expect(validateRecord({ title: 'x', values: { d: [{ label: 'Day 1', value: 5 }, { label: 'Day 2', value: '' as unknown as number }] } }, [f]))
       .toBe('India net (day-wise): row 2 (Day 2) has no amount. Fill it in or remove the row.')
+  })
+})
+
+describe('day-wise totals', () => {
+  const net: Field = { id: 'india_net_collection', label: 'India net collection', type: 'money', group: 'Box office',
+    applies_to: ['movie'], currency: 'INR', unit: 'crore', order: 0 }
+  const usd: Field = { ...net, id: 'gross_usd', label: 'Gross (USD)', currency: 'USD', unit: '' }
+
+  it('a day-wise field adds up into a money field of the same currency and unit only', () => {
+    const daywise = validateField({ label: 'India net (day-wise)', type: 'daywise', currency: 'INR', unit: 'crore',
+      sum_into: 'india_net_collection' }, [net, usd]) as Field
+    expect(daywise.sum_into).toBe('india_net_collection')
+    expect(validateField({ label: 'x', type: 'daywise', currency: 'INR', unit: 'crore', sum_into: 'gross_usd' }, [net, usd]))
+      .toContain('same currency and unit')
+    expect(validateField({ label: 'y', type: 'daywise', sum_into: 'nope' }, [net])).toContain('not a money field')
+  })
+
+  it('totals are the rounded sum of the rows (text or numbers), and only for linked fields', () => {
+    const daywise: Field = { ...net, id: 'd', label: 'Day-wise', type: 'daywise', sum_into: 'india_net_collection' }
+    const unlinked: Field = { ...daywise, id: 'u', sum_into: undefined }
+    expect(dayWiseTotals({ d: [{ label: 'Day 1', value: '64.85' }, { label: 'Day 2', value: 48.05 }, { label: 'x', value: '?' }],
+      u: [{ label: 'Day 1', value: 5 }] }, [daywise, unlinked])).toEqual({ india_net_collection: 112.9 })
+    expect(dayWiseTotals({ d: [] }, [daywise])).toEqual({})
   })
 })

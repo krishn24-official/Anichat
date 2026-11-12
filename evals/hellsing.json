@@ -1,0 +1,56 @@
+[
+ {
+  "question": "Who is Alucard?",
+  "expect": [
+   "Alucard"
+  ],
+  "answer_contains": [
+   "vampire"
+  ]
+ },
+ {
+  "question": "Who is Integra Hellsing?",
+  "expect": [
+   "Integral Fairbrook Wingates Hellsing"
+  ],
+  "answer_contains": [
+   "hellsing"
+  ]
+ },
+ {
+  "question": "Who is Seras Victoria?",
+  "expect": [
+   "Seras Victoria"
+  ],
+  "answer_contains": [
+   "police"
+  ]
+ },
+ {
+  "question": "Who is Alexander Anderson?",
+  "expect": [
+   "Alexander Anderson"
+  ],
+  "answer_contains": [
+   "iscariot"
+  ]
+ },
+ {
+  "question": "What is Millennium?",
+  "expect": [
+   "Millennium Project"
+  ],
+  "answer_contains": [
+   "nazi"
+  ]
+ },
+ {
+  "question": "Who is Walter?",
+  "expect": [
+   "Walter C. Dornez"
+  ],
+  "answer_contains": [
+   "butler"
+  ]
+ }
+]

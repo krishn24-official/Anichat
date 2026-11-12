@@ -25,6 +25,7 @@ export interface Field {
   help?: string // shown under the input
   order: number
   archived?: boolean // hidden from the form; values already saved are kept
+  sum_into?: string // day-wise fields: the money field their rows add up to (kept up to date by the editor)
 }
 
 /** "India Net Collection!" -> "india_net_collection". Called by: validateField(), tests */
@@ -69,7 +70,33 @@ export function validateField(input: Partial<Field>, existing: Field[]): Field |
   if (type === 'money' || type === 'daywise' || type === 'number') {
     field.unit = (UNITS as readonly string[]).includes(String(input.unit ?? '')) ? input.unit : ''
   }
+  if (type === 'daywise' && input.sum_into) {
+    // The total must be a money field counted the same way (₹ in crore + ₹ in crore).
+    const target = existing.find((f) => f.id === input.sum_into)
+    if (!target || target.type !== 'money') return `"${String(input.sum_into)}" is not a money field`
+    if (target.currency !== field.currency || (target.unit ?? '') !== (field.unit ?? '')) {
+      return `"${target.label}" is in ${target.currency} ${target.unit || ''}: the day-wise rows must use the same currency and unit`
+    }
+    field.sum_into = target.id
+  }
   return field
+}
+
+/**
+ * Totals kept up to date from day-wise rows: for every day-wise field that adds up into another
+ * field, that field gets the rows' sum (rounded to 2 decimals). Rows that aren't numbers count
+ * as 0; no rows leaves the total as it is.
+ * Called by: the movie editor (whenever day-wise rows change); tests
+ */
+export function dayWiseTotals(values: Record<string, unknown>, fields: Field[]): Record<string, number> {
+  const totals: Record<string, number> = {}
+  for (const f of fields) {
+    const rows = values[f.id]
+    if (f.type !== 'daywise' || !f.sum_into || !Array.isArray(rows) || !rows.length) continue
+    const sum = rows.reduce((s: number, r) => s + (Number.isFinite(toNumber((r as DayRow).value)) ? toNumber((r as DayRow).value) : 0), 0)
+    totals[f.sum_into] = Math.round(sum * 100) / 100
+  }
+  return totals
 }
 
 type Preset = Omit<Field, 'id' | 'order' | 'applies_to'> & { applies_to?: string[] }
@@ -88,8 +115,9 @@ export const SUGGESTED_FIELDS: Preset[] = [
   { label: 'Opening day India net', type: 'money', group: 'Box office', currency: 'INR', unit: 'crore' },
   { label: 'First week India net', type: 'money', group: 'Box office', currency: 'INR', unit: 'crore' },
   { label: 'India net collection (day-wise)', type: 'daywise', group: 'Box office', currency: 'INR',
-    unit: 'crore', help: 'Paste rows from Sacnilk: "Day 1 [1st Friday] ₹ 21 Cr"' },
-  { label: 'Worldwide gross (day-wise)', type: 'daywise', group: 'Box office', currency: 'INR', unit: 'crore' },
+    unit: 'crore', help: 'Paste rows from Sacnilk: "Day 1 [1st Friday] ₹ 21 Cr"', sum_into: 'india_net_collection' },
+  { label: 'Worldwide gross (day-wise)', type: 'daywise', group: 'Box office', currency: 'INR', unit: 'crore',
+    sum_into: 'worldwide_gross_collection' },
   { label: 'Box office verdict', type: 'text', group: 'Box office', help: 'Blockbuster, Hit, Average, Flop...' },
   { label: 'India release date', type: 'date', group: 'Release' },
   { label: 'Re-releases', type: 'text', group: 'Release', help: 'Dates and what they earned' },

@@ -1,0 +1,65 @@
+[
+ {
+  "question": "Who is Spike Spiegel?",
+  "expect": [
+   "Spike Spiegel"
+  ],
+  "answer_contains": [
+   "bounty hunter"
+  ]
+ },
+ {
+  "question": "Who is Jet Black?",
+  "expect": [
+   "Jet Black"
+  ],
+  "answer_contains": [
+   "bebop"
+  ]
+ },
+ {
+  "question": "Who is Faye Valentine?",
+  "expect": [
+   "Faye Valentine"
+  ],
+  "answer_contains": [
+   "gambler"
+  ]
+ },
+ {
+  "question": "Who is Edward?",
+  "expect": [
+   "Edward"
+  ],
+  "answer_contains": [
+   "hacker"
+  ]
+ },
+ {
+  "question": "Who is Vicious?",
+  "expect": [
+   "Vicious"
+  ],
+  "answer_contains": [
+   "red dragon"
+  ]
+ },
+ {
+  "question": "What is the Bebop?",
+  "expect": [
+   "Bebop"
+  ],
+  "answer_contains": [
+   "ship"
+  ]
+ },
+ {
+  "question": "What happens in Asteroid Blues?",
+  "expect": [
+   "Asteroid Blues"
+  ],
+  "answer_contains": [
+   "spike"
+  ]
+ }
+]

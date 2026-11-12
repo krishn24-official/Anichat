@@ -1,0 +1,56 @@
+[
+ {
+  "question": "Who is Yoh Asakura?",
+  "expect": [
+   "Asakura Yoh"
+  ],
+  "answer_contains": [
+   "shaman"
+  ]
+ },
+ {
+  "question": "Who is Hao Asakura?",
+  "expect": [
+   "Asakura Hao"
+  ],
+  "answer_contains": [
+   "shaman king"
+  ]
+ },
+ {
+  "question": "Who is Anna Kyoyama?",
+  "expect": [
+   "Asakura Anna"
+  ],
+  "answer_contains": [
+   "itako"
+  ]
+ },
+ {
+  "question": "Who is Amidamaru?",
+  "expect": [
+   "Amidamaru"
+  ],
+  "answer_contains": [
+   "samurai"
+  ]
+ },
+ {
+  "question": "What is the Shaman Fight?",
+  "expect": [
+   "Shaman Fight"
+  ],
+  "answer_contains": [
+   "tournament"
+  ]
+ },
+ {
+  "question": "What happens in Reincarnation 1?",
+  "expect": [
+   "Reincarnation 1"
+  ],
+  "answer_contains": [
+   "yoh"
+  ]
+ }
+]

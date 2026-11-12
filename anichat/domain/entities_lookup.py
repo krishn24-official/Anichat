@@ -59,6 +59,11 @@ def _phrases(card: Chunk, series_title: str = "") -> tuple[set[str], set[str], s
     first_sentence = re.split(r"(?<=[.!?])\s", body.strip(), maxsplit=1)[0]
     identity.update(_DEFINED_AS.findall(first_sentence))
     nicknames = {n.lower() for n in _NICKNAMED.findall(first_sentence)}
+    # A short alias that is a word of a longer name of the same page ("Bam" of "Twenty-Fifth Bam")
+    # is a short form of that name, not noise like "God" (an alias of Light Yagami).
+    longer = [p.lower() for p in identity if len(p) >= MIN_PHRASE_CHARS]
+    nicknames |= {p.lower() for p in identity if 3 <= len(p) < MIN_PHRASE_CHARS
+                  and any(re.search(rf"(?<!\w){re.escape(p.lower())}(?!\w)", other) for other in longer)}
     roles = set(_TITLE.findall(body))
     for value in _ROLE_LINE.findall(body):
         roles.update(_split_values(value))

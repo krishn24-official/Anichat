@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowUp, ClipboardPaste, History, Plus, Trash2, X } from 'lucide-react'
 import { type FormEvent, type ReactNode, useState } from 'react'
-import { type Field, formatValue, parseDayRows } from '../../api/_records'
+import { dayWiseTotals, type Field, formatValue, parseDayRows } from '../../api/_records'
 import { AdminError, deleteRecord, getHistory, type MovieRecord, saveRecord } from './adminApi'
 import { type DayRowText, type EditorState, fromEditor, move, parseCastLines, rowsTotal, toEditor } from './recordForm'
 import { card, inputBox, inputClass, labelClass, type Notice, primaryButton, secondaryButton } from './ui'
@@ -110,6 +110,14 @@ export function MovieEditor({ password, fields, record, baseVersion, onSaved, on
   const [history, setHistory] = useState<MovieRecord[] | null>(null)
   const update = (patch: Partial<EditorState>) => setState((s) => ({ ...s, ...patch }))
   const setValue = (id: string, v: string | DayRowText[]) => setState((s) => ({ ...s, values: { ...s.values, [id]: v } }))
+  /** Change a day-wise field's rows, and the total they add up into (Fields tab: "adds up into"). Called by: DayRows */
+  const setDayRows = (id: string, rows: DayRowText[]) => setState((s) => {
+    const values = { ...s.values, [id]: rows }
+    for (const [target, sum] of Object.entries(dayWiseTotals(values, fields.filter((f) => f.id === id)))) {
+      values[target] = String(sum)
+    }
+    return { ...s, values }
+  })
 
   // Movie fields to show: active ones, plus archived ones that still hold a value here.
   const shown = fields.filter((f) => f.applies_to.includes('movie') && (!f.archived || state.values[f.id] !== undefined))
@@ -241,18 +249,25 @@ export function MovieEditor({ password, fields, record, baseVersion, onSaved, on
           {shown.filter((f) => f.group === group).map((f) => {
             const value = state.values[f.id]
             if (f.type === 'daywise') {
-              return <DayRows key={f.id} field={f} rows={Array.isArray(value) ? value : []} onChange={(rows) => setValue(f.id, rows)} />
+              return <DayRows key={f.id} field={f} rows={Array.isArray(value) ? value : []} onChange={(rows) => setDayRows(f.id, rows)} />
             }
             const text = typeof value === 'string' ? value : ''
             const unit = f.type === 'money' ? `${f.currency === 'USD' ? '$' : '₹'}${f.unit ? ` in ${f.unit}` : ''}` : f.unit
             const preview = (f.type === 'money' || f.type === 'number') && text.trim() && Number.isFinite(Number(text.replace(/,/g, '')))
               ? `= ${formatValue(f, Number(text.replace(/,/g, '')))}` : ''
+            // A total kept up to date from day-wise rows: say so, and warn if it was changed by hand since.
+            const source = shown.find((d) => d.type === 'daywise' && d.sum_into === f.id && Array.isArray(state.values[d.id])
+              && (state.values[d.id] as DayRowText[]).length)
+            const sum = source ? dayWiseTotals({ [source.id]: state.values[source.id] }, [source])[f.id] : undefined
+            const auto = source && sum !== undefined
+              ? (Number(text.replace(/,/g, '')) === sum ? `Added up from ${source.label}`
+                : `⚠ ${source.label} adds up to ${formatValue(f, sum)}`) : ''
             return (
               <Text key={f.id} id={`v-${f.id}`} value={text} onChange={(v) => setValue(f.id, v)}
                     label={`${f.label}${unit ? ` (${unit})` : ''}${f.archived ? ' · archived' : ''}`}
                     type={f.type === 'date' ? 'date' : f.type === 'url' ? 'url' : 'text'}
                     placeholder={f.type === 'list' ? 'Netflix, Prime Video' : undefined}
-                    hint={[f.help, f.type === 'list' ? 'Separate with commas' : '', preview].filter(Boolean).join(' · ') || undefined} />
+                    hint={[auto, f.help, f.type === 'list' ? 'Separate with commas' : '', preview].filter(Boolean).join(' · ') || undefined} />
             )
           })}
         </Section>
