@@ -60,7 +60,7 @@ class TmdbClient:
     def search_movie(self, title: str, year: int | None = None) -> list[dict]:
         """Matching movies, best first: [{"id", "title", "release_date", "popularity", ...}].
 
-        Called by: application/added_data.py  AddedDataService.find_movie()
+        Called by: scripts/add_movie.py
         """
         params = {"query": title, "include_adult": "false"}
         if year:
@@ -70,6 +70,48 @@ class TmdbClient:
     def movie(self, tmdb_id: int) -> dict:
         """Full details of one movie, with its cast and crew ("credits").
 
-        Called by: application/added_data.py  AddedDataService.add_movie()
+        Called by: scripts/add_movie.py
         """
         return self._get(f"/movie/{tmdb_id}", append_to_response="credits")
+
+    def collection(self, name_or_id: str) -> tuple[str, list[dict]]:
+        """A film series ("Jumanji Collection", or its id): (its name, its movies).
+
+        Called by: scripts/add_movie.py --collection
+        """
+        if not str(name_or_id).isdigit():
+            found = self._get("/search/collection", query=name_or_id).get("results", [])
+            if not found:
+                raise LookupError(f"TMDb has no collection {name_or_id!r}")
+            name_or_id = found[0]["id"]
+        data = self._get(f"/collection/{name_or_id}")
+        return data["name"], data.get("parts", [])
+
+    def directed_by(self, name: str) -> tuple[str, list[dict]]:
+        """The movies a person directed: (their name as on TMDb, the movies).
+
+        Called by: scripts/add_movie.py --director
+        """
+        people = self._get("/search/person", query=name).get("results", [])
+        if not people:
+            raise LookupError(f"TMDb has no person {name!r}")
+        person = max(people[:5], key=lambda p: p.get("popularity", 0))
+        crew = self._get(f"/person/{person['id']}/movie_credits").get("crew", [])
+        return person["name"], [c for c in crew if c.get("job") == "Director"]
+
+    def by_companies(self, company_ids: str, released_before: str, min_votes: int = 100, max_pages: int = 20) -> list[dict]:
+        """Movies a studio made ("420|7505": any of these TMDb company ids), released by a date,
+        with at least `min_votes` votes (leaves out obscure releases), oldest first.
+
+        Called by: scripts/add_movie.py --company
+        """
+        movies, page = [], 1
+        while page <= max_pages:
+            data = self._get("/discover/movie", with_companies=company_ids, page=page, include_adult="false",
+                             sort_by="primary_release_date.asc", **{"primary_release_date.lte": released_before,
+                                                                     "vote_count.gte": min_votes})
+            movies += data.get("results", [])
+            if page >= data.get("total_pages", 1):
+                break
+            page += 1
+        return movies

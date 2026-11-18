@@ -1,0 +1,28 @@
+# Marvel and DC films that TMDb doesn't credit to the Marvel/DC studios (so --company misses them).
+# Used with: python -m scripts.add_movie --file movie_lists/marvel_dc_classics.txt
+# Marvel
+Blade (1998)
+Blade II (2002)
+X-Men (2000)
+Venom: Let There Be Carnage (2021)
+Venom: The Last Dance (2024)
+Morbius (2022)
+Madame Web (2024)
+Kraven the Hunter (2024)
+# DC
+Superman (1978)
+Superman II (1980)
+Superman III (1983)
+Superman IV: The Quest for Peace (1987)
+Supergirl (1984)
+Batman (1966)
+Batman (1989)
+Batman Returns (1992)
+Batman: Mask of the Phantasm (1993)
+Batman Forever (1995)
+Batman & Robin (1997)
+Steel (1997)
+Catwoman (2004)
+Constantine (2005)
+V for Vendetta (2006)
+Joker: Folie à Deux (2024)

@@ -16,14 +16,17 @@ const STORE_URL = 'https://preview-memory.local'
 export const SAMPLE_TOKEN = 'sample' // api/tmdb.ts reports "sample: true" with it
 
 /**
- * TMDB_READ_TOKEN / TMDB_API_KEY from AniChat's .env (one folder up), and nothing else from it.
+ * Some settings from AniChat's .env (one folder up), and nothing else from it: the TMDb key, and
+ * with `live` the real store's URL and token (`npm run dev:admin:live`: the preview then edits
+ * the same data as the deployed form).
  * Called by: adminPreview()
  */
-function tmdbKeysFromDotenv(): Record<string, string> {
+function keysFromDotenv(live: boolean): Record<string, string> {
   try {
     const text = readFileSync(fileURLToPath(new URL('../../.env', import.meta.url)), 'utf8')
+    const names = ['TMDB_READ_TOKEN', 'TMDB_API_KEY', ...(live ? ['KV_REST_API_URL', 'KV_REST_API_TOKEN'] : [])]
     const keys: Record<string, string> = {}
-    for (const m of text.matchAll(/^(TMDB_READ_TOKEN|TMDB_API_KEY)\s*=\s*["']?([^"'\r\n#]+?)["']?\s*$/gm)) keys[m[1]] = m[2]
+    for (const m of text.matchAll(/^([A-Z_]+)\s*=\s*["']?([^"'\r\n#]+?)["']?\s*$/gm)) if (names.includes(m[1])) keys[m[1]] = m[2]
     return keys
   } catch {
     return {}
@@ -60,15 +63,23 @@ async function handle(server: ViteDevServer, req: IncomingMessage, res: ServerRe
 }
 
 /** The Vite plugin. Used by: vite.config.ts in mode "admin" */
-export function adminPreview(): Plugin {
+export function adminPreview(live = false): Plugin {
   return {
     name: 'anichat-admin-preview',
     apply: 'serve',
     configureServer(server) {
       process.env.ADMIN_PASSWORD ??= 'preview'
-      process.env.KV_REST_API_URL = STORE_URL
-      process.env.KV_REST_API_TOKEN = 'preview'
-      // Kept in a file between restarts (git-ignored), written after every change.
+      // `live` (npm run dev:admin:live): the real store from AniChat's .env, the same data as the
+      // deployed form. Otherwise a local store, kept in a file between restarts (git-ignored).
+
+      for (const [key, value] of Object.entries(keysFromDotenv(live))) process.env[key] ??= value
+      if (live && !(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN)) {
+        throw new Error('dev:admin:live needs KV_REST_API_URL and KV_REST_API_TOKEN in AniChat/.env')
+      }
+      if (!live) {
+        process.env.KV_REST_API_URL = STORE_URL
+        process.env.KV_REST_API_TOKEN = 'preview'
+      }
       const storeFile = path.resolve(server.config.root, '.preview-store.json')
       let saved: Snapshot | undefined
       try {
@@ -78,18 +89,16 @@ export function adminPreview(): Plugin {
       }
       const store = memoryRedis(saved, (s) => writeFileSync(storeFile, JSON.stringify(s)))
       const realFetch = globalThis.fetch
-      // A real TMDb key from AniChat's .env (the laptop's), if there is one: then every movie is found.
-      for (const [key, value] of Object.entries(tmdbKeysFromDotenv())) process.env[key] ??= value
       const useSample = !process.env.TMDB_READ_TOKEN && !process.env.TMDB_API_KEY
       if (useSample) process.env.TMDB_READ_TOKEN = SAMPLE_TOKEN // answered by sampleTmdb(), never sent anywhere
       globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
         const url = String(input instanceof Request ? input.url : input)
-        if (url.startsWith(STORE_URL)) return store(url, init ?? {})
+        if (!live && url.startsWith(STORE_URL)) return store(url, init ?? {})
         if (useSample && url.startsWith('https://api.tmdb.org/')) return sampleTmdb(url)
         return realFetch(input, init)
       }) as typeof fetch
-      // The laptop's sync reads this store like Upstash: KV_REST_API_URL=http://localhost:<port>/preview-store
-      server.middlewares.use('/preview-store', (req, res) => {
+      // The laptop's sync reads the local store like Upstash: KV_REST_API_URL=http://localhost:<port>/preview-store
+      if (!live) server.middlewares.use('/preview-store', (req, res) => {
         const ok = req.method === 'POST' && req.headers.authorization === 'Bearer preview'
         if (!ok) {
           res.statusCode = 401
@@ -118,7 +127,8 @@ export function adminPreview(): Plugin {
       })
       server.config.logger.info(
         `\n  Admin preview: http://localhost:${server.config.server.port ?? 5173}/admin  (password: ${process.env.ADMIN_PASSWORD === 'preview' ? 'preview' : 'your ADMIN_PASSWORD'})` +
-        `\n  Store: .preview-store.json (${saved ? 'loaded' : 'new'}); laptop sync: KV_REST_API_URL=http://localhost:${server.config.server.port ?? 5173}/preview-store` +
+        (live ? '\n  Store: LIVE (the deployed form\'s Upstash store: edits are real)'
+          : `\n  Store: .preview-store.json (${saved ? 'loaded' : 'new'}); laptop sync: KV_REST_API_URL=http://localhost:${server.config.server.port ?? 5173}/preview-store`) +
         `\n  TMDb: ${useSample ? 'sample movies (Iron Man, Stree 2)' : 'real API'}\n`,
       )
     },

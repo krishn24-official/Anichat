@@ -127,3 +127,16 @@ def test_entries_for_a_series_merge_and_are_chunked_with_its_wiki_pages(tmp_path
     assert sorted(d.meta["kind"] for d in docs) == ["added", "character"]
     assert any("Ichiraku ramen" in c.text for d in docs if d.meta["kind"] == "added" for c in chunk_document(d))
     assert len({c.id for d in docs for c in chunk_document(d)}) == sum(len(chunk_document(d)) for d in docs)
+
+
+def test_only_released_feature_films_are_added():
+    from scripts.add_movie import feature_film
+
+    film = {"release_date": "2010-07-16", "runtime": 148, "genres": [{"id": 28}],
+            "credits": {"crew": [{"name": "Christopher Nolan", "job": "Director"}]}}
+    assert feature_film(film, "2026-11-14") is None
+    assert feature_film({**film, "release_date": "2028-03-17"}, "2026-11-14") == "not released yet"
+    assert feature_film({**film, "runtime": 4}, "2026-11-14") == "short (4 min)"
+    assert feature_film({**film, "genres": [{"id": 99}]}, "2026-11-14") == "documentary"
+    anthology = {"crew": [{"name": f"Director {i}", "job": "Director"} for i in range(8)]}
+    assert feature_film({**film, "credits": anthology}, "2026-11-14") == "anthology (8 directors)"

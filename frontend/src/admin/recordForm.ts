@@ -19,6 +19,8 @@ export interface EditorState {
   release_date: string
   runtime: string
   genres: string
+  collection: string
+  companies: string
   language: string
   tagline: string
   overview: string
@@ -44,7 +46,8 @@ export function toEditor(r: Partial<MovieRecord>, fields: Field[]): EditorState 
   return {
     id: r.id ?? '', tmdb_id: r.tmdb_id ?? null, title: r.title ?? '', original_title: r.original_title ?? '',
     year: r.year ? String(r.year) : '', release_date: r.release_date ?? '', runtime: r.runtime ? String(r.runtime) : '',
-    genres: join(r.genres), language: r.language ?? '', tagline: r.tagline ?? '', overview: r.overview ?? '',
+    genres: join(r.genres), collection: r.collection ?? '', companies: join(r.companies),
+    language: r.language ?? '', tagline: r.tagline ?? '', overview: r.overview ?? '',
     directors: join(r.directors), writers: join(r.writers), producers: join(r.producers), music: join(r.music),
     cast: (r.cast ?? []).map((c) => ({ ...c })), values, notes: r.notes ?? '', sources: join(r.sources, '\n'),
   }
@@ -84,7 +87,8 @@ export function fromEditor(s: EditorState): Partial<MovieRecord> {
   return {
     id: s.id || undefined, tmdb_id: s.tmdb_id, title: s.title.trim(), original_title: s.original_title.trim(),
     year: s.year.trim() ? Number(s.year) : null, release_date: s.release_date, runtime: s.runtime.trim() ? Number(s.runtime) : null,
-    genres: list(s.genres), language: s.language.trim(), tagline: s.tagline.trim(), overview: s.overview.trim(),
+    genres: list(s.genres), collection: s.collection.trim(), companies: list(s.companies),
+    language: s.language.trim(), tagline: s.tagline.trim(), overview: s.overview.trim(),
     directors: list(s.directors), writers: list(s.writers), producers: list(s.producers), music: list(s.music),
     cast: s.cast.filter((c) => c.name.trim()).map((c) => ({ name: c.name.trim(), character: c.character.trim() })),
     values, notes: s.notes.trim(), sources: s.sources.split('\n').map((x) => x.trim()).filter(Boolean),

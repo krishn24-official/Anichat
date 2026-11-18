@@ -11,8 +11,10 @@ from functools import lru_cache
 from anichat import config
 from anichat.application.answer import AnswerService
 from anichat.application.llm_fallback import FallbackChatModel
+from anichat.application.movie_questions import MovieQuestions
 from anichat.application.retrieve import RetrievalService
 from anichat.infrastructure.fastembed_embedder import FastEmbedEmbedder
+from anichat.infrastructure.movie_db import MovieDB
 from anichat.infrastructure.openai_compatible import GEMINI_URL, GROQ_URL, OpenAICompatibleModel
 from anichat.infrastructure.qdrant_index import QdrantIndex
 
@@ -53,6 +55,8 @@ def retrieval_service() -> RetrievalService:
 
 @lru_cache(maxsize=None)
 def answer_service() -> AnswerService:
-    """Retrieval + the chat model.
+    """Retrieval + the chat model, and the movies table (data/movies.sqlite, built by the sync) for
+    questions that rank or add up across movies.
     Called by: interfaces/api.py, scripts/chat.py"""
-    return AnswerService(retrieval_service(), chat_model())
+    movies = MovieQuestions(MovieDB(config.DATA_DIR / "movies.sqlite"), chat_model())
+    return AnswerService(retrieval_service(), chat_model(), movie_questions=movies)

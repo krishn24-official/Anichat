@@ -99,6 +99,21 @@ class SubmissionStore:
         stored = {**record, "version": 1, "created_at": now, "updated_at": now}
         self._command("HSET", RECORDS_KEY, record["id"], json.dumps(stored, ensure_ascii=False))
 
+    def update_record(self, record: dict, changes: dict, now: str) -> bool:
+        """Save changes to a record as its next version, keeping the previous one in its history
+        (as the form does). Refused (False) if the record changed since it was read.
+
+        Called by: scripts/add_movie.py --fill-missing
+        """
+        current = json.loads(self._command("HGET", RECORDS_KEY, record["id"]) or "null")
+        if not current or current.get("version") != record.get("version"):
+            return False
+        updated = {**current, **changes, "version": current["version"] + 1, "updated_at": now}
+        self._command("LPUSH", f"anichat:history:{record['id']}", json.dumps(current, ensure_ascii=False))
+        self._command("LTRIM", f"anichat:history:{record['id']}", 0, 19)
+        self._command("HSET", RECORDS_KEY, record["id"], json.dumps(updated, ensure_ascii=False))
+        return True
+
     def synced(self) -> dict[str, int]:
         """Record id -> the version last indexed. Called by: scripts/sync_submissions.py"""
         flat = self._command("HGETALL", SYNCED_KEY) or []

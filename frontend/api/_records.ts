@@ -152,6 +152,8 @@ export interface MovieRecord {
   release_date: string
   runtime: number | null // minutes
   genres: string[]
+  collection: string // the film series: "The Fast and the Furious Collection" (TMDb), or your own ("MCU Phase 4")
+  companies: string[] // studios: "Marvel Studios", "Columbia Pictures"
   language: string
   overview: string
   tagline: string
@@ -246,7 +248,8 @@ export function validateRecord(input: Partial<MovieRecord>, fields: Field[]): Om
     id: clean(input.id, 80) || (tmdbId ? `tmdb-${tmdbId}` : `m-${slug(title)}${year ? `-${year}` : ''}`),
     type: 'movie', tmdb_id: tmdbId, title, original_title: clean(input.original_title, 200), year,
     release_date: releaseDate, runtime: input.runtime ? Math.round(toNumber(input.runtime)) || null : null,
-    genres: names(input.genres, 10), language: clean(input.language, 40), overview: clean(input.overview, 5000),
+    genres: names(input.genres, 10), collection: clean(input.collection, 120), companies: names(input.companies, 15),
+    language: clean(input.language, 40), overview: clean(input.overview, 5000),
     tagline: clean(input.tagline, 300), directors: names(input.directors), writers: names(input.writers),
     producers: names(input.producers), music: names(input.music), cast, values,
     notes: clean(input.notes, 20_000), sources: names(input.sources, 20), deleted: input.deleted ? true : undefined,
@@ -323,6 +326,8 @@ export interface TmdbMovie {
   tagline?: string
   budget?: number
   revenue?: number
+  belongs_to_collection?: { name?: string } | null
+  production_companies?: { name?: string }[]
   credits?: { cast?: TmdbCredit[]; crew?: TmdbCredit[] }
 }
 
@@ -348,6 +353,7 @@ export function tmdbRecord(movie: TmdbMovie, fields: Field[], castLimit = 40): P
     original_title: movie.original_title && movie.original_title !== movie.title ? movie.original_title : '',
     year: movie.release_date ? Number(movie.release_date.slice(0, 4)) : null, release_date: movie.release_date ?? '',
     runtime: movie.runtime || null, genres: (movie.genres ?? []).map((g) => g.name),
+    collection: movie.belongs_to_collection?.name ?? '', companies: names((movie.production_companies ?? []).map((c) => c.name ?? ''), 15),
     language: language ?? movie.original_language ?? '', overview: movie.overview ?? '', tagline: movie.tagline ?? '',
     directors: crew(movie, ['Director']), writers: crew(movie, ['Screenplay', 'Writer', 'Story', 'Dialogue']),
     producers: crew(movie, ['Producer']), music: crew(movie, ['Original Music Composer', 'Music']),

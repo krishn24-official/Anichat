@@ -184,6 +184,12 @@ export function MovieEditor({ password, fields, record, baseVersion, onSaved, on
           <Text id="m-lang" label="Language" value={state.language} onChange={(v) => update({ language: v })} placeholder="Hindi" />
         </div>
         <Text id="m-genres" label="Genres" value={state.genres} onChange={(v) => update({ genres: v })} placeholder="Comedy, Horror" />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Text id="m-collection" label="Film series" value={state.collection} onChange={(v) => update({ collection: v })}
+                placeholder="Stree Collection" hint="Questions like &quot;which Fast & Furious movie…&quot; use it" />
+          <Text id="m-companies" label="Studios" value={state.companies} onChange={(v) => update({ companies: v })}
+                placeholder="Maddock Films" hint="Separate with commas: Marvel Studios, Sony…" />
+        </div>
         <Text id="m-orig" label="Original title (if different)" value={state.original_title} onChange={(v) => update({ original_title: v })} />
         <div>
           <label htmlFor="m-overview" className={labelClass}>Story (overview)</label>

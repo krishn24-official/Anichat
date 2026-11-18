@@ -131,12 +131,26 @@ Then, on the laptop:
 ```
 python -m scripts.sync_submissions --list      # what changed since the last sync
 python -m scripts.sync_submissions             # rebuild changed movies, add entries, re-index
+python -m scripts.sync_submissions --every 10  # keep running: sync whenever the form changed something
 python -m scripts.add_movie "Iron Man" --year 2008   # the same as "Add a movie", from the terminal
+python -m scripts.add_movie --collection "Jumanji" --director "Christopher Nolan" --dry-run   # whole sets
 ```
+
+Sets added so far (all released feature films; shorts, documentaries and anthologies skipped):
+Marvel (`--company "420|7505|19551|11106"`), DC (`--company "429|9993|10576|128064|184898"`), Christopher
+Nolan, Fast & Furious, Jumanji, plus `movie_lists/marvel_dc_classics.txt` for older films TMDb doesn't
+credit to the studios: 155 movies with Ramayana.
 
 Movies become documents of the `movies` series, entries pages of kind "added" in their series;
 both live under `data/added/` (a wiki rebuild never deletes them) and are chunked with the wiki
 pages. Only changed chunks are re-embedded.
+
+The sync also rebuilds **the movies table** (`data/movies.sqlite`): every movie's values, people
+and day-wise rows. Questions that rank, filter or add up across movies ("which movie earned the
+most?", "Ranbir Kapoor's films by collection", "total of the first 3 days") can't be answered
+from a few text passages, so for those the model first turns the question into a small query
+(known fields and options only, never SQL), the table answers it exactly, and the rows become the
+first cited source. Other questions skip this step.
 
 Setup, once, on Vercel (import the repo with root directory `frontend/`):
 1. Storage tab -> connect an **Upstash for Redis** store (free plan). Vercel adds

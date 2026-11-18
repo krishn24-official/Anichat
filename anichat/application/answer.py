@@ -42,10 +42,14 @@ class AnswerService:
     Tested by:  tests/test_answer.py
     """
 
-    def __init__(self, retrieval: RetrievalService, model: ChatModel, context_chunks: int = CONTEXT_CHUNKS):
+    def __init__(self, retrieval: RetrievalService, model: ChatModel, context_chunks: int = CONTEXT_CHUNKS,
+                 movie_questions=None):
+        """`movie_questions`: application/movie_questions.py MovieQuestions, for questions that rank or
+        add up across movies (the movies table); None leaves them to chunk search alone."""
         self._retrieval = retrieval
         self._model = model
         self._k = context_chunks
+        self._movies = movie_questions
 
     def _context(self, question: str, series: str | None,
                  history: list[Turn] | tuple[Turn, ...]) -> tuple[list[Turn], list[Chunk], dict[str, float]]:
@@ -57,7 +61,15 @@ class AnswerService:
         history = recent(history)
         context = history[-1].question if history and looks_like_follow_up(question) else ""
         retrieval = self._retrieval.retrieve(question, series=series, limit=self._k, context=context)
-        return history, [r.chunk for r in retrieval.chunks], {"retrieve": retrieval.timings["total"]}
+        chunks, timings = [r.chunk for r in retrieval.chunks], {"retrieve": retrieval.timings["total"]}
+        if self._movies is not None:
+            # Ranking / adding up across movies: the movies table's rows come first, as source [1].
+            table, seconds = self._movies.source(question, series)
+            if seconds:
+                timings["movies_table"] = seconds
+            if table is not None:
+                chunks = [table] + chunks[: self._k - 1]
+        return history, chunks, timings
 
     def answer(self, question: str, series: str | None = None, history: list[Turn] | tuple[Turn, ...] = ()) -> Answer:
         """Retrieve, then ask the model to answer only from what was retrieved.
