@@ -43,13 +43,14 @@ class AnswerService:
     """
 
     def __init__(self, retrieval: RetrievalService, model: ChatModel, context_chunks: int = CONTEXT_CHUNKS,
-                 movie_questions=None):
-        """`movie_questions`: application/movie_questions.py MovieQuestions, for questions that rank or
-        add up across movies (the movies table); None leaves them to chunk search alone."""
+                 tables=()):
+        """`tables`: sources for questions that rank, filter or count across many entries, each with
+        .source(question, series) -> (Chunk | None, seconds): application/movie_questions.py
+        MovieQuestions, application/pokemon_questions.py PokemonQuestions. Empty: chunk search only."""
         self._retrieval = retrieval
         self._model = model
         self._k = context_chunks
-        self._movies = movie_questions
+        self._tables = list(tables)
 
     def _context(self, question: str, series: str | None,
                  history: list[Turn] | tuple[Turn, ...]) -> tuple[list[Turn], list[Chunk], dict[str, float]]:
@@ -62,13 +63,15 @@ class AnswerService:
         context = history[-1].question if history and looks_like_follow_up(question) else ""
         retrieval = self._retrieval.retrieve(question, series=series, limit=self._k, context=context)
         chunks, timings = [r.chunk for r in retrieval.chunks], {"retrieve": retrieval.timings["total"]}
-        if self._movies is not None:
-            # Ranking / adding up across movies: the movies table's rows come first, as source [1].
-            table, seconds = self._movies.source(question, series)
+        for source in self._tables:
+            # Ranking / filtering / counting across many entries: the first table that answers comes
+            # first, as source [1] (each table checks itself whether the question is its kind).
+            table, seconds = source.source(question, series)
             if seconds:
-                timings["movies_table"] = seconds
+                timings["table"] = timings.get("table", 0.0) + seconds
             if table is not None:
                 chunks = [table] + chunks[: self._k - 1]
+                break
         return history, chunks, timings
 
     def answer(self, question: str, series: str | None = None, history: list[Turn] | tuple[Turn, ...] = ()) -> Answer:

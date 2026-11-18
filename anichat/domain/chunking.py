@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 
 TARGET_CHARS = 1600  # ~400 tokens
 MAX_CHARS = 2000  # ~500 tokens: never exceed (beyond the model limit text is ignored)
+MIN_TEXT_CHARS = 400  # text room per chunk however long its heading line is
+MAX_HEADING = 80  # characters of one heading in the location line
 MIN_CHARS = 300  # smaller sections are merged into the previous chunk
 OVERLAP_SENTENCES = 1
 SEPARATOR = " › "
@@ -108,7 +110,9 @@ def split_text(text: str, target: int = TARGET_CHARS, limit: int = MAX_CHARS, ov
                 current[:] = current[-overlap:] if overlap else []
             continue
         while len(unit) > limit:  # one enormous "sentence": cut at a word boundary
-            cut = unit.rfind(" ", 0, limit) or limit
+            cut = unit.rfind(" ", 0, limit)
+            if cut <= 0:  # no space to cut at (rfind's -1 is truthy, so "or limit" would cut 1 char at a time)
+                cut = limit
             pieces.append(unit[:cut])
             unit = unit[cut:].strip()
         if current and len(" ".join(current + [unit])) > target:
@@ -142,7 +146,9 @@ def chunk_document(doc: SourceDocument, importance: int = 0) -> list[Chunk]:
     # 1. Pieces per section, merging tiny sections into the previous piece.
     pieces: list[tuple[str, str]] = []  # (section path, text)
     for heading_path, text in _sections(doc.body):
-        section = SEPARATOR.join(heading_path)
+        # A heading is a few words; a "heading" of 400 characters is a paragraph marked up as one
+        # (some wiki pages): cut it, or it would fill the chunk's location line.
+        section = SEPARATOR.join(h if len(h) <= MAX_HEADING else h[: MAX_HEADING - 1] + "…" for h in heading_path)
         if pieces and len(text) < MIN_CHARS:
             prev_section, prev_text = pieces[-1]
             label = f"{heading_path[-1]}: " if heading_path else ""
@@ -153,8 +159,10 @@ def chunk_document(doc: SourceDocument, importance: int = 0) -> list[Chunk]:
                 continue
         # The location line is part of the chunk: take it out of the size budget.
         location_chars = len(page) + len(SEPARATOR) + len(section) + 2
+        # A freakishly long heading can't eat the whole budget: keep room for some text.
+        budget = max(MAX_CHARS - location_chars, MIN_TEXT_CHARS)
         pieces += [(section, part) for part in
-                   split_text(text, TARGET_CHARS - location_chars, MAX_CHARS - location_chars)]
+                   split_text(text, min(TARGET_CHARS - location_chars, budget), budget)]
 
     # 2. Chunks with their location line and metadata (plus a profile card for entity pages).
     chunks = []
@@ -180,7 +188,7 @@ def chunk_document(doc: SourceDocument, importance: int = 0) -> list[Chunk]:
 
 
 # Entity kinds (not episodes/chapters) get a profile card: a short "who/what is X" chunk.
-CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit", "movie", "ova", "ability", "race", "page", "magic", "transformation", "devil", "quirk", "angel", "mecha", "stand", "added"}
+CARD_KINDS = {"character", "breathing_style", "location", "arc", "titan", "death_note", "organization", "technique", "object", "concept", "event", "jutsu", "clan", "devil_fruit", "movie", "ova", "ability", "race", "page", "magic", "transformation", "devil", "quirk", "angel", "mecha", "stand", "added", "pokemon"}
 CARD_FACTS = ("alias", "affiliation", "occupation", "rank", "race", "species", "status", "relatives", "user", "creator",
               "killed by", "parents", "children", "clan", "classification", "quirk")
 # Wiki sections listing whom a character killed ("People killed" on Attack on Titan pages).

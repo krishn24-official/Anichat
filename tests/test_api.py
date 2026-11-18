@@ -47,7 +47,7 @@ def test_chat_returns_the_answer_with_sources_and_rounded_timings(monkeypatch):
 
 def test_chat_rejects_unknown_series_and_too_short_questions(monkeypatch):
     http, answers = client(monkeypatch)
-    assert http.post("/chat", json={"question": "Who is Goku?", "series": "pokemon"}).status_code == 422
+    assert http.post("/chat", json={"question": "Who is Goku?", "series": "digimon"}).status_code == 422
     assert http.post("/chat", json={"question": "?"}).status_code == 422
     assert answers.asked == []
 

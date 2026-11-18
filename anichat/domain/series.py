@@ -24,7 +24,7 @@ class CategorySource:
 
     kind: str  # our name for the page type, also the folder name under data/raw/<series>/
     category: str  # wiki category title, without the "Category:" prefix
-    include_subcategories: bool = False  # e.g. Characters -> Demons, Hashira, ...
+    include_subcategories: bool | int = False  # e.g. Characters -> Demons, Hashira, ...; a number = levels down
     # Keep only pages whose infobox matches, for wikis that mix several series in one category
     # (Naruto's "Episodes" holds Naruto, Shippuden and Boruto). (field, regex) pairs, all must
     # fully match, case-insensitive; a missing field counts as "".
@@ -987,6 +987,20 @@ SERIES: dict[str, SeriesSource] = {
     # (scripts/sync_submissions.py). "other": facts that belong to no series.
     "movies": SeriesSource(id="movies", title="Movies", wiki_host="", categories=()),
     "other": SeriesSource(id="other", title="Other", wiki_host="", categories=()),
+    # Pokémon: the wiki gives the anime (episodes "TB001: Pokémon - I Choose You!", anime characters);
+    # the Pokédex (every species: number, types, weaknesses, stats) comes from PokéAPI through
+    # scripts/add_pokedex.py into data/added/pokemon/, so species pages are not collected here.
+    "pokemon": SeriesSource(
+        id="pokemon", title="Pokémon", wiki_host="pokemon.fandom.com",
+        categories=(
+            CategorySource("episode", "Pokémon the Series episodes", include_subcategories=3,  # series > season > episode
+                           exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Anime characters", include_subcategories=True, exclude_titles=NOT_ARTICLES),
+            CategorySource("character", "Main characters", exclude_titles=NOT_ARTICLES),
+            CategorySource("organization", "Organizations", exclude_titles=NOT_ARTICLES),
+            CategorySource("location", "Locations", exclude_titles=NOT_ARTICLES),
+        ),
+    ),
     # Wikis with the usual layout; their other pages (named chapters, later seasons' "Season 3
     # Episode 1", ...) come in through the catch-all as pages.
     "promised_neverland": standard_series("promised_neverland", "The Promised Neverland",

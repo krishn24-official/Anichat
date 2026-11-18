@@ -72,18 +72,27 @@ class FandomClient:
                 return titles
             cont = data["continue"]
 
-    async def category_pages(self, host: str, category: str, include_subcategories: bool) -> list[str]:
-        """Article titles in a category, plus those of its direct sub-categories when asked.
-        Duplicates (a page in several sub-categories) are removed; order is kept.
+    async def category_pages(self, host: str, category: str, include_subcategories: bool | int) -> list[str]:
+        """Article titles in a category, plus those of its sub-categories when asked: True (or 1)
+        = direct sub-categories, a number = that many levels down (Pokémon: series -> season ->
+        episodes). Duplicates (a page in several sub-categories) are removed; order is kept.
 
         Called by: application/collect.py  CollectService.collect()
         """
         if category == ALL_ARTICLES:
             return await self._all_articles(host)
         titles = await self._members(host, category, "page")
-        if include_subcategories:
-            for sub in await self._members(host, category, "subcat"):
-                titles += await self._members(host, sub.removeprefix("Category:"), "page")
+        level, seen = [category], {category}
+        for _ in range(int(include_subcategories)):
+            below = []
+            for cat in level:
+                for sub in await self._members(host, cat, "subcat"):
+                    name = sub.removeprefix("Category:")
+                    if name not in seen:  # categories can loop
+                        seen.add(name)
+                        below.append(name)
+                        titles += await self._members(host, name, "page")
+            level = below
         return list(dict.fromkeys(titles))
 
     async def _all_articles(self, host: str) -> list[str]:

@@ -99,7 +99,7 @@ class WikiClient(Protocol):
     Used by:        application/collect.py           CollectService
     """
 
-    async def category_pages(self, host: str, category: str, include_subcategories: bool) -> list[str]:
+    async def category_pages(self, host: str, category: str, include_subcategories: bool | int) -> list[str]:
         """Titles of the article pages in a category (optionally one level of sub-categories)."""
         ...
 

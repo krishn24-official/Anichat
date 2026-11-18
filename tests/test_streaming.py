@@ -76,4 +76,4 @@ def test_stream_endpoint_sends_server_sent_events(monkeypatch):
     assert events[0]["text"] == "Rengoku "
     assert events[-1]["answer"] == "Rengoku died [1]." and events[-1]["sources"][0]["numbers"] == [1]
     assert events[-1]["timings"] == {"retrieve": 0.212}
-    assert http.post("/chat/stream", json={"question": "Who?", "series": "pokemon"}).status_code == 422
+    assert http.post("/chat/stream", json={"question": "Who?", "series": "digimon"}).status_code == 422

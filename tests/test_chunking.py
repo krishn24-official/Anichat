@@ -97,3 +97,10 @@ def test_parents_facts_give_the_parents_a_children_fact():
 
     naruto = SourceDocument({"title": "Naruto Uzumaki", "facts": {"parents": "Minato Namikaze; Kushina Uzumaki"}}, "x")
     assert children_by_parent([naruto]) == {"Minato Namikaze": ["Naruto Uzumaki"], "Kushina Uzumaki": ["Naruto Uzumaki"]}
+
+
+def test_a_long_sentence_without_spaces_is_cut_without_running_away():
+    from anichat.domain.chunking import split_text
+
+    pieces = split_text("x" * 5000, 1600, 2000)
+    assert [len(p) for p in pieces] == [2000, 2000, 1000]
