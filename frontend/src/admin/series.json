@@ -1,11 +1,27 @@
 [
  {
+  "id": "eighty_six",
+  "title": "86: Eighty-Six"
+ },
+ {
+  "id": "ajin",
+  "title": "Ajin: Demi-Human"
+ },
+ {
   "id": "akame_ga_kill",
   "title": "Akame ga Kill!"
  },
  {
   "id": "attack_on_titan",
   "title": "Attack on Titan"
+ },
+ {
+  "id": "beastars",
+  "title": "Beastars"
+ },
+ {
+  "id": "beelzebub",
+  "title": "Beelzebub"
  },
  {
   "id": "berserk",
@@ -20,6 +36,10 @@
   "title": "Black Clover"
  },
  {
+  "id": "black_lagoon",
+  "title": "Black Lagoon"
+ },
+ {
   "id": "bleach",
   "title": "Bleach"
  },
@@ -30,6 +50,10 @@
  {
   "id": "blue_lock",
   "title": "Blue Lock"
+ },
+ {
+  "id": "bocchi_the_rock",
+  "title": "Bocchi the Rock!"
  },
  {
   "id": "boruto",
@@ -72,6 +96,10 @@
   "title": "Dandadan"
  },
  {
+  "id": "darling_in_the_franxx",
+  "title": "Darling in the Franxx"
+ },
+ {
   "id": "death_note",
   "title": "Death Note"
  },
@@ -112,6 +140,18 @@
   "title": "Dragon Ball Z"
  },
  {
+  "id": "edens_zero",
+  "title": "Edens Zero"
+ },
+ {
+  "id": "eleceed",
+  "title": "Eleceed"
+ },
+ {
+  "id": "erased",
+  "title": "Erased (Boku dake ga Inai Machi)"
+ },
+ {
   "id": "fairy_tail",
   "title": "Fairy Tail"
  },
@@ -128,16 +168,40 @@
   "title": "Frieren: Beyond Journey's End"
  },
  {
+  "id": "fruits_basket",
+  "title": "Fruits Basket"
+ },
+ {
   "id": "fullmetal_alchemist",
   "title": "Fullmetal Alchemist"
+ },
+ {
+  "id": "future_diary",
+  "title": "Future Diary (Mirai Nikki)"
+ },
+ {
+  "id": "gantz",
+  "title": "Gantz"
  },
  {
   "id": "gintama",
   "title": "Gintama"
  },
  {
+  "id": "golden_kamuy",
+  "title": "Golden Kamuy"
+ },
+ {
+  "id": "gurren_lagann",
+  "title": "Gurren Lagann"
+ },
+ {
   "id": "haikyuu",
   "title": "Haikyu!!"
+ },
+ {
+  "id": "hajime_no_ippo",
+  "title": "Hajime no Ippo"
  },
  {
   "id": "hells_paradise",
@@ -208,8 +272,20 @@
   "title": "Kagurabachi"
  },
  {
+  "id": "kaguya_sama",
+  "title": "Kaguya-sama: Love Is War"
+ },
+ {
   "id": "kaiju_no_8",
   "title": "Kaiju No. 8"
+ },
+ {
+  "id": "reborn",
+  "title": "Katekyo Hitman Reborn!"
+ },
+ {
+  "id": "kill_la_kill",
+  "title": "Kill la Kill"
  },
  {
   "id": "kingdom",
@@ -220,12 +296,20 @@
   "title": "KonoSuba: God's Blessing on This Wonderful World!"
  },
  {
+  "id": "kuroko_no_basket",
+  "title": "Kuroko's Basketball"
+ },
+ {
   "id": "lookism",
   "title": "Lookism"
  },
  {
   "id": "made_in_abyss",
   "title": "Made in Abyss"
+ },
+ {
+  "id": "magi",
+  "title": "Magi: The Labyrinth of Magic"
  },
  {
   "id": "mcu",
@@ -252,6 +336,10 @@
   "title": "My Hero Academia"
  },
  {
+  "id": "nana",
+  "title": "Nana"
+ },
+ {
   "id": "naruto",
   "title": "Naruto"
  },
@@ -264,8 +352,16 @@
   "title": "Neon Genesis Evangelion"
  },
  {
+  "id": "noblesse",
+  "title": "Noblesse"
+ },
+ {
   "id": "noragami",
   "title": "Noragami"
+ },
+ {
+  "id": "omniscient_readers_viewpoint",
+  "title": "Omniscient Reader's Viewpoint"
  },
  {
   "id": "one_piece",
@@ -292,12 +388,24 @@
   "title": "Parasyte"
  },
  {
+  "id": "pokemon",
+  "title": "Pokémon"
+ },
+ {
+  "id": "psycho_pass",
+  "title": "Psycho-Pass"
+ },
+ {
   "id": "re_zero",
   "title": "Re:Zero - Starting Life in Another World"
  },
  {
   "id": "rurouni_kenshin",
   "title": "Rurouni Kenshin"
+ },
+ {
+  "id": "sailor_moon",
+  "title": "Sailor Moon"
  },
  {
   "id": "sakamoto_days",
@@ -344,6 +452,10 @@
   "title": "The Apothecary Diaries"
  },
  {
+  "id": "god_of_high_school",
+  "title": "The God of High School"
+ },
+ {
   "id": "promised_neverland",
   "title": "The Promised Neverland"
  },
@@ -364,8 +476,16 @@
   "title": "Tokyo Revengers"
  },
  {
+  "id": "toriko",
+  "title": "Toriko"
+ },
+ {
   "id": "tower_of_god",
   "title": "Tower of God"
+ },
+ {
+  "id": "trigun",
+  "title": "Trigun"
  },
  {
   "id": "undead_unluck",
@@ -380,7 +500,19 @@
   "title": "Vinland Saga"
  },
  {
+  "id": "violet_evergarden",
+  "title": "Violet Evergarden"
+ },
+ {
+  "id": "your_lie_in_april",
+  "title": "Your Lie in April"
+ },
+ {
   "id": "yu_yu_hakusho",
   "title": "Yu Yu Hakusho"
+ },
+ {
+  "id": "zom_100",
+  "title": "Zom 100: Bucket List of the Dead"
  }
 ]

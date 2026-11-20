@@ -167,3 +167,9 @@ def test_a_template_name_built_from_a_parameter_still_parses():
                       "</onlyinclude>\n==Appearance==\nPink hair.")
     assert page.infobox == {"status": "Active", "age": "17"}  # no image file names (the name is the title)
     assert page.lead == "Airi Sakura is one of the heroines of the series."
+
+
+def test_dpl_page_lists_inside_a_scroll_box_leave_no_braces():
+    page = parse_page("Volume 1 of the webnovel.\n==Episodes==\n{{Scroll box|content={{#dpl:category = Volume 1 Episodes"
+                      "|include = {Infobox episode}:episode_name|format = ,¶*%PAGE%,,}}}}\n==Story==\nKim Dokja reads.")
+    assert "{" not in str(page.sections) and page.sections[-1] == (2, "Story", "Kim Dokja reads.")

@@ -275,6 +275,9 @@ def parse_page(wikitext: str, title: str = "") -> ParsedPage:
     # from a parameter) take their default, so the template around them still parses.
     wikitext = re.sub(r"\{\{\{[^{}|]*\|([^{}]*)\}\}\}", r"\1", wikitext)
     wikitext = re.sub(r"\{\{\{[^{}|]*\}\}\}", "", wikitext)
+    # DPL queries ("{{#dpl:...|include = {Infobox episode}:name}}") list pages when the wiki renders;
+    # they hold no text, and their single braces would stop the template around them from parsing.
+    wikitext = re.sub(r"\{\{\s*#dpl:(?:[^{}]|\{[^{}]*\})*\}\}", "", wikitext, flags=re.I)
     text = _strip_noise(wikitext)
     text = _remove_file_links(text)
     text = _resolve_links(text, page.mentions)
